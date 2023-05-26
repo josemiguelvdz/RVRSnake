@@ -1,23 +1,26 @@
+# Directories
+# S_DIR=source
+B_DIR=Exe
+
+# Files
+S_FILES=Snake.cc
+
+# Header files
+H_FILES=
+
+# Output
+EXEC=$(B_DIR)/SnakeTest
+
+# Build settings
 CC=g++
-CFLAGS=-g -I. -std=c++11
-DEPS = Socket.h Chat.h
-OBJ = Socket.o Chat.o
-LIBS=-lpthread
+LIBS=-lpthread -lSDL2
 
-%.o: %.cc $(DEPS)
-	$(CC) -g -c -o $@ $< $(CFLAGS)
+all:
+	mkdir -p $(B_DIR)
+	$(CC) $(S_FILES) -o $(EXEC) $(LIBS)
 
-all: cs cc
-
-cs: $(OBJ) ChatServer.o
-	g++ -o $@ $^ $(CFLAGS) $(LIBS)
-
-cc: $(OBJ) ChatClient.o
-	g++ -o $@ $^ $(CFLAGS) $(LIBS)
-
-
-.PHONY: clean
+exe:
+	./$(EXEC)
 
 clean:
-	rm -f *.o cs cc
-
+	rm -rf $(B_DIR)/*
