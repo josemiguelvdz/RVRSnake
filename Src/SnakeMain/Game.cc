@@ -2,35 +2,29 @@
 
 #include <thread>
 
-// #include "Audio/SoundManager.h"
-// #include "Physics/PhysicsManager.h"
-// #include "Render/RenderManager.h"
-#include "Input/InputManager.h"
-// #include "EntityComponent/SceneManager.h"
-// #include "Render/RenderWindow.h"
-#include "Render/Window.h"
+#include "../Input/InputManager.h"
+#include "../EntityComponent/SceneManager.h"
+#include "../Render/Window.h"
 
 // #include "EntityComponent/Scene.h"
 // #include "EntityComponent/Components/ComponentsFactory.h"
 // #include "EntityComponent/Components/FactoryComponent.h"
 
-#include "Utils/Time.h"
+#include "../Utils/Time.h"
 // #include "Utils/Timer.h"
 
 #include <SDL2/SDL.h>
 
 bool Game::setup(std::string gameName)
 {
-    Window::Init(SDL_INIT_EVERYTHING, gameName, SDL_WINDOWPOS_UNDEFINED,
+    Window::Init(SDL_INIT_EVERYTHING, gameName.c_str(), SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, 1600, 900, SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
 	// Añadir componentes del motor
 	// initFactories();
 
     // Init Input
-
-	// Init managers
-	// physicsManager().start();
+	// TODO: Create Inputs of the Snake
 
 	// Start time
 	mTime = new Time(60);
@@ -52,14 +46,14 @@ void Game::loop()
 		dt = mTime->update();
 		
 		// Update the scene
-		physicsManager().update(dt, 0, 1 / mTime->getTargetFrameRate());
+		// physicsManager().update(dt, 0, 1 / mTime->getTargetFrameRate());
 
-		soundManager().systemRefresh(dt);
+		// soundManager().systemRefresh(dt);
 
 		sceneManager().update(dt);
 		
 		// Render the scene
-		renderManager().render();
+		// renderManager().render();
 		
 		//If we're going to change the scene
 		if (sceneManager().isChanging())
@@ -74,11 +68,11 @@ void Game::exit()
 {
 	// Clear the memory created in the execution of the program
 	SceneManager::Shutdown();
-	PhysicsManager::Shutdown();
-	RenderManager::Shutdown();
+	// PhysicsManager::Shutdown();
+	// RenderManager::Shutdown();
 	Window::Shutdown();
-	SoundManager::Shutdown();
-	ComponentsFactory::Shutdown();
+	// SoundManager::Shutdown();
+	// ComponentsFactory::Shutdown();
 	InputManager::Shutdown();
 
 	delete mTime;

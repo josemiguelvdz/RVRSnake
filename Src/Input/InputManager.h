@@ -2,8 +2,8 @@
 #ifndef __INPUT_INPUTMANAGER
 #define __INPUT_INPUTMANAGER
 
-#include "Utils/Singleton.h"
-#include "Utils/Vector2.h"
+#include "../Utils/Singleton.h"
+#include "../Utils/Vector2.h"
 #include "Button.h"
 #include "Axis.h"
 #include <vector>

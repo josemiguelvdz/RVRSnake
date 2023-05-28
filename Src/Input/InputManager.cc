@@ -256,8 +256,7 @@ bool InputManager::addOnButtonPressedEvent(std::string name, int(*callback)(void
 		//Call callback if input matches any of the virtual button's bindings.
 		auto bindings = info->buttonBindings->equal_range(GetInput(event));
 		for (auto binding = bindings.first; binding != bindings.second; binding++)
-			if (binding->second == info->buttonName 
-				&& (info->player == -1 || info->player == SDL_GetGamepadInstancePlayerIndex(event->cbutton.which)))
+			if (binding->second == info->buttonName && info->player == -1)
 				info->callback(info->additionalData);
 		
 		return 0;
@@ -318,9 +317,7 @@ int InputManager::UpdateInputData(void* userdata, SDL_Event* event)
 	auto bindings = Instance()->mButtonBindings.equal_range(input);
 	for (auto binding = bindings.first; binding != bindings.second; binding++)
 		//Check if its the right player
-		if (input.type != INPUTTYPE_GAMEPAD_BUTTON || 
-			(input.type == INPUTTYPE_GAMEPAD_BUTTON && (Instance()->mButtons[binding->second].player == -1 ||
-			Instance()->mButtons[binding->second].player == SDL_GetGamepadInstancePlayerIndex(event->cbutton.which))))
+		if (Instance()->mButtons[binding->second].player == -1)
 			Instance()->mButtons[binding->second].pressed = EVENT_BUTTON_DOWN;
 
 	//Return all unactive axis towards zero
@@ -333,24 +330,11 @@ int InputManager::UpdateInputData(void* userdata, SDL_Event* event)
 			axis.second.value = std::min(.0f, axis.second.value + axis.second.gravity);
 
 	//Update all axis binded to that input
-	if (input.type == INPUTTYPE_GAMEPAD_AXIS) {
-		bindings = Instance()->mPositiveAxisBindings.equal_range(input);
-		for (auto binding = bindings.first; binding != bindings.second; binding++) 
-			//Check if its the right player
-			if (Instance()->mButtons[binding->second].player == -1 ||
-				Instance()->mButtons[binding->second].player == SDL_GetGamepadInstancePlayerIndex(event->caxis.which)) {
-				Axis* axis = &Instance()->mAxis[binding->second];
-				axis->value = input.value;
-				axis->active = std::abs(input.value) > axis->dead;
-			}
-	}
-	else if (EVENT_BUTTON_DOWN) {
+	if (EVENT_BUTTON_DOWN) {
 		bindings = Instance()->mPositiveAxisBindings.equal_range(input);
 		for (auto binding = bindings.first; binding != bindings.second; binding++) {
 			//Check if its the right player
-			if (!(input.type != INPUTTYPE_GAMEPAD_BUTTON || 
-				(input.type == INPUTTYPE_GAMEPAD_BUTTON && (Instance()->mButtons[binding->second].player == -1 ||
-				Instance()->mButtons[binding->second].player == SDL_GetGamepadInstancePlayerIndex(event->cbutton.which)))))
+			if (Instance()->mButtons[binding->second].player == -1)
 				continue;
 
 			if (Instance()->mAxis[binding->second].active && Instance()->mAxis[binding->second].value == -1)
@@ -364,9 +348,7 @@ int InputManager::UpdateInputData(void* userdata, SDL_Event* event)
 		bindings = Instance()->mNegativeAxisBindings.equal_range(input);
 		for (auto binding = bindings.first; binding != bindings.second; binding++) {
 			//Check if its the right player
-			if (!(input.type != INPUTTYPE_GAMEPAD_BUTTON ||
-				(input.type == INPUTTYPE_GAMEPAD_BUTTON && (Instance()->mButtons[binding->second].player == -1 ||
-				Instance()->mButtons[binding->second].player == SDL_GetGamepadInstancePlayerIndex(event->cbutton.which)))))
+			if (!Instance()->mButtons[binding->second].player == -1)
 				continue;
 
 			if (Instance()->mAxis[binding->second].active && Instance()->mAxis[binding->second].value == 1)

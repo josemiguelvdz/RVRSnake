@@ -8,7 +8,7 @@
 /*
 Type of input: which device was triggered
 */
-enum InputType {
+enum InputType : int {
     INPUTTYPE_KEYBOARD,
     INPUTTYPE_MOUSE_CLICK,
     INPUTTYPE_MOUSE_MOTION,

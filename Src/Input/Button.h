@@ -8,7 +8,7 @@
 #include <SDL2/SDL_events.h>
 
 typedef union SDL_Event SDL_Event;
-typedef int SDL_EventFilter (void* userdata, SDL_Event* event);
+typedef int (SDLCALL * SDL_EventFilter) (void *userdata, SDL_Event * event);
 
 enum InputType : int;
 
