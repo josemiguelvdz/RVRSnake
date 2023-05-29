@@ -1,5 +1,3 @@
-// This file is part of the course TPV2@UCM - Samir Genaim
-
 #pragma once
 
 #include <SDL2/SDL.h>
@@ -9,76 +7,32 @@
 #include "Singleton.h"
 #include "RandomNumberGenerator.h"
 #include "Font.h"
-#include "Utils/Texture.h"
+#include "Texture.h"
 #include "VirtualTimer.h"
+
+#include "../Render/Window.h"
 
 class SDLUtils: public Singleton<SDLUtils> {
 
 	friend Singleton<SDLUtils> ; // needed to give access to private constructors
 	//static bool sound_initialized;
 public:
-
-	// we abstract away the actual data structure we use for
-	// tables. All we assume is that is has the following
-	// methods
-	//
-	//   emplace(key,value)
-	//   at(key)
-	//   clear()
-	//
 	template<typename T>
 	using sdl_resource_table = std::map<std::string,T>;
 
-	virtual ~SDLUtils();
-	
-	// cannot copy/move
-	SDLUtils(SDLUtils&) = delete;
-	SDLUtils(SDLUtils&&) = delete;
-	SDLUtils& operator=(SDLUtils&) = delete;
-	SDLUtils& operator=(SDLUtils&&) = delete;
-
-	//static bool isSoundInitialized() { return sound_initialized; }
-	// access to the underlying SDL_Window -- in principle not needed
-	inline SDL_Window* window() {
-		return window_;
-	}
-
-	// access to the underlying SDL_Renderer -- needed when creating textures
-	// other than those initialized in this class
-	inline SDL_Renderer* renderer() {
-		return renderer_;
-	}
+	~SDLUtils();
 
 	// clear the renderer with a given SDL_Color
 	inline void clearRenderer(SDL_Color bg = build_sdlcolor(0x7F7F7F)) {
-		SDL_SetRenderDrawColor(renderer_, COLOREXP(bg));
-		SDL_RenderClear(renderer_);
+		SDL_SetRenderDrawColor(window().getRenderer(), COLOREXP(bg));
+		SDL_RenderClear(window().getRenderer());
 	}
 
 	// present the current content of the renderer
 	inline void presentRenderer() {
-		SDL_RenderPresent(renderer_);
+		SDL_RenderPresent(window().getRenderer());
 	}
 
-	// the window's width
-	inline int width() {
-		return width_;
-	}
-
-	// the window's height
-	inline int height() {
-		return height_;
-	}
-
-	// toggle to full-screen/window mode
-	inline void toggleFullScreen() {
-		auto flags = SDL_GetWindowFlags(window_);
-		if (flags & SDL_WINDOW_FULLSCREEN) {
-			SDL_SetWindowFullscreen(window_, 0);
-		} else {
-			SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN);
-		}
-	}
 
 	// show the cursor when mouse is over the window
 	inline void showCursor() {
@@ -148,24 +102,12 @@ public:
 		return SDL_GetTicks();
 	}
 
-private:
-	SDLUtils();
-	SDLUtils(std::string windowTitle, int width, int height);
-	SDLUtils(std::string windowTitle, int width, int height,
-			std::string filename);
-
-	void initWindow();
-	void closeWindow();
 	void initSDLExtensions(); // initialize resources (fonts, textures, audio, etc.)
 	void closeSDLExtensions(); // free resources the
-	//void loadReasources(std::string filename); // load resources from the json file
+	void loadResources(); // load resources
 
-	std::string windowTitle_; // window title
-	int width_; // window width
-	int height_; // window height
-
-	SDL_Window *window_; // the window
-	SDL_Renderer *renderer_; // the renderer
+private:
+	SDLUtils();
 
 	sdl_resource_table<Font> fonts_; // fonts map (string -> font)
 	sdl_resource_table<Texture> images_; // textures map (string -> texture)
@@ -184,5 +126,5 @@ private:
 // writing SDLUtils::instance()->method() we write sdlutils().method()
 //
 inline SDLUtils& sdlutils() {
-	return *SDLUtils::instance();
+	return *SDLUtils::Instance();
 }

@@ -10,6 +10,10 @@
 // #include "EntityComponent/Components/ComponentsFactory.h"
 // #include "EntityComponent/Components/FactoryComponent.h"
 
+#include "../Scenes/Battle.h"
+
+#include "../Utils/SDLUtils.h"
+
 #include "../Utils/Time.h"
 // #include "Utils/Timer.h"
 
@@ -20,14 +24,19 @@ bool Game::setup(std::string gameName)
     Window::Init(SDL_INIT_EVERYTHING, gameName.c_str(), SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, 672, 672, SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
 
-	// Añadir componentes del motor
-	// initFactories();
+	// Load Resources
+	sdlutils().initSDLExtensions();
+	sdlutils().loadResources();
 
     // Init Input
 	// TODO: Create Inputs of the Snake
 
 	// Start time
 	mTime = new Time(60);
+
+	// Load Scene
+	Scene* battleTest = new Battle(1);
+	sceneManager().loadScene(battleTest);
 	
 	return true;
 }
@@ -50,10 +59,14 @@ void Game::loop()
 
 		// soundManager().systemRefresh(dt);
 
+		sdlutils().clearRenderer();
+
 		sceneManager().update(dt);
 		
 		// Render the scene
 		// renderManager().render();
+
+		sdlutils().presentRenderer();
 		
 		//If we're going to change the scene
 		if (sceneManager().isChanging())

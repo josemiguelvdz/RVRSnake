@@ -14,7 +14,7 @@ EXEC=$(B_DIR)/SnakeTest
 # Build settings
 CC=g++
 CFLAGS=#-g -I. -std=c++11
-LIBS=-lpthread -lSDL2
+LIBS=-lpthread -lSDL2 -lSDL2_ttf -lSDL2_image
 WITHOUT_WARNINGS=-w
 
 all:

@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <SDL2/SDL_test_font.h>
+#include <SDL2/SDL_ttf.h>
 #include <string>
 #include <cassert>
 #include <iostream>
@@ -55,5 +55,4 @@ public:
 
 private:
 	TTF_Font *font_;
-}
-;
+};

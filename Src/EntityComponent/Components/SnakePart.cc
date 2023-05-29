@@ -6,16 +6,15 @@
 
 using namespace std;
 
-SnakePart::mSnakePartsTexture = nullptr;
 
 SnakePart::SnakePart(int id)
 {
-    mSnakePartsTexture = nullptr;
+    // mSnakePartsTexture = nullptr;
 }
 
 SnakePart::~SnakePart()
 {
 	// renderManager().destroyMesh(mName);
     // TODO: ESTO ESTA BIEN?
-    SDL_free(mSnakePartsTexture);
+    // SDL_free(mSnakePartsTexture);
 }

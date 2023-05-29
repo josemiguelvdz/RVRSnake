@@ -114,12 +114,6 @@ public:
     void processNewEntities();
 
     /**
-    Adds new entities from unordered_map passed by the sceneManager
-    @param entitiesMap Contains all info about each entity and its components.
-    */
-    void pushEntities(InfoScene& entitiesMap);
-
-    /**
     Makes this entity global so it won't be deleted on changeScenes.
     @param entity The entity to be promoted.
     @returns True if succesfully promoted.

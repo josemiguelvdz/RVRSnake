@@ -2,48 +2,40 @@
 #include "../../Render/Window.h"
 #include "../Entity.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "../../Utils/SDLUtils.h"
+#include "../../Utils/Texture.h"
 
 Board::Board() : mName("board")
 {
-    groundTexture = nullptr;
+    int nBoxes = window().getWindowWidth() / boxWidth;
+    boxes = std::vector<std::vector<int>>(nBoxes, std::vector<int>(nBoxes, -1));
 }
 
 
 Board::~Board()
 {
-	// renderManager().destroyMesh(mName);
-    // TODO: ESTO ESTA BIEN?
-    SDL_free(groundTexture);
-}
-
-void Board::init()
-{
-	// Load textures
-    // SDL_Texture* ballTexture = IMG_LoadTexture(window().getRenderer(), "../../../Resources/gfx/tile32_light.png");
 }
 
 void Board::start()
 {
-	// mTransform = getEntity()->getComponent<Transform>("transform");
 
-	// assert(mTransform && "An Entity doesn't have the transform component");
-
-	// renderManager().setMeshTransform(mName, mTransform->getPosition(), mTransform->getScale(), mTransform->getRotation());
-    int nBoxes = window().getWindowWidth() / boxWidth;
-    
-    for(int i = 0; i < nBoxes; i++){
-        for (int j = 0; j < nBoxes; j++){
-            // Put image in coords i * boxWidth, j * boxHeight
-            boxes[i][j].playerID = -1;
-            
-        }
-    }
 }
+
 
 void Board::update(const double& dt)
 {
-	// if (!mStaticObject)
-	// 	renderManager().setMeshTransform(mName, mTransform->getPosition(), mTransform->getScale(), mTransform->getRotation());
+	int nBoxes = window().getWindowWidth() / boxWidth;
+
+    groundTexture = &sdlutils().images().at("tileLight32");
+    
+    for(int i = 0; i < boxes.size(); i++){
+        for (int j = 0; j < boxes[0].size(); j++){
+            // Put image in coords i * boxWidth, j * boxHeight
+            SDL_Rect textureBox;
+
+            textureBox = {i * boxWidth, j * boxHeight, boxWidth, boxHeight };
+
+		    groundTexture->render(textureBox);
+	    }
+    }
 }

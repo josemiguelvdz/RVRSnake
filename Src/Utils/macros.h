@@ -19,11 +19,11 @@
  * position, velocity, etc.)
  */
 
-inline SDL_Rect build_sdlrect(Vector2D<int> &pos, float w, float h) {
+inline SDL_Rect build_sdlrect(Vector2& pos, float w, float h) {
 	return
 	{
-		static_cast<int>(pos.getX()),
-		static_cast<int>(pos.getY()),
+		static_cast<int>(pos.x),
+		static_cast<int>(pos.y),
 		static_cast<int>(w),
 		static_cast<int>(h)
 	};

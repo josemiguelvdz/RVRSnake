@@ -7,47 +7,29 @@
 #include <string>
 #include <vector>
 
-/**
-
-*/
 using namespace std;
 
-class SDL_Texture;
+class Texture;
 
-struct Box {
-	int playerID;
-};
+// struct Box {
+// 	int playerID;
+// };
 
 class Board : public Component
 {
 private:
 protected:
 	std::string mName;
+	vector<vector<int>> boxes;
 
-	SDL_Texture* groundTexture; 
-	vector<vector<Box>> boxes;
+	Texture* groundTexture = nullptr;
 
 	int boxWidth = 32;
 	int boxHeight = 32;
 public:
-
-	/**
-
-	*/
 	Board();
 	~Board();
-
-	void init();
-
-	/**
-	
-	*/
 	void start() override;
-	
-
-	/**
-	
-	*/
 	void update(const double& dt) override;
 };
 #endif

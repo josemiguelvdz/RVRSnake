@@ -12,9 +12,9 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 
 	board.get()->addComponent(new Board());
 
-	for(int i = 0; i < snakeNumber; i++){
-		auto snake = addEntity("Snake" + std::to_string(i));;
+	// for(int i = 0; i < snakeNumber; i++){
+	// 	auto snake = addEntity("Snake" + std::to_string(i));;
 		
-		snake.get()->addComponent(new Snake(i));
-	}
+	// 	snake.get()->addComponent(new Snake(i));
+	// }
 }

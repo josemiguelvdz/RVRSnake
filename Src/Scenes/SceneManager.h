@@ -29,12 +29,11 @@ public:
     */
     virtual ~SceneManager();
 
-    /**
-    Add a new Scene to the SceneManager.
-    Name is assumed to be a unique identifier.
-    @param String name to identify the new scene.
+     /**
+    Load a new scene to set as active.
+    @returns True on Success.
     */
-    Scene* addScene(const SceneName& name);
+    bool loadScene(Scene* newScene);
 
     /**
     Remove an scene from the SceneManager.
@@ -89,13 +88,7 @@ public:
     */
     int loadEntities(const SceneName& sceneName);
 
-    /**
-    Load a new scene to set as active.
-    @param newScene Name of the new scene.
-    @param eraseActiveScene If true, currently active scene is erased.
-    @returns True on Success.
-    */
-    bool loadScene(const SceneName& newScene, bool eraseActiveScene = true);
+   
 
     /**
     Deletes all scenes and clears the map of scenes.
@@ -106,7 +99,7 @@ public:
     Set the new scene to be made active.
     @param newScene Name of the new scene.
     */
-    void change(std::string newScene);
+    void change(Scene* newScene);
 
     /**
     Begin quitting process.
@@ -116,7 +109,7 @@ public:
     /**
     Get name of the new scene to be made active.
     */
-    std::string getNewScene();
+    Scene* getNewScene();
 
     bool isChanging();
 
@@ -142,11 +135,9 @@ private:
     //Quit app
     bool mQuit = false;
 
-    std::string mNewScene;
-
     std::unordered_map<SceneName, Scene*> mScenes;
     Scene* mActiveScene = nullptr;
-    InfoScene mEntitiesMap;
+    Scene* mNewScene = nullptr;
 };
 
 /**

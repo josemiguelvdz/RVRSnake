@@ -148,28 +148,7 @@ void Scene::processNewEntities()
 		entityPtr->start();
 
 
-
-
 	mNewEntities.clear();
-}
-
-void Scene::pushEntities(InfoScene& entitiesMap)
-{
-	// Recorrer el mapa de entidades
-	for (auto& infoEntity : entitiesMap) {
-		const EntityName* entityName = &infoEntity.first;
-		InfoEntity* entityComponents = &infoEntity.second;
-
-		// Crear entidad
-		auto entity = addEntity(*entityName);
-
-		// Crear y añadir componentes
-		for (auto& component : *entityComponents) {
-			const ComponentName* componentName = &component.first;
-			Parameters* componentInfo = &component.second;
-			// entity->addComponent(*componentName, *componentInfo);
-		}
-	}
 }
 
 bool Scene::promoteToGlobal(Entity* entity)

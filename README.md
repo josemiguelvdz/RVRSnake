@@ -8,6 +8,8 @@ sudo apt-get install libsdl2-2.0-0
 sudo apt-get install libsdl2-dev
 sudo apt-get install libsdl2-image-2.0-0 
 sudo apt-get install libsdl2-image-dev
+sudo apt-get install libsdl2-ttf-2.0-0
+sudo apt-get install libsdl2-ttf-dev
 
 OPCIONAL - Instalar el dbg
 sudo apt-get install libsdl2-dbg

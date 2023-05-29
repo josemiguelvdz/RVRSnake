@@ -13,19 +13,22 @@ SceneManager::SceneManager() : mActiveScene(nullptr) {
 
 SceneManager::~SceneManager() {
 	std::cout << " >>> SceneManager deleted..." << std::endl;
-
 	deleteAllScenes();
-
-	mEntitiesMap.clear();
 
 	Scene::DeleteGlobalEntities();
 }
 
-Scene* SceneManager::addScene(const SceneName& name) {
-	if(!mScenes.count(name))
-		mScenes[name] = new Scene(name);
+bool SceneManager::loadScene(Scene* newScene) {
+	if(getActiveScene() != nullptr){
+		removeScene(getActiveScene()->getName());
+	}
 
-	return mScenes[name];
+	mChange = false;
+
+	mScenes[newScene->getName()] = newScene;
+	setActiveScene(newScene->getName());
+
+	return true;
 }
 
 bool SceneManager::removeScene(const SceneName& name) {
@@ -87,7 +90,7 @@ void SceneManager::update(const double& dt) {
 	}
 }
 
-void SceneManager::change(std::string newScene) {
+void SceneManager::change(Scene* newScene) {
     mNewScene = newScene;
 	mChange = true;
 }
@@ -97,7 +100,7 @@ void SceneManager::quit()
 	mQuit = true;
 }
 
-std::string SceneManager::getNewScene()
+Scene* SceneManager::getNewScene()
 {
 	return mNewScene;
 }
@@ -154,22 +157,7 @@ void SceneManager::deleteAllScenes() {
 	mScenes.clear();
 }
 
-bool SceneManager::loadScene(const SceneName& newScene, bool eraseActiveScene) {
-	std::string s = newScene;
-	mChange = false;
-	addScene(s);
 
-	if (getActiveScene() != nullptr) {
-		if (s == getActiveScene()->getName())
-			return false;
-
-		if (eraseActiveScene && mScenes.count(getActiveScene()->getName()))
-			removeScene(getActiveScene()->getName());
-	}
-
-	sceneManager().setActiveScene(s);
-	return sceneManager().loadEntities(s) == 0;
-}
 
 // int SceneManager::readEntities(lua_State* L) {
 	// lua_pushnil(L);
@@ -256,7 +244,7 @@ bool SceneManager::loadScene(const SceneName& newScene, bool eraseActiveScene) {
 
 void SceneManager::pushEntities() {
 	// Get active scene and call it
-	mActiveScene->pushEntities(mEntitiesMap);
+	// mActiveScene->pushEntities(mEntitiesMap);
 
-	mActiveScene->processNewEntities();
+	// mActiveScene->processNewEntities();
 }
