@@ -5,6 +5,7 @@
 #include "../Utils/Singleton.h"
 
 typedef struct SDL_Window SDL_Window;
+class SDL_Renderer;
 
 /**
 Manages a SDL_Window instance so it can be shared among several modules like Ogre and Bullet.
@@ -43,6 +44,8 @@ class Window : public Singleton<Window>
 	//Reference to SDL Window class
 	SDL_Window* mWindow;
 
+	SDL_Renderer* mRenderer;
+
 	int mWidth, mHeight;
 
 public:
@@ -61,6 +64,8 @@ public:
 	* @returns The window height
 	*/
 	int getWindowHeight();
+
+	SDL_Renderer* getRenderer();
 };
 
 /**
