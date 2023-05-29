@@ -1,5 +1,5 @@
 #include "Entity.h"
-// #include "Components/Component.h"
+#include "Components/Component.h"
 #include <iostream>
 
 Entity::Entity(Scene* scene, const EntityName name) :
@@ -26,32 +26,30 @@ Entity::~Entity() {
     std::cout << " >>> Entity ( " << mName << " ) deleted..." << std::endl;
 }
 
-// Component* Entity::addComponent(const ComponentName& componentName, Parameters& params) {
-//     // Component* c = componentsFactory().create(componentName, params);
+bool Entity::addComponent(Component* component) {
+    if (!hasComponent(component->getName())) {
+        mComponents.insert({ component->getName(), component });
+        component->setEntity(this);
 
-//     // if (!hasComponent(componentName)) {
+        return true;
+    }
+    return false;
+}
 
-//     //     mComponents.insert({ componentName, c });
-//     //     c->setEntity(this);
-//     // }
-//     return c;
-// }
+bool Entity::removeComponent(const ComponentName& componentName)
+{
+    if (hasComponent(componentName)) {
+        mComponents.erase(componentName);
+        return true;
+    }
 
-// bool Entity::removeComponent(const ComponentName& componentName)
-// {
-//     // if (hasComponent(componentName)) {
-//     //     componentsFactory().destroy(componentName, mComponents.find(componentName)->second);
-//     //     mComponents.erase(componentName);
-//     //     return true;
-//     // }
+    return false;
+}
 
-//     return false;
-// }
-
-// bool Entity::hasComponent(const ComponentName& name)
-// {
-//     return mComponents.find(name) != mComponents.end();
-// }
+bool Entity::hasComponent(const ComponentName& name)
+{
+    return mComponents.find(name) != mComponents.end();
+}
 
 bool Entity::isActive() const
 {
@@ -85,48 +83,24 @@ void Entity::setScene(Scene* scene)
 
 void Entity::start()
 {
-    // for (auto c : mComponents) {
-    //     if (c.second->enabled)
-    //         c.second->start();
-    // };
+    for (auto c : mComponents) {
+        if (c.second->enabled)
+            c.second->start();
+    };
 }
 
 void Entity::update(float dt) {
-    // if (!mActive) return;
-    // for (auto c : mComponents) {
-    //     if(c.second->enabled)
-    //         c.second->update(dt);
-    // };
+    if (!mActive) return;
+    for (auto c : mComponents) {
+        if(c.second->enabled)
+            c.second->update(dt);
+    };
 }
 
 void Entity::lateUpdate(float dt) {
-    // if (!mActive) return;
-    // for (auto c : mComponents) {
-    //     if (c.second->enabled)
-    //         c.second->lateUpdate(dt);
-    // };
-}
-
-void Entity::onCollisionEnter(Entity* other)
-{
-    // for (auto &c : mComponents) {
-    //     if(c.second->enabled && c.first != "collider")
-    //         c.second->onCollisionEnter(other);
-    // }
-}
-
-void Entity::onCollisionStay(Entity* other)
-{
-    // for (auto &c : mComponents ) {
-    //     if (c.second->enabled  && c.first != "collider")
-    //         c.second->onCollisionStay(other);
-    // }
-}
-
-void Entity::onCollisionExit(Entity* other)
-{
-    // for (auto &c : mComponents) {
-    //     if (c.second->enabled && c.first != "collider")
-    //         c.second->onCollisionExit(other);
-    // }
+    if (!mActive) return;
+    for (auto c : mComponents) {
+        if (c.second->enabled)
+            c.second->lateUpdate(dt);
+    };
 }

@@ -91,8 +91,22 @@ public:
     */
     virtual void onCollisionExit(Entity* other);
 
+    /**
+	 Set name to mesh (renderMesh in rendermanager array).
+		@param name: name for map and for entity that attached in node
+	*/
+
+	void setName(std::string name);
+
+	/**
+	Set it is static entity or not
+	*/
+	std::string getName();
+
 protected:
     Entity* mEntity;
+
+    std::string mName;
 };
 
 #endif

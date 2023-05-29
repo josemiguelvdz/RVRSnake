@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __ENTITYCOMPONENT_SCENE
-#define __ENTITYCOMPONENT_SCENE
+#ifndef __SCENES_SCENE
+#define __SCENES_SCENE
 
 #include "InfoScene.h"
 #include <memory>

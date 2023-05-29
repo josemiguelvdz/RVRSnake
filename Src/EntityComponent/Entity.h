@@ -3,7 +3,7 @@
 #ifndef __ENTITYCOMPONENT_ENTITY
 #define __ENTITYCOMPONENT_ENTITY
 
-#include "InfoScene.h"
+#include "../Scenes/InfoScene.h"
 #include <vector>
 #include <map>
 
@@ -38,59 +38,32 @@ public:
     */
     virtual ~Entity();
 
-    
-    /**
-    Add a new component. If the component already exists, notify in debug mode
-    @param componentName The key of the component in the map
-    @param params std::unordered_map<std::string parameterName, std::string parameterValue> 
-    @return Reference to the new component.
-    */
-    // Component* addComponent(const ComponentName& componentName, Parameters& params);
-
-    /**
-    Add a new component. If the component already exists, returns a reference to the existing component.
-    @tparam T component type to be returned
-    @param params std::unordered_map<std::string parameterName, std::string parameterValue>
-    @return Reference to the new component.
-    */
-    // template<typename T>
-    // T* addComponent(const ComponentName& componentName) {
-        // T* component = static_cast<T*>(componentsFactory().create(componentName));
-
-        // if (!hasComponent(componentName)) {
-        //     mComponents.insert({ componentName, component });
-        //     component->setEntity(this);
-        // }
-        // else
-        //     return getComponent<T>(componentName);
-
-        // return component;
-    // };
+    bool addComponent(Component* component);
 
     /**
     Remove completely a typed component.
     */
-    // bool removeComponent(const ComponentName& componentName);
+    bool removeComponent(const ComponentName& componentName);
     
     /**
     Get the reference a suggested component.
     @param Component's key name in this Entity's map
     @return Reference to the component. Nullptr if it does not exist.
     */
-    // template<typename T>
-    // inline T* getComponent(const ComponentName& componentName) {
-    //     if (!hasComponent(componentName))
-    //         return nullptr;
+    template<typename T>
+    inline T* getComponent(const ComponentName& componentName) {
+        if (!hasComponent(componentName))
+            return nullptr;
 
-    //     return static_cast<T*>(mComponents.find(componentName)->second);
-    // };
+        return static_cast<T*>(mComponents.find(componentName)->second);
+    };
 
     /**
     // Check if the component has already been added.
     // @param Component's key name in this Entity's map
     // @return Boolean confirmation.
     // */
-    // bool hasComponent(const ComponentName& name);
+    bool hasComponent(const ComponentName& name);
 
     /**
     Check if the entity is active.
@@ -163,7 +136,7 @@ private:
     bool mActive;
     std::string mName;
     Scene* mScene;
-    // std::map<ComponentName, Component*> mComponents;
+    std::map<ComponentName, Component*> mComponents;
 };
 
 #endif

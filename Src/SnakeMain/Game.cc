@@ -3,7 +3,7 @@
 #include <thread>
 
 #include "../Input/InputManager.h"
-#include "../EntityComponent/SceneManager.h"
+#include "../Scenes/SceneManager.h"
 #include "../Render/Window.h"
 
 // #include "EntityComponent/Scene.h"

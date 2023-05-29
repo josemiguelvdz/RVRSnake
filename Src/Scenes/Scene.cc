@@ -1,5 +1,5 @@
 #include "Scene.h"
-#include "Entity.h"
+#include "../EntityComponent/Entity.h"
 
 #include <iostream>
 

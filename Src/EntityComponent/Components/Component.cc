@@ -29,3 +29,14 @@ void Component::onCollisionEnter(Entity* other) {}
 void Component::onCollisionStay(Entity* other) {}
 
 void Component::onCollisionExit(Entity* other) {}
+
+
+std::string Component::getName()
+{
+	return mName;
+}
+
+void Component::setName(std::string name)
+{
+	mName = name;
+}

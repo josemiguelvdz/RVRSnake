@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-Board::Board()
+Board::Board() : mName("board")
 {
     groundTexture = nullptr;
 }
@@ -46,14 +46,4 @@ void Board::update(const double& dt)
 {
 	// if (!mStaticObject)
 	// 	renderManager().setMeshTransform(mName, mTransform->getPosition(), mTransform->getScale(), mTransform->getRotation());
-}
-
-std::string Board::getName()
-{
-	return mName;
-}
-
-void Board::setName(std::string name)
-{
-	mName = name;
 }
