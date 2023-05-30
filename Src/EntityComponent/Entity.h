@@ -128,8 +128,13 @@ public:
     */
     void onCollisionExit(Entity* other);
 
+    int getDepth();
+    void setDepth(int newPosZ);
+
 private:
     bool mActive;
+    int mPosZ;
+
     std::string mName;
     Scene* mScene;
     std::map<ComponentName, Component*> mComponents;

@@ -2,6 +2,7 @@
 #include "../EntityComponent/Entity.h"
 
 #include <iostream>
+#include <algorithm>
 
 Scene::Scene(const SceneName name) : mName(name)
 {
@@ -110,12 +111,27 @@ void Scene::update(const double& dt) {
 	}
 }
 
+bool cmpCondition(std::shared_ptr<Entity> a, std::shared_ptr<Entity> b) {
+	return a.get()->getDepth() < b.get()->getDepth();
+}
+
 void Scene::render() {
+	// Before rendering, order all entities (Z-COORD)
+	// std::sort(MGlobalEntities.begin(), MGlobalEntities.end(), cmpCondition);
 	for (const auto& kv : MGlobalEntities)
-		kv.second->render();
+		mRenderEntities.push_back(kv.second);
 
 	for (const auto& kv : mEntities)
-		kv.second->render();
+		mRenderEntities.push_back(kv.second);
+	
+
+	std::sort(mRenderEntities.begin(), mRenderEntities.end(), cmpCondition);
+
+	for (const auto& re : mRenderEntities){
+		re.get()->render();
+	}
+
+	mRenderEntities.clear();
 }
 
 void Scene::refresh() {
