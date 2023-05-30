@@ -11,6 +11,7 @@
 // #include "EntityComponent/Components/FactoryComponent.h"
 
 #include "../Scenes/Battle.h"
+#include "../Scenes/TitleScreen.h"
 
 #include "../Utils/SDLUtils.h"
 
@@ -35,8 +36,9 @@ bool Game::setup(std::string gameName)
 	mTime = new Time(60);
 
 	// Load Scene
-	Scene* battleTest = new Battle(1);
-	sceneManager().loadScene(battleTest);
+	// Scene* battleTest = new Battle(1);
+	Scene* titleScreen = new TitleScreen();
+	sceneManager().loadScene(titleScreen);
 	
 	return true;
 }
