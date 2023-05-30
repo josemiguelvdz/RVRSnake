@@ -30,6 +30,7 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 	*/
 	auto appleGenerator = addEntity("AppleGenerator");
 	appleGenerator.get()->addComponent(new AppleGenerator());
+	appleGenerator.get()->setDepth(1);
 	
 }
 

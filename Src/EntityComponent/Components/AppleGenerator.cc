@@ -35,8 +35,8 @@ void AppleGenerator::update(const double& dt)
         Apple newApple = Apple();
 
         // TODO: OBTAIN BOARD INFO
-        newApple.posX = sdlutils().rand().nextInt(0, 22);
-        newApple.posY = sdlutils().rand().nextInt(0, 22);
+        newApple.posX = sdlutils().rand().nextInt(0, 21);
+        newApple.posY = sdlutils().rand().nextInt(0, 21);
 
         mApples.push_back(newApple);
 
