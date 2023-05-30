@@ -22,8 +22,6 @@ protected:
 	std::string mName;
 	vector<vector<int>> boxes;
 
-	Texture* groundTexture = nullptr;
-
 	int boxWidth = 32;
 	int boxHeight = 32;
 public:
@@ -31,5 +29,6 @@ public:
 	~Board();
 	void start() override;
 	void update(const double& dt) override;
+	void render() override;
 };
 #endif

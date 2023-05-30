@@ -8,7 +8,6 @@
 #include "RandomNumberGenerator.h"
 #include "Font.h"
 #include "Texture.h"
-#include "VirtualTimer.h"
 
 #include "../Render/Window.h"
 
@@ -91,12 +90,6 @@ public:
 		return random_;
 	}
 
-	// Access to the virtual timer, it is useful when you allow to 'pause'
-	// your game, also for synchronising clocks of players (when using sdlnet)
-	inline VirtualTimer& virtualTimer() {
-		return timer_;
-	}
-
 	// Access to real time
 	inline Uint32 currRealTime() const {
 		return SDL_GetTicks();
@@ -118,7 +111,6 @@ private:
 	// sdl_resource_table<Texture> anims_; // anims map (string -> anim)
 
 	RandomNumberGenerator random_; // (pseudo) random numbers generator
-	VirtualTimer timer_; // virtual timer
 };
 
 

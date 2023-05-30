@@ -61,11 +61,12 @@ void Game::loop()
 
 		sdlutils().clearRenderer();
 
+		// Update the scene
 		sceneManager().update(dt);
-		
-		// Render the scene
-		// renderManager().render();
 
+		// Render the scene
+		sceneManager().render();
+		
 		sdlutils().presentRenderer();
 		
 		//If we're going to change the scene

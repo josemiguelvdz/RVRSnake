@@ -66,11 +66,15 @@ void SDLUtils::loadResources() {
 		IMAGES	
 	*/
 	images_.emplace("tileLight32", Texture(window().getRenderer(), "../../Resources/gfx/tile32_light.png"));
-	std::cout << "Resources Loaded\n";
+	images_.emplace("battleBackground", Texture(window().getRenderer(), "../../Resources/gfx/battleBg.jpeg"));
+	images_.emplace("appleTemp", Texture(window().getRenderer(), "../../Resources/gfx/tile32_dark.png"));
+
 
 	/*
 		SOUNDS	
 	*/
+
+	std::cout << "Resources Loaded\n";
 
 // 	// load fonts
 // 	jValue = root["fonts"];
