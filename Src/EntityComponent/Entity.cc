@@ -5,7 +5,8 @@
 Entity::Entity(Scene* scene, const EntityName name) :
     mActive(true),
     mName(name),
-    mScene(scene)
+    mScene(scene),
+    mPosZ(0)
 {
     std::cout << " > Entity ( " << mName << " ) created." << std::endl;
 }
@@ -13,7 +14,8 @@ Entity::Entity(Scene* scene, const EntityName name) :
 Entity::Entity(const EntityName name) :
     mActive(true),
     mName(name),
-    mScene(nullptr)
+    mScene(nullptr),
+    mPosZ(0)
 {
     std::cout << " > Entity " << mName << " created.";
 }
@@ -103,4 +105,12 @@ void Entity::render() {
         if (c.second->enabled)
             c.second->render();
     };
+}
+
+int Entity::getDepth(){
+    return mPosZ;
+}
+
+void Entity::setDepth(int newPosZ) {
+    mPosZ = newPosZ;
 }

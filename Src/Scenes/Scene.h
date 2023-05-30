@@ -125,6 +125,8 @@ protected:
     typedef std::unordered_map<EntityName, std::shared_ptr<Entity>> EntitiesMap;
     EntitiesMap mEntities;
 
+    std::vector<std::shared_ptr<Entity>> mRenderEntities;
+
     //Entities that are not deleted between scenes.
     static EntitiesMap MGlobalEntities;
 };
