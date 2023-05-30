@@ -110,12 +110,12 @@ void Scene::update(const double& dt) {
 	}
 }
 
-void Scene::lateUpdate(const double& dt) {
+void Scene::render() {
 	for (const auto& kv : MGlobalEntities)
-		kv.second->lateUpdate(dt);
+		kv.second->render();
 
 	for (const auto& kv : mEntities)
-		kv.second->lateUpdate(dt);
+		kv.second->render();
 }
 
 void Scene::refresh() {

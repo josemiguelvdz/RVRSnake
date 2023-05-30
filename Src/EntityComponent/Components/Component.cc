@@ -22,7 +22,7 @@ void Component::start() {}
 
 void Component::update(const double& dt) {}
 
-void Component::lateUpdate(const double& dt) {}
+void Component::render() {}
 
 void Component::onCollisionEnter(Entity* other) {}
 

@@ -64,16 +64,7 @@ public:
     */
     virtual void update(const double& dt);
 
-    /**
-    This method is meant to be the definition 
-    of those updates that has to be processed
-    at the end of the game cycle.
-
-    For example: render and collisions.
-
-    @param dt Seconds that have passed since last update.
-    */
-    virtual void lateUpdate(const double& dt);
+    virtual void render();
 
     /**
     Executed when a collision starts.

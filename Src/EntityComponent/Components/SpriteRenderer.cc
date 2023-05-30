@@ -17,6 +17,6 @@ void SpriteRenderer::start()
 {
 }
 
-void SpriteRenderer::lateUpdate(const double& dt)
+void SpriteRenderer::render()
 {
 }

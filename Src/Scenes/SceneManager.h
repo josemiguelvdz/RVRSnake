@@ -78,6 +78,8 @@ public:
     */
     void update(const double& dt);
 
+    void render();
+
     /**
     Parse entities from .lua file to an unordered_map that will be passed to the current Scene
     to create the entities.

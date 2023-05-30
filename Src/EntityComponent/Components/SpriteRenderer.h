@@ -14,6 +14,6 @@ public:
 
 	void start() override;
 	
-	void lateUpdate(const double& dt) override;
+	void render() override;
 };
 #endif

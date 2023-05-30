@@ -94,14 +94,7 @@ public:
     */
     void update(const double& dt);
 
-    /**
-    Calls the lateUpdate function of all entities (and thus, 
-    all components within them).
-    LateUpdate is called after update.
-
-    @param dt Seconds that have passed since last update.
-    */
-    void lateUpdate(const double& dt);
+    void render();
 
     /**
     Safely deletes deactivated entities from map.

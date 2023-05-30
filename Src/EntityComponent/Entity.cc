@@ -97,10 +97,10 @@ void Entity::update(float dt) {
     };
 }
 
-void Entity::lateUpdate(float dt) {
+void Entity::render() {
     if (!mActive) return;
     for (auto c : mComponents) {
         if (c.second->enabled)
-            c.second->lateUpdate(dt);
+            c.second->render();
     };
 }

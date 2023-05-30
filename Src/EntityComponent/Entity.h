@@ -109,11 +109,7 @@ public:
     */
     void update(float dt);
 
-    /**
-    Run all the added components lateUpdate method.
-    @param dt Seconds that have passed since last update.
-    */
-    void lateUpdate(float dt);
+    void render();
 
 
     /**

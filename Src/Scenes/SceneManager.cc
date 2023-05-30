@@ -83,10 +83,15 @@ bool SceneManager::setActiveScene(const SceneName& name) {
 
 void SceneManager::update(const double& dt) {
 	if (mActiveScene) {
+		mActiveScene->refresh();
 		mActiveScene->processNewEntities();
 		mActiveScene->update(dt);
-		mActiveScene->lateUpdate(dt);
-		mActiveScene->refresh();
+	}
+}
+
+void SceneManager::render() {
+	if (mActiveScene) {
+		mActiveScene->render();
 	}
 }
 
