@@ -19,7 +19,6 @@ Snake::Snake(int id, Vector2 position, Vector2 orientation) : mName("snake"), mI
 	turnNextPartToCorner = false;
 }
 
-
 Snake::~Snake()
 {
 }
@@ -81,26 +80,21 @@ void Snake::render()
 	auto bgTexture = &sdlutils().images().at("snakeTexture");
 
 	//Cabeza viva o muerta
-    SDL_Rect clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+    SDL_Rect clipBox = build_sdlrect(2 * BOX_SIZE, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE , 1 * BOX_SIZE);
     
-    SDL_Rect textureBox = build_sdlrect(lastGridPosition.x, lastGridPosition.y, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+    SDL_Rect textureBox = build_sdlrect(lastGridPosition.x, lastGridPosition.y, 1 * BOX_SIZE, 1 * BOX_SIZE);
 
- 	float rotationAngle = 0;    //Derecha
-    if (mOrientation.x < -.1f) { //Izquierda
-        rotationAngle = 180;    
-		clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
-		textureBox = build_sdlrect(mPosition.x, mPosition.y, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
-	}
-    else if (mOrientation.y > .1f) { //Abajo
+	Vector2 orientation = mOrientation;
+	if (turnNextPartToCorner)
+		orientation = mParts.front()->getOrientation();
+
+ 	float rotationAngle = 0;    	//Derecha
+    if (orientation.x < -.1f)		//Izquierda
+        rotationAngle = 180;
+    else if (orientation.y > .1f)	//Abajo
         rotationAngle = 90;     
-		clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
-		textureBox = build_sdlrect(lastGridPosition.x - gridOffset * .5f, mPosition.y - gridOffset * .5f, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
-	}
-    else if (mOrientation.y < -.1f) { //Arriba
-        rotationAngle= 270;     
-		clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
-		textureBox = build_sdlrect(lastGridPosition.x - gridOffset * .5f, mPosition.y + gridOffset * .5f, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
-	}
+    else if (orientation.y < -.1f) //Arriba
+        rotationAngle = 270;
 
  	bgTexture->render(clipBox, textureBox, rotationAngle, nullptr);
 }

@@ -37,6 +37,7 @@ public:
 
 	void setPositionAndOrientation(Vector2 position, Vector2 orientation);
 	Vector2 getPosition();
+	Vector2 getOrientation();
 
 	void setCorner();
 };

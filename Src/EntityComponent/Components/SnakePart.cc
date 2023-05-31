@@ -82,6 +82,11 @@ Vector2 SnakePart::getPosition()
     return mPosition;
 }
 
+Vector2 SnakePart::getOrientation() 
+{
+    return mOrientation;
+}
+
 void SnakePart::setCorner() 
 {
     isCorner = true;
