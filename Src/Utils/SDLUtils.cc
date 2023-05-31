@@ -69,7 +69,7 @@ void SDLUtils::loadResources() {
 	images_.emplace("battleBackground", Texture(window().getRenderer(), "../../Resources/gfx/battleBg.jpeg"));
 	images_.emplace("appleTemp", Texture(window().getRenderer(), "../../Resources/gfx/tile32_dark.png"));
 	images_.emplace("gameLogo", Texture(window().getRenderer(), "../../Resources/gfx/gameLogo.png"));
-
+	images_.emplace("snakeTexture", Texture(window().getRenderer(), "../../Resources/gfx/snake.png"));
 
 	/*
 		SOUNDS	

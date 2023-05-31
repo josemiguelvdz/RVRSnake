@@ -6,6 +6,9 @@ Time::Time(float targetFrameRate, float timeScale) :
 	mTimeScale(timeScale), mDeltaTime(0), mCurrentFrameTime(0), mPreviousFrameTime(0)
 {
 	mTargetDeltaTime = 1 / mTargetFrameRate;
+
+	mCurrentFrameTime = obtainCurrentTime();
+	mPreviousFrameTime = mCurrentFrameTime;
 }
 
 Time::~Time()

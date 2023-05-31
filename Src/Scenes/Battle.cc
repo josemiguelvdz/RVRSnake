@@ -19,11 +19,11 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 		SNAKES
 	*/
 
-	// for(int i = 0; i < snakeNumber; i++){
-	// 	auto snake = addEntity("Snake" + std::to_string(i));;
-		
-	// 	snake.get()->addComponent(new Snake(i));
-	// }
+	for(int i = 0; i < snakeNumber; i++){
+		auto snake = addEntity("Snake" + std::to_string(i));
+		snake.get()->addComponent(new Snake(i, {4, 3}, {1, 0}));
+		snake.get()->setDepth(2);
+	}
 
 	/*
 		MANZANA GENERATOR

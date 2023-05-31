@@ -32,14 +32,15 @@ bool Game::setup(std::string gameName)
     // Init Input
 	// TODO: Create Inputs of the Snake
 
+	// Load Scene
+	Scene* battleTest = new Battle(1);
+	sceneManager().loadScene(battleTest);
+	//Scene* titleScreen = new TitleScreen();
+	//sceneManager().loadScene(titleScreen);
+	
 	// Start time
 	mTime = new Time(60);
 
-	// Load Scene
-	// Scene* battleTest = new Battle(1);
-	Scene* titleScreen = new TitleScreen();
-	sceneManager().loadScene(titleScreen);
-	
 	return true;
 }
 

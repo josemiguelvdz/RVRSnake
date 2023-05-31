@@ -4,6 +4,7 @@
 #define __ENTITYCOMPONENT_SNAKE
 
 #include "Component.h"
+#include "../../Utils/Vector2.h"
 #include <string>
 #include <list>
 
@@ -19,14 +20,19 @@ class Snake : public Component
 	std::list<SnakePart*> mParts;
 
 	int mId;
+	Vector2 mPosition, mOrientation;
+
+	float mSpeed;
 
 public:
-	Snake(int id);
+	Snake(int id, Vector2 position, Vector2 orientation);
 	~Snake();
 
 	void start() override;
 	
 	void update(const double& dt) override;
+
+	void render() override;
 
 	/**
 	 Set name to mesh (renderMesh in rendermanager array).

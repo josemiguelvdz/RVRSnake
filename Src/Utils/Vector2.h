@@ -50,6 +50,12 @@ public:
     Vector2 operator*(const float s);
 
     /**
+    *  Return a  Vector2 scale
+    *  @param s scale factor
+    */
+    Vector2 operator*(const int s);
+
+    /**
     *  Returns a new Vector2 interpolating between the two given Vector2 based on the scalar value "f".
     *  @param a first Vector2
     *  @param b second Vector2
@@ -57,6 +63,24 @@ public:
     */
     Vector2 lerp(const Vector2 a, const Vector2 b, float f);
 
+    void operator=(const Vector2& v);
+	void operator=(const Vector2* v);
+
+	/**
+	Check if this vector is equal to another vector "v"
+
+	@param v The other vector to check equality with
+	@return True if the two vectors are equal, false otherwise
+	*/
+	bool operator==(const Vector2& v);
+
+	/**
+	Check if this vector is not equal to another vector "v"
+
+	@param v The other vector to check inequality with
+	@return True if the two vectors are not equal, false otherwise
+	*/
+	bool operator!=(const Vector2& v);
 };
 
 #endif
