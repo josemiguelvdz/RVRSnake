@@ -3,6 +3,8 @@
 
 #include "../EntityComponent/Components/Image.h"
 #include "../EntityComponent/Components/Text.h"
+#include "../EntityComponent/Components/SinglePlayerButton.h"
+
 #include "../Utils/Texture.h"
 #include "../Utils/SDLUtils.h"
 
@@ -71,8 +73,35 @@ TitleScreen::TitleScreen() : Scene("TitleScreen")
 	SDL_SetTextureAlphaMod(image->getTexture()->getSdlTexture(), 0);
 
 	image->getTexture()->startToAppear(12.0f);
-	
 
+	/*
+		BUTTONS
+	*/
+	
+	auto singleplayer = addEntity("SinglePlayerButton");
+	singleplayer.get()->setDepth(1);
+
+	auto singleplayerButton = new SinglePlayerButton(&sdlutils().images().at("singleplayerButton"), window().getWindowWidth() / 2 - (350.0f / 2.0f), 
+	window().getWindowHeight() - 270, 350, 100);
+	SDL_SetTextureAlphaMod(singleplayerButton->getTexture()->getSdlTexture(), 0);
+	singleplayerButton->getTexture()->startToAppear(12.0f);
+	
+	singleplayer.get()->addComponent(singleplayerButton);
+
+
+
+	// auto singleplayerIMG = new Image("singleplayerButton", ,  , );
+	// singleplayer.get()->addComponent(singleplayerIMG);
+	// SDL_SetTextureAlphaMod(singleplayerIMG->getTexture()->getSdlTexture(), 0);
+	// singleplayerIMG->getTexture()->startToAppear(12.0f);
+
+	// auto multiplayer = addEntity("MultiPlayerButton");
+	// multiplayer.get()->setDepth(1);
+
+	// auto multiplayerIMG = new Image("multiplayerButton", 350, 100, window().getWindowWidth() / 2 - (350.0f / 2.0f) , window().getWindowHeight() - 150);
+	// multiplayer.get()->addComponent(multiplayerIMG);
+	// SDL_SetTextureAlphaMod(multiplayerIMG->getTexture()->getSdlTexture(), 0);
+	// multiplayerIMG->getTexture()->startToAppear(12.0f);
 	
 }
 

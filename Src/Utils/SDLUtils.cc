@@ -57,6 +57,8 @@ void SDLUtils::loadResources() {
 	images_.emplace("gameLogo", Texture(window().getRenderer(), "../../Resources/gfx/gameLogo.png"));
 	images_.emplace("snakeTexture", Texture(window().getRenderer(), "../../Resources/gfx/snake.png"));
 	images_.emplace("authorsBg", Texture(window().getRenderer(), "../../Resources/gfx/authorsBg.png"));
+	images_.emplace("singleplayerButton", Texture(window().getRenderer(), "../../Resources/gfx/singleplayerButton.png"));
+	images_.emplace("multiplayerButton", Texture(window().getRenderer(), "../../Resources/gfx/multiplayerButton.png"));
 
 
 	/*
