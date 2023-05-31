@@ -34,10 +34,10 @@ bool Game::setup(std::string gameName)
 	createInput();
 
 	// Load Scene
-	// Scene* battleTest = new Battle(1);
-	// sceneManager().loadScene(battleTest);
-	Scene* titleScreen = new TitleScreen();
-	sceneManager().loadScene(titleScreen);
+	Scene* battleTest = new Battle(1);
+	sceneManager().loadScene(battleTest);
+	// Scene* titleScreen = new TitleScreen();
+	// sceneManager().loadScene(titleScreen);
 	
 	// Start time
 	mTime = new Time(60);

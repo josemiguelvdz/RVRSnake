@@ -22,11 +22,22 @@ class SnakePart
 
 	std::unordered_map<SnakePartType, SDL_Rect> mTextureClips;
 
+	void snap();
+	void snapX();
+	void snapY();
+
+	bool isCorner;
+
 public:
 	SnakePart(int id, Vector2 position, Vector2 orientation);
 	~SnakePart();
 
 	void update(const double& dt, float speed);
 	void render(SnakePart* next);
+
+	void setPositionAndOrientation(Vector2 position, Vector2 orientation);
+	Vector2 getPosition();
+
+	void setCorner();
 };
 #endif

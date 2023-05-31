@@ -14,6 +14,9 @@ Snake::Snake(int id, Vector2 position, Vector2 orientation) : mName("snake"), mI
 	mSpeed = 5.0f;
 	mAlive = true;
 	distanceSinceCorner = BOX_SIZE;
+	gridOffset = 0;
+	lastGridPosition = mPosition;
+	turnNextPartToCorner = false;
 }
 
 
@@ -32,38 +35,36 @@ void Snake::update(const double& dt)
 	if(!mAlive)
 		return;
 
-	if(distanceSinceCorner >= BOX_SIZE / 2){
+	if(distanceSinceCorner >= BOX_SIZE){
 		//No se puede ir en tu direccion actual ni en la opuesta
 		//Solo se permiten giros de 90 grados
 
-		if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") > .1f){
-			mOrientation = { BOX_SIZE, 0 }; //Derecha
-			snap();
-			distanceSinceCorner = 0;
-		}
-		else if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") < -.1f){
-			mOrientation = { -BOX_SIZE, 0 }; //Izquierda
-			snap();
-			distanceSinceCorner = 0;
-		}
-		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") > .1f){
-			mOrientation = { 0, -BOX_SIZE }; //Arriba
-			snap();
-			distanceSinceCorner = 0;
-		}
-		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") < -.1f) {
-			mOrientation = { 0, BOX_SIZE }; //Abajo
-			snap();
-			distanceSinceCorner = 0;
-		}
+		if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") > .1f)
+			turn({ BOX_SIZE, 0 }); //Derecha
+		else if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") < -.1f)
+			turn({ -BOX_SIZE, 0 }); //Izquierda
+		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") > .1f)
+			turn({ 0, -BOX_SIZE }); //Arriba
+		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") < -.1f)
+			turn({ 0, BOX_SIZE }); //Abajo
 	}
-	
+
 	mPosition = mPosition + mOrientation * (float) (mSpeed * dt);
 
+	gridOffset += mSpeed * dt * BOX_SIZE;
 	distanceSinceCorner += mSpeed * dt * BOX_SIZE;
 
 	for(auto part : mParts)
 		part->update(dt, mSpeed);
+
+	if (gridOffset > BOX_SIZE){
+		bringLastPartFirst();
+
+		if(turnNextPartToCorner){
+			turnNextPartToCorner = false;
+			mParts.front()->setCorner();
+		}
+	}
 
 	//if(isOutOfBounds())
 	//	mAlive = false;
@@ -71,28 +72,37 @@ void Snake::update(const double& dt)
 
 void Snake::render()
 {
-	auto bgTexture = &sdlutils().images().at("snakeTexture");
-
-	//Cabeza viva o muerta
-    SDL_Rect clipBox = build_sdlrect(2 * BOX_SIZE, mAlive ? 1 * BOX_SIZE : 0, 1 * BOX_SIZE, 1 * BOX_SIZE);
-    
-    SDL_Rect textureBox = {mPosition.x, mPosition.y, 1 * BOX_SIZE, 1 * BOX_SIZE };
-
- 	float rotationAngle = 0;    //Derecha
-    if (mOrientation.x < -.1f)
-        rotationAngle = 180;    //Izquierda
-    else if (mOrientation.y > .1f)
-        rotationAngle = 90;     //Abajo
-    else if (mOrientation.y < -.1f)
-        rotationAngle= 270;     //Arriba
-
- 	bgTexture->render(clipBox, textureBox, rotationAngle, nullptr);
-
 	auto part = mParts.begin();
 	auto nextPart = ++mParts.begin();
 
 	for(int i = 0; i < mParts.size(); i++, part++, nextPart++)
 		(*part)->render(nextPart == mParts.end() ? nullptr : *nextPart);
+
+	auto bgTexture = &sdlutils().images().at("snakeTexture");
+
+	//Cabeza viva o muerta
+    SDL_Rect clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+    
+    SDL_Rect textureBox = build_sdlrect(lastGridPosition.x, lastGridPosition.y, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+
+ 	float rotationAngle = 0;    //Derecha
+    if (mOrientation.x < -.1f) { //Izquierda
+        rotationAngle = 180;    
+		clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+		textureBox = build_sdlrect(mPosition.x, mPosition.y, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+	}
+    else if (mOrientation.y > .1f) { //Abajo
+        rotationAngle = 90;     
+		clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+		textureBox = build_sdlrect(lastGridPosition.x - gridOffset * .5f, mPosition.y - gridOffset * .5f, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+	}
+    else if (mOrientation.y < -.1f) { //Arriba
+        rotationAngle= 270;     
+		clipBox = build_sdlrect(2 * BOX_SIZE - gridOffset, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+		textureBox = build_sdlrect(lastGridPosition.x - gridOffset * .5f, mPosition.y + gridOffset * .5f, 1 * BOX_SIZE + gridOffset, 1 * BOX_SIZE);
+	}
+
+ 	bgTexture->render(clipBox, textureBox, rotationAngle, nullptr);
 }
 
 string Snake::getName()
@@ -105,37 +115,54 @@ void Snake::setName(string name)
 	mName = name;
 }
 
-void Snake::snap() {
-	snapX();
-	snapY();
+void Snake::turn(Vector2 newOrientation)
+{
+	mPosition = snap();
+	distanceSinceCorner = 0;
+	gridOffset = 0;
+
+	if(mPosition.distance(mParts.front()->getPosition()) > BOX_SIZE)
+		bringLastPartFirst();
+
+	mOrientation = newOrientation;
+	turnNextPartToCorner = true;
+	lastGridPosition = mPosition;
 }
 
-void Snake::snapX()
+void Snake::bringLastPartFirst()
+{
+	gridOffset = 0;
+
+	auto tail = mParts.back();
+	mParts.pop_back();
+	tail->setPositionAndOrientation(lastGridPosition, mOrientation);
+	mParts.push_front(tail);
+
+	lastGridPosition = snap();
+}
+
+Vector2 Snake::snap() {
+	return Vector2(snapX(), snapY());
+}
+
+float Snake::snapX()
 {
     int xPosition = mPosition.x / BOX_SIZE;
 	float xOffset = mPosition.x / BOX_SIZE - xPosition;
 
-	cout << "pos.x : " << mPosition.x << "  xPos: " << xPosition << "  xOffset " << xOffset;
-
 	if(xOffset < .5f)
-		mPosition.x = xPosition * BOX_SIZE;
+		return xPosition * BOX_SIZE;
 	else
-		mPosition.x = (xPosition + 1) * BOX_SIZE;
-
-	cout << "  newPos: " << mPosition.x << endl;
+		return (xPosition + 1) * BOX_SIZE;
 }
 
-void Snake::snapY()
+float Snake::snapY()
 {
     int yPosition = mPosition.y / BOX_SIZE;
 	float yOffset = mPosition.y / BOX_SIZE - yPosition;
 
-	cout << "pos.y : " << mPosition.y << "  yPos: " << yPosition << "  yOffset " << yOffset;
-
 	if(yOffset < .5f)
-		mPosition.y = yPosition * BOX_SIZE;
+		return yPosition * BOX_SIZE;
 	else
-		mPosition.y = (yPosition + 1) * BOX_SIZE;
-
-	cout << "  newPos: " << mPosition.y << endl;
+		return (yPosition + 1) * BOX_SIZE;
 }

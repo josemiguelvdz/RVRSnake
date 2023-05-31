@@ -11,7 +11,7 @@
 class SnakePart;
 class SDL_Texture;
 
-#define STARTING_LENGTH 3
+#define STARTING_LENGTH 8 //3
 
 class Snake : public Component
 {
@@ -24,12 +24,20 @@ class Snake : public Component
 
 	float mSpeed;
 	float distanceSinceCorner;
+	float gridOffset;
+	Vector2 lastGridPosition;
 
 	bool mAlive;
 
-	void snap();
-	void snapX();
-	void snapY();
+	Vector2 snap();
+	float snapX();
+	float snapY();
+
+	void turn(Vector2 newOrientation);
+
+	void bringLastPartFirst();
+
+	bool turnNextPartToCorner;
 
 public:
 	Snake(int id, Vector2 position, Vector2 orientation);
