@@ -1,4 +1,4 @@
-#include "SinglePlayerButton.h"
+#include "HostGameButton.h"
 
 #include "../../Render/Window.h"
 #include "../../Utils/Vector2.h"
@@ -7,7 +7,7 @@
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
 
-SinglePlayerButton::SinglePlayerButton(string textureName, int x, int y , int w, int h)
+HostGameButton::HostGameButton(string textureName, int x, int y , int w, int h)
 {
     mPosX = x;
     mPosY = y;
@@ -15,13 +15,10 @@ SinglePlayerButton::SinglePlayerButton(string textureName, int x, int y , int w,
     mWidth = mIniWidth = w;
     mHeight = mIniHeight = h;
 
-	mMaxWidth = mWidth + 20;
-	mMaxHeight = mHeight + 10;
-
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
 
-SinglePlayerButton::SinglePlayerButton(Texture* texture, int x, int y , int w, int h)
+HostGameButton::HostGameButton(Texture* texture, int x, int y , int w, int h)
 {
 	mPosX = x;
     mPosY = y;
@@ -29,64 +26,58 @@ SinglePlayerButton::SinglePlayerButton(Texture* texture, int x, int y , int w, i
     mWidth = mIniWidth = w;
     mHeight = mIniHeight = h;
 
-	mMaxWidth = mWidth + 20;
-	mMaxHeight = mHeight + 10;
-
     mBtnTexture = texture;
 }
 
-SinglePlayerButton::~SinglePlayerButton()
+HostGameButton::~HostGameButton()
 {
 	delete mBtnTexture;
 }
 
-void SinglePlayerButton::start()
+void HostGameButton::start()
 {
 	// UIButton::start();
 }
 
-void SinglePlayerButton::update(const double& dt)
+void HostGameButton::update(const double& dt)
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
 
 	if (x >= mPosX && x < mPosX + mWidth && y >= mPosY && y < mPosY + mHeight) {
-		setHover(true);
 
 		if (inputManager().getButton("leftclick")) {
 			//mClickAudio->play();
-			execute();	
+			execute();
+			
 		}
+		// else if (stoppedSound) {
+		// 	toggleSound = true;
+		// 	stoppedSound = false;
+		// 	if (mHoverAudio != nullptr)
+		// 	mHoverAudio->play();
+		// }
 	}
-	else{
-		setHover(false);
-	}
-
-
-	// Hover Anim
-	if (mIsHover){
-		mWidth = SimpleLerp::Lerp(mWidth, mMaxWidth, 0.1);
-		mHeight = SimpleLerp::Lerp(mHeight, mMaxHeight, 0.1);
-	}
-	else{
-		mWidth = SimpleLerp::Lerp(mWidth, mIniWidth, 0.1);
-		mHeight = SimpleLerp::Lerp(mHeight, mIniHeight, 0.1);
-	}
+	// else
+	// 	toggleSound = false;
 }
 
-void SinglePlayerButton::render(){
+void HostGameButton::render(){
 	if (mBtnTexture != nullptr){
         SDL_Rect textureBox = {mPosX, mPosY, mWidth, mHeight};
         mBtnTexture->render(textureBox);
     }
 }
 
-void SinglePlayerButton::setHover(bool newState)
+void HostGameButton::toggleHover()
 {
-	mIsHover = newState;
+	// if (!toggleSound && !stoppedSound)
+	// {
+	// 	stoppedSound = true;
+	// }
 }
 
-void SinglePlayerButton::execute()
+void HostGameButton::execute()
 {
 	// soundManager().stopEverySound();
 
@@ -94,4 +85,3 @@ void SinglePlayerButton::execute()
 	Scene* battleTest = new Battle(1);
 	sceneManager().change(battleTest);
 }
-

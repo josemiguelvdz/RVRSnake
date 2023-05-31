@@ -59,6 +59,11 @@ void SDLUtils::loadResources() {
 	images_.emplace("authorsBg", Texture(window().getRenderer(), "../../Resources/gfx/authorsBg.png"));
 	images_.emplace("singleplayerButton", Texture(window().getRenderer(), "../../Resources/gfx/singleplayerButton.png"));
 	images_.emplace("multiplayerButton", Texture(window().getRenderer(), "../../Resources/gfx/multiplayerButton.png"));
+	images_.emplace("networkMenuBg", Texture(window().getRenderer(), "../../Resources/gfx/menuBg.png"));
+	images_.emplace("networkMenuDeco", Texture(window().getRenderer(), "../../Resources/gfx/menuNetworkDeco.png"));
+	images_.emplace("hostButton", Texture(window().getRenderer(), "../../Resources/gfx/hostGameButton.png"));
+	images_.emplace("joinButton", Texture(window().getRenderer(), "../../Resources/gfx/joinGameButton.png"));
+	images_.emplace("ipTextBox", Texture(window().getRenderer(), "../../Resources/gfx/ipTextBox.png"));
 
 
 	/*

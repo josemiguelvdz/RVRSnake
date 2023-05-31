@@ -1,13 +1,13 @@
-#include "SinglePlayerButton.h"
+#include "MultiPlayerButton.h"
 
 #include "../../Render/Window.h"
 #include "../../Utils/Vector2.h"
 #include "../../Scenes/SceneManager.h"
-#include "../../Scenes/Battle.h"
+#include "../../Scenes/OnlineSelection.h"
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
 
-SinglePlayerButton::SinglePlayerButton(string textureName, int x, int y , int w, int h)
+MultiPlayerButton::MultiPlayerButton(string textureName, int x, int y , int w, int h)
 {
     mPosX = x;
     mPosY = y;
@@ -18,10 +18,12 @@ SinglePlayerButton::SinglePlayerButton(string textureName, int x, int y , int w,
 	mMaxWidth = mWidth + 20;
 	mMaxHeight = mHeight + 10;
 
+	mIsHover = false;
+
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
 
-SinglePlayerButton::SinglePlayerButton(Texture* texture, int x, int y , int w, int h)
+MultiPlayerButton::MultiPlayerButton(Texture* texture, int x, int y , int w, int h)
 {
 	mPosX = x;
     mPosY = y;
@@ -32,20 +34,22 @@ SinglePlayerButton::SinglePlayerButton(Texture* texture, int x, int y , int w, i
 	mMaxWidth = mWidth + 20;
 	mMaxHeight = mHeight + 10;
 
+	mIsHover = false;
+
     mBtnTexture = texture;
 }
 
-SinglePlayerButton::~SinglePlayerButton()
+MultiPlayerButton::~MultiPlayerButton()
 {
 	delete mBtnTexture;
 }
 
-void SinglePlayerButton::start()
+void MultiPlayerButton::start()
 {
 	// UIButton::start();
 }
 
-void SinglePlayerButton::update(const double& dt)
+void MultiPlayerButton::update(const double& dt)
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
@@ -61,7 +65,7 @@ void SinglePlayerButton::update(const double& dt)
 	else{
 		setHover(false);
 	}
-
+	
 
 	// Hover Anim
 	if (mIsHover){
@@ -74,24 +78,23 @@ void SinglePlayerButton::update(const double& dt)
 	}
 }
 
-void SinglePlayerButton::render(){
+void MultiPlayerButton::render(){
 	if (mBtnTexture != nullptr){
         SDL_Rect textureBox = {mPosX, mPosY, mWidth, mHeight};
         mBtnTexture->render(textureBox);
     }
 }
 
-void SinglePlayerButton::setHover(bool newState)
+void MultiPlayerButton::setHover(bool newState)
 {
 	mIsHover = newState;
 }
 
-void SinglePlayerButton::execute()
+void MultiPlayerButton::execute()
 {
 	// soundManager().stopEverySound();
 
     // Create game scene
-	Scene* battleTest = new Battle(1);
-	sceneManager().change(battleTest);
+	Scene* onlineSelection = new OnlineSelection();
+	sceneManager().change(onlineSelection);
 }
-

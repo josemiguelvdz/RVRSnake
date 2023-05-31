@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef __VROOMVROOM_UIBUTTON_SINGLEPLAYER_BUTTON
-#define __VROOMVROOM_UIBUTTON_SINGLEPLAYER_BUTTON
+#ifndef __VROOMVROOM_UIBUTTON_MULTIPLAYER_BUTTON
+#define __VROOMVROOM_UIBUTTON_MULTIPLAYER_BUTTON
 
 #include "UIButton.h"
 
@@ -11,15 +11,16 @@
 /**
 The UISpriteRenderer class represents a visual object in 2D space as a screen overlay that will be attached to an entity.
 */
-class SinglePlayerButton : public UIButton
+class MultiPlayerButton : public UIButton
 {
 protected:
+
 public:
-    SinglePlayerButton(string textureName, int x, int y , int w, int h);
-    SinglePlayerButton(Texture* texture, int x, int y , int w, int h);
+    MultiPlayerButton(string textureName, int x, int y , int w, int h);
+    MultiPlayerButton(Texture* texture, int x, int y , int w, int h);
 
     //Destroy RenderManager map saved image
-    ~SinglePlayerButton();
+    ~MultiPlayerButton();
 
     /**
     Get info for UITransform, create the Sprite and set the start pos
@@ -42,9 +43,6 @@ public:
     *Changes certain values to allow a sound to be playied only ione time when hovwering a button
     */
     void setHover(bool newState);
-
-
-
 };
 
 #endif

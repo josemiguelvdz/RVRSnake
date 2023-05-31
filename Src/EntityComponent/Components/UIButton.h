@@ -22,6 +22,11 @@ protected:
 
     float mIniWidth;
     float mIniHeight;
+
+    float mMaxWidth;
+    float mMaxHeight;
+
+    bool mIsHover;
 public:
 	UIButton();
     ~UIButton();
