@@ -21,15 +21,27 @@ protected:
 	int mTextureWidth;
 	int mTextureHeight;
 
-	int mIMGPosX;
-	int mIMGPosY;
+	float mActualPosX;
+	float mActualPosY;
+
+	float mOriginalPosX;
+	float mOriginalPosY;
+
+	// Animation
+	bool mSweeping;
+	float mAmplitude = 13.f;
+	float mPhase = 0.0f;
+
 public:
 	Image();
-    Image(Texture* newTexture, int width, int height, int posX, int posY);
-    Image(string textureName, int width, int height, int posX, int posY);
+    Image(Texture* newTexture, int width, int height, float posX, float posY);
+    Image(string textureName, int width, int height, float posX, float posY);
 	~Image();
 	void start() override;
 	void update(const double& dt) override;
 	void render() override;
+
+	void playSimpleSweepAnim();
+	void stopSimpleSweepAnim();
 };
 #endif
