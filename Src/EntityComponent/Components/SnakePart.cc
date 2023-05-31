@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <list>
+#include <math.h>
 
 using namespace std;
 
@@ -26,29 +27,34 @@ SnakePart::~SnakePart()
 
 void SnakePart::update(const double& dt, float speed)
 {
-    Vector2 newPosition = mPosition + mOrientation * (float) (speed * dt);
-    cout << "Pos: " << mPosition.x << " " << mPosition.y << " NewPos: " << newPosition.x << " " << newPosition.y << dt << endl;
-    mPosition = newPosition;
+    mPosition = mPosition + mOrientation * (float) (speed * dt);
 }
 
-void SnakePart::render(SnakePart* next, bool first)
+void SnakePart::render(SnakePart* next)
 {
     auto bgTexture = &sdlutils().images().at("snakeTexture");
 
     SDL_Rect clipBox;
 
-    if(first)
-        clipBox = mTextureClips[SNAKEPARTTYPE_HEAD];
-    else if (next == nullptr)
+    if (next == nullptr)
         clipBox = mTextureClips[SNAKEPARTTYPE_TAIL];
 
     //Si esta justo detras
-    else if (next->mPosition == mPosition - mOrientation)
+    else if (next->mPosition.distance(mPosition - mOrientation) < 10)
         clipBox = mTextureClips[SNAKEPARTTYPE_BODY];
     else
         clipBox = mTextureClips[SNAKEPARTTYPE_CORNER];
     
     SDL_Rect textureBox = {mPosition.x, mPosition.y, 1 * BOX_SIZE, 1 * BOX_SIZE };
 
- 	bgTexture->render(clipBox, textureBox);
+
+    float rotationAngle = 0;    //Derecha
+    if (mOrientation.x < -.1f)
+        rotationAngle = 180;    //Izquierda
+    else if (mOrientation.y > .1f)
+        rotationAngle= 270;     //Arriba
+    else if (mOrientation.y < -.1f)
+        rotationAngle = 90;     //Abajo
+
+ 	bgTexture->render(clipBox, textureBox, rotationAngle, nullptr);
 }

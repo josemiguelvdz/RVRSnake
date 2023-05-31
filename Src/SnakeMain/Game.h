@@ -36,6 +36,8 @@ class Game {
 		*/
 		static int QuitLoop(void* userdata, SDL_Event* event);
 
+		void createInput();
+
 		Time* mTime;
 };
 

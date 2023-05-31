@@ -23,6 +23,13 @@ class Snake : public Component
 	Vector2 mPosition, mOrientation;
 
 	float mSpeed;
+	float distanceSinceCorner;
+
+	bool mAlive;
+
+	void snap();
+	void snapX();
+	void snapY();
 
 public:
 	Snake(int id, Vector2 position, Vector2 orientation);

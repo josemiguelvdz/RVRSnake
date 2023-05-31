@@ -27,6 +27,6 @@ public:
 	~SnakePart();
 
 	void update(const double& dt, float speed);
-	void render(SnakePart* next, bool first = false);
+	void render(SnakePart* next);
 };
 #endif

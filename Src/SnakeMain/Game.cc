@@ -3,6 +3,7 @@
 #include <thread>
 
 #include "../Input/InputManager.h"
+#include "../Input/InputCode.h"
 #include "../Scenes/SceneManager.h"
 #include "../Render/Window.h"
 
@@ -30,7 +31,7 @@ bool Game::setup(std::string gameName)
 	sdlutils().loadResources();
 
     // Init Input
-	// TODO: Create Inputs of the Snake
+	createInput();
 
 	// Load Scene
 	Scene* battleTest = new Battle(1);
@@ -120,6 +121,41 @@ int Game::QuitLoop(void* userdata, SDL_Event* event)
 	}
 
 	return 0;
+}
+
+void Game::createInput()
+{
+	AxisInput wasdHorizontal, arrowHorizontal;
+	wasdHorizontal.type = INPUTTYPE_KEYBOARD;
+	wasdHorizontal.positive = KEYBOARDCODE_D;
+	wasdHorizontal.negative = KEYBOARDCODE_A;
+
+	arrowHorizontal.type = INPUTTYPE_KEYBOARD;
+	arrowHorizontal.positive = KEYBOARDCODE_RIGHT; 
+	arrowHorizontal.negative = KEYBOARDCODE_LEFT;
+
+	AxisInfo horizontalInfo;
+	horizontalInfo.dead = .1f;
+	horizontalInfo.gravity = .4f;
+
+	inputManager().addAxis("horizontal", horizontalInfo, wasdHorizontal);
+	inputManager().addBinding("horizontal", arrowHorizontal);
+
+	AxisInput wasdVertical, arrowVertical;
+	wasdVertical.type = INPUTTYPE_KEYBOARD;
+	wasdVertical.positive = KEYBOARDCODE_W;
+	wasdVertical.negative = KEYBOARDCODE_S;
+
+	arrowVertical.type = INPUTTYPE_KEYBOARD;
+	arrowVertical.positive = KEYBOARDCODE_UP; 
+	arrowVertical.negative = KEYBOARDCODE_DOWN;
+
+	AxisInfo verticalInfo;
+	verticalInfo.dead = .1f;
+	verticalInfo.gravity = .4f;
+
+	inputManager().addAxis("vertical", verticalInfo, wasdVertical);
+	inputManager().addBinding("vertical", arrowVertical);
 }
 
 Game::Game() {

@@ -1,4 +1,5 @@
 #include "Vector2.h"
+#include <math.h>
 
 Vector2::Vector2() {
 	x = 0;
@@ -57,3 +58,14 @@ bool Vector2::operator!=(const Vector2& v)
 {
 	return (x != v.x || y != v.y);
 }
+
+float Vector2::magnitude()
+{
+	return sqrt(x * x + y * y);
+}
+
+float Vector2::distance(const Vector2& v)
+{
+	return Vector2(v.x - x, v.y - y).magnitude();
+}
+

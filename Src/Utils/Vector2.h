@@ -81,6 +81,9 @@ public:
 	@return True if the two vectors are not equal, false otherwise
 	*/
 	bool operator!=(const Vector2& v);
+
+    float magnitude();
+    float distance(const Vector2& v);
 };
 
 #endif
