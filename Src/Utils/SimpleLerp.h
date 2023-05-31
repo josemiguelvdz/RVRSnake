@@ -6,6 +6,8 @@
 /**
 Class SimpleLerp: Allows to interpolate between two numerical values.
 */
+
+
 class SimpleLerp
 {
 
@@ -20,6 +22,8 @@ public:
 	*/
 	static float Lerp(float a, float b, float f);
 
+
+	static int Lerp(int a, int b, float f);
 };
 
 #endif

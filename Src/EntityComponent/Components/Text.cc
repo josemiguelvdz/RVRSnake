@@ -30,13 +30,7 @@ void Text::render(){
     /*
         RENDERIZAR 
     */
-    SDL_Color color = {255, 255, 255, 255};
-
-    auto test2 = new Texture(window().getRenderer(), mText, sdlutils().fonts().at("gameFont"), color);
-    // test2->width = mTextSize;
-
-    
-    test2->render(mPosX, mPosY);
+    mTextTexture->render(mPosX, mPosY);
 }
 
 void Text::update(const double& dt)

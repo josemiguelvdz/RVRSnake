@@ -9,6 +9,8 @@
 
 using namespace std;
 
+class Texture;
+
 class Text : public Component
 {
 private:
@@ -20,6 +22,7 @@ protected:
 	float mPosY;
 
     int mTextSize;
+	Texture* mTextTexture;
 public:
 	Text();
     Text(string text, float posX, float posY);
@@ -27,5 +30,13 @@ public:
 	void start() override;
 	void update(const double& dt) override;
 	void render() override;
+
+	inline Texture* getTexture(){
+		return mTextTexture;
+	}
+
+	inline void setTexture(Texture* newTexture){
+		mTextTexture = newTexture;
+	}
 };
 #endif

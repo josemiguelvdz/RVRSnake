@@ -43,5 +43,9 @@ public:
 
 	void playSimpleSweepAnim();
 	void stopSimpleSweepAnim();
+
+	inline Texture* getTexture(){
+		return mIMGTexture;
+	}
 };
 #endif
