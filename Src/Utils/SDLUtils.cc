@@ -5,27 +5,12 @@
 #include <cassert>
 #include <memory>
 
-// #include "../../json/JSON.h"
-//bool SDLUtils::sound_initialized = false;
-// bool Music::sound_initialized = false;
-
 SDLUtils::SDLUtils(){
 }
 
 SDLUtils::~SDLUtils() {
-	//closeSDLExtensions();
-	//closeWindow();
+	closeSDLExtensions();
 }
-
-
-// void SDLUtils::closeWindow() {
-
-// 	// destroy renderer and window
-// 	SDL_DestroyRenderer(renderer_);
-// 	SDL_DestroyWindow(window_);
-
-// 	SDL_Quit(); // quit SDL
-// }
 
 void SDLUtils::initSDLExtensions() {
 	std::cout << "Initializing SDL_ttf" << std::endl;
@@ -61,6 +46,7 @@ void SDLUtils::loadResources() {
 	/*
 		FONTS	
 	*/
+	fonts_.emplace("gameFont", Font("../../Resources/font/font.ttf", 48));		
 
 	/*
 		IMAGES	
@@ -69,6 +55,7 @@ void SDLUtils::loadResources() {
 	images_.emplace("battleBackground", Texture(window().getRenderer(), "../../Resources/gfx/battleBg.jpeg"));
 	images_.emplace("appleTemp", Texture(window().getRenderer(), "../../Resources/gfx/tile32_dark.png"));
 	images_.emplace("gameLogo", Texture(window().getRenderer(), "../../Resources/gfx/gameLogo.png"));
+	images_.emplace("authorsBg", Texture(window().getRenderer(), "../../Resources/gfx/authorsBg.png"));
 
 
 	/*
@@ -76,32 +63,6 @@ void SDLUtils::loadResources() {
 	*/
 
 	std::cout << "Resources Loaded\n";
-
-// 	// load fonts
-// 	jValue = root["fonts"];
-// 	if (jValue != nullptr) {
-// 		if (jValue->IsArray()) {
-// 			for (auto &v : jValue->AsArray()) {
-// 				if (v->IsObject()) {
-// 					JSONObject vObj = v->AsObject();
-// 					std::string key = vObj["id"]->AsString();
-// 					std::string file = vObj["file"]->AsString();
-// 					uint8_t size =
-// 							static_cast<uint8_t>(vObj["size"]->AsNumber());
-// #ifdef _DEBUG
-// 					std::cout << "Loading font with id: " << key << std::endl;
-// #endif
-// 					fonts_.emplace(key, Font(file, size));
-// 				} else {
-// 					throw "'fonts' array in '" + filename
-// 							+ "' includes and invalid value";
-// 				}
-// 			}
-// 		} else {
-// 			throw "'fonts' is not an array in '" + filename + "'";
-// 		}
-// 	}
-
 // 	// load sounds
 // 	jValue = root["sounds"];
 // 	if (jValue != nullptr) {
