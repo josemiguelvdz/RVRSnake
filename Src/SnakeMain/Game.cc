@@ -34,10 +34,10 @@ bool Game::setup(std::string gameName)
 	createInput();
 
 	// Load Scene
-	Scene* battleTest = new Battle(1);
-	sceneManager().loadScene(battleTest);
-	//Scene* titleScreen = new TitleScreen();
-	//sceneManager().loadScene(titleScreen);
+	// Scene* battleTest = new Battle(1);
+	// sceneManager().loadScene(battleTest);
+	Scene* titleScreen = new TitleScreen();
+	sceneManager().loadScene(titleScreen);
 	
 	// Start time
 	mTime = new Time(60);
@@ -125,6 +125,9 @@ int Game::QuitLoop(void* userdata, SDL_Event* event)
 
 void Game::createInput()
 {
+	/*
+		KEYBOARD
+	*/
 	AxisInput wasdHorizontal, arrowHorizontal;
 	wasdHorizontal.type = INPUTTYPE_KEYBOARD;
 	wasdHorizontal.positive = KEYBOARDCODE_D;
@@ -156,6 +159,15 @@ void Game::createInput()
 
 	inputManager().addAxis("vertical", verticalInfo, wasdVertical);
 	inputManager().addBinding("vertical", arrowVertical);
+
+
+	/*
+		MOUSE
+	*/
+	Input mouseClick;
+	mouseClick.type = INPUTTYPE_MOUSE_CLICK;
+	mouseClick.which = MOUSE_LEFTCLICK;
+	inputManager().addButton("leftclick", mouseClick);
 }
 
 Game::Game() {

@@ -46,12 +46,12 @@ void SinglePlayerButton::update(const double& dt)
 
 	if (x >= mPosX && x < mPosX + mWidth && y >= mPosY && y < mPosY + mHeight) {
 
-		// if (inputManager().getButton("LEFTCLICK")) {
-		// 	//mClickAudio->play();
-		// 	execute();
+		if (inputManager().getButton("leftclick")) {
+			//mClickAudio->play();
+			execute();
 
-        //     std::cout << "CLICK\n";
-		// }
+            std::cout << "CLICK\n";
+		}
 		// else if (stoppedSound) {
 		// 	toggleSound = true;
 		// 	stoppedSound = false;
@@ -84,6 +84,6 @@ void SinglePlayerButton::execute()
 
     // Create game scene
 	Scene* battleTest = new Battle(1);
-	sceneManager().loadScene(battleTest);
+	sceneManager().change(battleTest);
 }
 
