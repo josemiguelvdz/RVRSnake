@@ -18,7 +18,7 @@ class Snake : public Component
 {
 	std::list<SnakePart*> mParts;
 
-	int mId;
+	uint8_t mId;
 	Vector2 mPosition, mOrientation;
 	Vector2 mNextPosition, mNextOrientation;
 

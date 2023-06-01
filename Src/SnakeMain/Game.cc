@@ -4,20 +4,17 @@
 
 #include "../Input/InputManager.h"
 #include "../Input/InputCode.h"
-#include "../Scenes/SceneManager.h"
+
 #include "../Render/Window.h"
 
-// #include "EntityComponent/Scene.h"
-// #include "EntityComponent/Components/ComponentsFactory.h"
-// #include "EntityComponent/Components/FactoryComponent.h"
-
+#include "../Scenes/SceneManager.h"
 #include "../Scenes/Battle.h"
 #include "../Scenes/TitleScreen.h"
 
-#include "../Utils/SDLUtils.h"
+#include "../Network/NetworkManager.h"
 
 #include "../Utils/Time.h"
-// #include "Utils/Timer.h"
+#include "../Utils/SDLUtils.h"
 
 #include <SDL2/SDL.h>
 
@@ -32,6 +29,9 @@ bool Game::setup(std::string gameName)
 
     // Init Input
 	createInput();
+
+	// Init Network
+	NetworkManager::Init(this);
 
 	// Load Scene
 	Scene* battleTest = new Battle(1);
