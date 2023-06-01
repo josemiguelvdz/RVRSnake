@@ -64,7 +64,7 @@ void SDLUtils::loadResources() {
 	images_.emplace("hostButton", Texture(window().getRenderer(), "../../Resources/gfx/hostGameButton.png"));
 	images_.emplace("joinButton", Texture(window().getRenderer(), "../../Resources/gfx/joinGameButton.png"));
 	images_.emplace("textBox", Texture(window().getRenderer(), "../../Resources/gfx/textBox.png"));
-
+	images_.emplace("nameBg", Texture(window().getRenderer(), "../../Resources/gfx/nameBg.png"));
 	images_.emplace("colorSelectionDeco", Texture(window().getRenderer(), "../../Resources/gfx/colorSelectionDeco.png"));
 	images_.emplace("connectedIcon", Texture(window().getRenderer(), "../../Resources/gfx/connectedIcon.png"));
 	images_.emplace("disconnectedIcon", Texture(window().getRenderer(), "../../Resources/gfx/disconnectedIcon.png"));
@@ -78,6 +78,7 @@ void SDLUtils::loadResources() {
 	images_.emplace("yellowButton", Texture(window().getRenderer(), "../../Resources/gfx/yellowButton.png"));
 	images_.emplace("purpleButton", Texture(window().getRenderer(), "../../Resources/gfx/purpleButton.png"));
 	images_.emplace("grayButton", Texture(window().getRenderer(), "../../Resources/gfx/grayButton.png"));
+	
 
 	/*
 		SOUNDS	

@@ -4,6 +4,7 @@
 #include "../EntityComponent/Components/Image.h"
 #include "../EntityComponent/Components/Text.h"
 #include "../EntityComponent/Components/HostGameButton.h"
+#include "../EntityComponent/Components/TextBox.h"
 
 #include "../Utils/Texture.h"
 #include "../Utils/SDLUtils.h"
@@ -45,7 +46,7 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
     */
     auto ipTextBox = addEntity("IpTextBox");
     ipTextBox.get()->setDepth(3);
-	ipTextBox.get()->addComponent(new Image("textBox", 280, 100, 355, 285));
+	ipTextBox.get()->addComponent(new TextBox("textBox", " ", 355, 285, 280, 100, 15));
 
 
     /*
@@ -55,51 +56,25 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
     joinGame.get()->setDepth(3);
 
     auto joinGameButton = new HostGameButton(&sdlutils().images().at("joinButton"), 440, 380, 120, 90);	
+	SDL_SetTextureAlphaMod(joinGameButton->getTexture()->getSdlTexture(), 0);
 	joinGame.get()->addComponent(joinGameButton);
 
 
     /*
-        NAME
+        NAME DECORATION
     */
+   	auto nameDeco = addEntity("NameDecoration");
+    nameDeco.get()->addComponent(new Image("nameBg", 672, 672, 0, 0));
+    nameDeco.get()->setDepth(2);
 
-    // //Boton para escribir el nombre
-	// nombre = new UiButton(mGame, mGame->getNombre(), "ip", { 255, 255, 255, 255 }, { 0, 0, 0, 0 }, sdlutils().width() / 2 - 120, opcPant->getHeight() - 200);
-	// cursor_ = new GameObject(mGame);
-	// nombre->setInitialPosition(sdlutils().width() / 2 - 120, opcPant->getHeight() - 200);
-	// nombre->setActive(false);
-	
-	// nombre->setAction([this](Game* mGame, bool& exit) {
 
-	// 	char c = ih().getTypedKey();
-	// 	string nombrePlayer = mGame->getNombre();
 
-	// 	if (c != ' ')
-	// 	{
-	// 		if (c == '\b')
-	// 		{
-
-	// 			if (!nombrePlayer.empty())
-	// 				nombrePlayer.pop_back();
-	// 			else
-	// 				nombrePlayer = ' ';
-	// 		}
-
-	// 		else if (nombrePlayer.size() < maxCaracteres) {
-	// 			nombrePlayer += c;
-	// 		}
-
-	// 		if (nombrePlayer.empty())
-	// 			nombrePlayer = ' ';
-
-	// 		mGame->setNombre(nombrePlayer);
-
-	// 		nombre->setTexture(nombrePlayer, string("ip"), { 255, 255, 255, 255 }, { 0, 0, 0, 0 });
-	// 		nombre->setDimension();
-	// 	}
-	// 	nombre->render(nullptr);
-	// 	});
-
-	// optionsMenu.push_back(nombre);
+   	/*
+		NAME TEXT BOX
+   	*/
+   	auto nameTextBox = addEntity("NameTextBox");
+    nameTextBox.get()->setDepth(3);
+	nameTextBox.get()->addComponent(new TextBox("textBox", " ", 190, 64, 280, 100, 8));
 
     /*
         BACK BUTTON

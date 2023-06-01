@@ -38,5 +38,11 @@ public:
 	inline void setTexture(Texture* newTexture){
 		mTextTexture = newTexture;
 	}
+
+	inline string getText(){
+		return mText;
+	}
+
+	void setText(string newText);
 };
 #endif

@@ -10,6 +10,7 @@
 #include "../Scenes/SceneManager.h"
 #include "../Scenes/Battle.h"
 #include "../Scenes/TitleScreen.h"
+#include "../Scenes/OnlineSelection.h"
 
 #include "../Network/NetworkManager.h"
 
@@ -34,10 +35,13 @@ bool Game::setup(std::string gameName)
 	NetworkManager::Init(this);
 
 	// Load Scene
-	Scene* battleTest = new Battle(1);
-	sceneManager().loadScene(battleTest);
-	// Scene* titleScreen = new TitleScreen();
-	// sceneManager().loadScene(titleScreen);
+	// Scene* battleTest = new Battle(1);
+	// sceneManager().loadScene(battleTest);
+	Scene* titleScreen = new TitleScreen();
+	sceneManager().loadScene(titleScreen);
+
+	// Scene* multiScren = new OnlineSelection();
+	// sceneManager().loadScene(multiScren);
 	
 	// Start time
 	mTime = new Time(60);
