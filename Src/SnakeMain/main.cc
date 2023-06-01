@@ -1,9 +1,8 @@
-// TODO: INCLUDE MEMORY LEAKS
-
 #include "Game.h"
 
 int main()
 {
+
     Game* game = new Game();
 
     if (!game->setup()) {
@@ -11,6 +10,7 @@ int main()
         return -1;
     }
 
+    int *a = new int(1);
     /*
     * The main loop of the game
     * It is responsible of calculating the time between frames and when the game

@@ -5,6 +5,7 @@
 #include "../EntityComponent/Components/Text.h"
 #include "../EntityComponent/Components/HostGameButton.h"
 #include "../EntityComponent/Components/TextBox.h"
+#include "../EntityComponent/Components/GameManager.h"
 
 #include "../Utils/Texture.h"
 #include "../Utils/SDLUtils.h"
@@ -74,7 +75,7 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
    	*/
    	auto nameTextBox = addEntity("NameTextBox");
     nameTextBox.get()->setDepth(3);
-	nameTextBox.get()->addComponent(new TextBox("textBox", " ", 190, 64, 280, 100, 8));
+	nameTextBox.get()->addComponent(new TextBox("textBox", gameManager()->mPlayerName, 190, 64, 280, 100, 8));
 
     /*
         BACK BUTTON

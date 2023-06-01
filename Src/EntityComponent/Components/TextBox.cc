@@ -10,6 +10,8 @@
 
 TextBox::TextBox(string btnTextureName, string text, int x, int y , int w, int h, int charLimit)
 {
+	mName = "textbox";
+	
     mPosX = x;
     mPosY = y;
 

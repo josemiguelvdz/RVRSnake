@@ -9,7 +9,6 @@
 #include <iostream>
 #include <mutex>
 
-class Game;
 class Player;
 
 typedef struct {
@@ -56,7 +55,6 @@ class NetworkManager : public Singleton<NetworkManager>
 
 	uint8_t mIdCount;
 	uint8_t maxIdCount;
-	Game* mGame;
 
 	bool mExitThread;
 	bool mGameStarted;
@@ -83,10 +81,10 @@ class NetworkManager : public Singleton<NetworkManager>
 	// Host
 	bool mHost;
 
-	NetworkManager(Game* game_);
+	NetworkManager();
 
 public:
-	~NetworkManager();
+	~NetworkManager() override;
 
 	bool init(char type, const char* ip_addr = nullptr, std::string name = "");
 	void update();

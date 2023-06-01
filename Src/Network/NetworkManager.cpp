@@ -2,7 +2,6 @@
 #include "Packet.h"
 
 #include "../Utils/SDLUtils.h"
-#include "../SnakeMain/Game.h"
 
 #include <SDL2/SDL.h>
 
@@ -139,15 +138,13 @@ bool NetworkManager::compareAddress(const IPaddress& addr1, const IPaddress& add
 	return strcmp(addr1.host, addr2.host) && strcmp(addr1.port, addr2.port);
 }
 
-NetworkManager::NetworkManager(Game* game_) : mSocket("127.0.0.1", "3000")
+NetworkManager::NetworkManager() : mSocket("127.0.0.1", "3000")
 {
 	mExitThread = false;
 	mGameStarted = false;
 
 	mType = '0';
 	mIdCount = 0;
-
-	mGame = game_;
 
 	mAcceptFrequency = 150;
 	mRecvFrequency = 50;

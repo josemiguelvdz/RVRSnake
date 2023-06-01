@@ -23,6 +23,8 @@ public:
 	void loop();
 	void exit();
 
+	std::string getPlayerName();
+
 private:
 	/*
 	* If we press SDL_QUIT (Exit button), the game stops and closes
@@ -35,6 +37,8 @@ private:
 	void createInput();
 
 	Time* mTime;
+
+	std::string mPlayerName;
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include "../EntityComponent/Components/Text.h"
 #include "../EntityComponent/Components/SinglePlayerButton.h"
 #include "../EntityComponent/Components/MultiPlayerButton.h"
+#include "../EntityComponent/Components/GameManager.h"
 
 #include "../Utils/Texture.h"
 #include "../Utils/SDLUtils.h"
@@ -98,6 +99,13 @@ TitleScreen::TitleScreen() : Scene("TitleScreen")
 	multiplayerButton->getTexture()->startToAppear(12.0f);
 	
 	multiplayer.get()->addComponent(multiplayerButton);	
+
+	/*
+		GAME MANAGER
+	*/
+
+	// auto gameManager = addEntity("GameManager");
+	// gameManager.get()->addComponent(new GameManager());
 }
 
 TitleScreen::~TitleScreen(){

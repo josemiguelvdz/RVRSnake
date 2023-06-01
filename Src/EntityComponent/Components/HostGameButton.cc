@@ -1,10 +1,14 @@
 #include "HostGameButton.h"
 
+#include "GameManager.h"
+#include "TextBox.h"
+#include "../Entity.h"
 #include "../../Render/Window.h"
 #include "../../Utils/Vector2.h"
 #include "../../Scenes/SceneManager.h"
 #include "../../Scenes/ColorSelection.h"
 #include "../../Input/InputManager.h"
+#include "../../Network/NetworkManager.h"
 #include "../../Utils/SDLUtils.h"
 #include "../../Utils/Timer.h"
 
@@ -106,6 +110,9 @@ void HostGameButton::initClickAnimation()
 void HostGameButton::execute()
 {
 	// soundManager().stopEverySound();
+
+	gameManager()->mPlayerName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getName();
+	//networkManager(); //.init('h', nullptr, gameManager()->mPlayerName);
 
     // Create game scene
 	Scene* colorSelection = new ColorSelection();

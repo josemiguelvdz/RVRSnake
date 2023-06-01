@@ -31,9 +31,6 @@ bool Game::setup(std::string gameName)
     // Init Input
 	createInput();
 
-	// Init Network
-	NetworkManager::Init(this);
-
 	// Load Scene
 	// Scene* battleTest = new Battle(1);
 	// sceneManager().loadScene(battleTest);
@@ -45,6 +42,8 @@ bool Game::setup(std::string gameName)
 	
 	// Start time
 	mTime = new Time(60);
+
+	mPlayerName = "Snake";
 
 	return true;
 }
@@ -89,6 +88,7 @@ void Game::loop()
 void Game::exit()
 {
 	// Clear the memory created in the execution of the program
+	NetworkManager::Shutdown();
 	SceneManager::Shutdown();
 	// PhysicsManager::Shutdown();
 	// RenderManager::Shutdown();
@@ -172,6 +172,10 @@ void Game::createInput()
 	mouseClick.type = INPUTTYPE_MOUSE_CLICK;
 	mouseClick.which = MOUSE_LEFTCLICK;
 	inputManager().addButton("leftclick", mouseClick);
+}
+
+std::string Game::getPlayerName() {
+	return mPlayerName;
 }
 
 Game::Game() {
