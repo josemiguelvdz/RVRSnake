@@ -11,6 +11,7 @@
 
 #define BOX_SIZE 32
 
+class Timer;
 class SDL_Texture;
 
 enum SnakePartType { SNAKEPARTTYPE_HEAD, SNAKEPARTTYPE_BODY, SNAKEPARTTYPE_CORNER, SNAKEPARTTYPE_TAIL };
@@ -32,7 +33,6 @@ public:
 	SnakePart(int id, Vector2 position, Vector2 orientation);
 	~SnakePart();
 
-	void update(const double& dt, float speed);
 	void render(SnakePart* next);
 
 	void setPositionAndOrientation(Vector2 position, Vector2 orientation);

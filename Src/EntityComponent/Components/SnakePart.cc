@@ -27,11 +27,6 @@ SnakePart::~SnakePart()
     // SDL_free(mSnakePartsTexture);
 }
 
-void SnakePart::update(const double& dt, float speed)
-{
-    //mPosition = mPosition + mOrientation * (float) (speed * dt);
-}
-
 void SnakePart::render(SnakePart* next)
 {
     auto bgTexture = &sdlutils().images().at("snakeTexture");

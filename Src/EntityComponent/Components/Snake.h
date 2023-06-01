@@ -4,6 +4,7 @@
 #define __ENTITYCOMPONENT_SNAKE
 
 #include "Component.h"
+#include "AppleGenerator.h"
 #include "../../Utils/Vector2.h"
 #include <string>
 #include <list>
@@ -11,33 +12,38 @@
 class SnakePart;
 class SDL_Texture;
 
-#define STARTING_LENGTH 8 //3
+#define STARTING_LENGTH 3
 
 class Snake : public Component
 {
-	std::string mName;
-
 	std::list<SnakePart*> mParts;
 
 	int mId;
 	Vector2 mPosition, mOrientation;
+	Vector2 mNextPosition, mNextOrientation;
 
-	float mSpeed;
-	float distanceSinceCorner;
-	float gridOffset;
-	Vector2 lastGridPosition;
+	float mSpeed, mSpeedIncrement;
 
 	bool mAlive;
+	bool mTurnNextPartToCorner;
+
+	AppleGenerator* mAppleGenerator;
+
+	Timer* mTimer = nullptr;
 
 	Vector2 snap();
 	float snapX();
 	float snapY();
 
+	void move();
 	void turn(Vector2 newOrientation);
 
 	void bringLastPartFirst();
 
-	bool turnNextPartToCorner;
+	//Comprueba si hay una manzana en esa casilla
+	bool eat();
+	//Aumenta en 1 el tamaño de la serpiente
+	void eatApple(Apple& apple);
 
 public:
 	Snake(int id, Vector2 position, Vector2 orientation);

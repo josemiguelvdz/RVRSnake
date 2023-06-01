@@ -14,11 +14,12 @@ class Timer;
 struct Apple {
     int posX;
     int posY;
+
+	bool eaten;
 };
 
 class AppleGenerator : public Component
 {
-private:
 protected:
 	std::string mName;
 
@@ -36,5 +37,7 @@ public:
 	void start() override;
 	void update(const double& dt) override;
 	void render() override;
+
+	vector<Apple>& getApples();
 };
 #endif
