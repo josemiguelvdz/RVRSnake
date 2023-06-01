@@ -6,6 +6,7 @@
 #include "../../Scenes/ColorSelection.h"
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
+#include "../../Utils/Timer.h"
 
 HostGameButton::HostGameButton(string textureName, int x, int y , int w, int h)
 {
@@ -17,6 +18,9 @@ HostGameButton::HostGameButton(string textureName, int x, int y , int w, int h)
 
 	mMaxWidth = mWidth + 10;
 	mMaxHeight = mHeight + 10;
+
+	mDelayExecution = 0.6f;
+	mExecuteTimer = new Timer(false);
 
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
@@ -31,6 +35,9 @@ HostGameButton::HostGameButton(Texture* texture, int x, int y , int w, int h)
 
 	mMaxWidth = mWidth + 10;
 	mMaxHeight = mHeight + 10;
+
+	mDelayExecution = 0.6f;
+	mExecuteTimer = new Timer(false);
 
     mBtnTexture = texture;
 }
@@ -55,8 +62,7 @@ void HostGameButton::update(const double& dt)
 
 		if (inputManager().getButton("leftclick")) {
 			//mClickAudio->play();
-			execute();
-			
+			initClickAnimation();
 		}
 	}
 	else{
@@ -72,6 +78,13 @@ void HostGameButton::update(const double& dt)
 		mWidth = SimpleLerp::Lerp(mWidth, mIniWidth, 0.1);
 		mHeight = SimpleLerp::Lerp(mHeight, mIniHeight, 0.1);
 	}
+
+	mExecuteTimer->update(dt);
+
+	// Click Action
+	if (mExecuteTimer->getRawSeconds() > mDelayExecution){
+		execute();
+	}
 }
 
 void HostGameButton::render(){
@@ -79,6 +92,15 @@ void HostGameButton::render(){
         SDL_Rect textureBox = {mPosX, mPosY, mWidth, mHeight};
         mBtnTexture->render(textureBox);
     }
+}
+
+void HostGameButton::initClickAnimation()
+{
+	// soundManager().stopEverySound();
+	mWidth = mIniWidth;
+	mHeight = mIniHeight;
+
+	mExecuteTimer->resume();
 }
 
 void HostGameButton::execute()

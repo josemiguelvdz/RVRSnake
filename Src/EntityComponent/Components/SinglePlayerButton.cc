@@ -6,6 +6,7 @@
 #include "../../Scenes/Battle.h"
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
+#include "../../Utils/Timer.h"
 
 SinglePlayerButton::SinglePlayerButton(string textureName, int x, int y , int w, int h)
 {
@@ -17,6 +18,9 @@ SinglePlayerButton::SinglePlayerButton(string textureName, int x, int y , int w,
 
 	mMaxWidth = mWidth + 20;
 	mMaxHeight = mHeight + 10;
+
+	mDelayExecution = 0.6f;
+	mExecuteTimer = new Timer(false);
 
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
@@ -31,6 +35,9 @@ SinglePlayerButton::SinglePlayerButton(Texture* texture, int x, int y , int w, i
 
 	mMaxWidth = mWidth + 20;
 	mMaxHeight = mHeight + 10;
+
+	mDelayExecution = 0.6f;
+	mExecuteTimer = new Timer(false);
 
     mBtnTexture = texture;
 }
@@ -52,10 +59,12 @@ void SinglePlayerButton::update(const double& dt)
 
 	if (x >= mPosX && x < mPosX + mWidth && y >= mPosY && y < mPosY + mHeight) {
 		setHover(true);
-
 		if (inputManager().getButton("leftclick")) {
-			//mClickAudio->play();
-			execute();	
+			Uint8 opacity = 0;
+			SDL_GetTextureAlphaMod(mBtnTexture->getSdlTexture(), &opacity);
+
+			if (opacity == 255)
+				initClickAnimation();	
 		}
 	}
 	else{
@@ -72,6 +81,13 @@ void SinglePlayerButton::update(const double& dt)
 		mWidth = SimpleLerp::Lerp(mWidth, mIniWidth, 0.1);
 		mHeight = SimpleLerp::Lerp(mHeight, mIniHeight, 0.1);
 	}
+
+	mExecuteTimer->update(dt);
+
+	// Click Action
+	if (mExecuteTimer->getRawSeconds() > mDelayExecution){
+		execute();
+	}
 }
 
 void SinglePlayerButton::render(){
@@ -81,10 +97,17 @@ void SinglePlayerButton::render(){
     }
 }
 
-void SinglePlayerButton::execute()
+void SinglePlayerButton::initClickAnimation()
 {
 	// soundManager().stopEverySound();
+	mWidth = mIniWidth;
+	mHeight = mIniHeight;
 
+	mExecuteTimer->resume();
+}
+
+void SinglePlayerButton::execute()
+{
     // Create game scene
 	Scene* battleTest = new Battle(1);
 	sceneManager().change(battleTest);

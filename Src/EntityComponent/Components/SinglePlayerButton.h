@@ -8,9 +8,6 @@
 #include <string>
 #include <vector>
 
-/**
-The UISpriteRenderer class represents a visual object in 2D space as a screen overlay that will be attached to an entity.
-*/
 class SinglePlayerButton : public UIButton
 {
 protected:
@@ -37,6 +34,8 @@ public:
     void execute() override;
 
     void render() override;
+
+    void initClickAnimation() override;
 };
 
 #endif

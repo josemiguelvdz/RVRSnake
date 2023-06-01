@@ -8,6 +8,7 @@
 using namespace std;
 
 class Texture;
+class Timer;
 
 class UIButton : public Component
 {
@@ -27,6 +28,9 @@ protected:
     float mMaxHeight;
 
     bool mIsHover;
+
+    Timer* mExecuteTimer;
+    float mDelayExecution;
 public:
 	UIButton();
     ~UIButton();
@@ -40,6 +44,8 @@ public:
     *Changes certain values to allow a sound to be playied only ione time when hovwering a button
     */
     virtual void setHover(bool newState);
+
+    virtual void initClickAnimation();
 
     inline Texture* getTexture(){
 		return mBtnTexture;

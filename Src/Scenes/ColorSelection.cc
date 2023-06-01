@@ -68,22 +68,26 @@ ColorSelection::ColorSelection() : Scene("ColorSelection")
     */
     auto redButtonDeco = addEntity("RedButtonDeco");
     redButtonDeco.get()->setDepth(3);
-	redButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("redColorDeco"), 180, 120, 115, 140));
+	redButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("redColorDeco"), 180, 120, 
+    115 + window().getWindowWidth(), 140));
 
     auto blueButtonDeco = addEntity("BlueButtonDeco");
     blueButtonDeco.get()->setDepth(3);
-	blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 385, 140));
+	blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
+    385 + window().getWindowWidth(), 140));
 
     auto yellowButtonDeco = addEntity("YellowButtonDeco");
     yellowButtonDeco.get()->setDepth(3);
-	yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 115, 283));
+	yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
+    115 + window().getWindowWidth(), 283));
 
     auto purpleButtonDeco = addEntity("PurlpleButtonDeco");
     purpleButtonDeco.get()->setDepth(3);
-	purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 385, 283));
+	purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
+    385 + window().getWindowWidth(), 283));
 
     /*
-        G
+        
     */
 
 }

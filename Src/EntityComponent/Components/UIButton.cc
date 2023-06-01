@@ -27,3 +27,6 @@ void UIButton::setHover(bool newState)
 {
 	mIsHover = newState;
 }
+
+void UIButton::initClickAnimation(){
+}

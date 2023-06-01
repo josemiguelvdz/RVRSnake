@@ -6,6 +6,7 @@
 #include "../../Scenes/OnlineSelection.h"
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
+#include "../../Utils/Timer.h"
 
 MultiPlayerButton::MultiPlayerButton(string textureName, int x, int y , int w, int h)
 {
@@ -19,6 +20,9 @@ MultiPlayerButton::MultiPlayerButton(string textureName, int x, int y , int w, i
 	mMaxHeight = mHeight + 10;
 
 	mIsHover = false;
+
+	mDelayExecution = 0.6f;
+	mExecuteTimer = new Timer(false);
 
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
@@ -35,6 +39,9 @@ MultiPlayerButton::MultiPlayerButton(Texture* texture, int x, int y , int w, int
 	mMaxHeight = mHeight + 10;
 
 	mIsHover = false;
+
+	mDelayExecution = 0.6f;
+	mExecuteTimer = new Timer(false);
 
     mBtnTexture = texture;
 }
@@ -58,8 +65,11 @@ void MultiPlayerButton::update(const double& dt)
 		setHover(true);
 
 		if (inputManager().getButton("leftclick")) {
-			//mClickAudio->play();
-			execute();	
+			Uint8 opacity = 0;
+			SDL_GetTextureAlphaMod(mBtnTexture->getSdlTexture(), &opacity);
+
+			if (opacity == 255)
+				initClickAnimation();	
 		}
 	}
 	else{
@@ -76,6 +86,13 @@ void MultiPlayerButton::update(const double& dt)
 		mWidth = SimpleLerp::Lerp(mWidth, mIniWidth, 0.1);
 		mHeight = SimpleLerp::Lerp(mHeight, mIniHeight, 0.1);
 	}
+
+	mExecuteTimer->update(dt);
+
+	// Click Action
+	if (mExecuteTimer->getRawSeconds() > mDelayExecution){
+		execute();
+	}
 }
 
 void MultiPlayerButton::render(){
@@ -85,10 +102,17 @@ void MultiPlayerButton::render(){
     }
 }
 
-void MultiPlayerButton::execute()
+void MultiPlayerButton::initClickAnimation()
 {
 	// soundManager().stopEverySound();
+	mWidth = mIniWidth;
+	mHeight = mIniHeight;
 
+	mExecuteTimer->resume();
+}
+
+void MultiPlayerButton::execute()
+{
     // Create game scene
 	Scene* onlineSelection = new OnlineSelection();
 	sceneManager().change(onlineSelection);

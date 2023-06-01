@@ -37,6 +37,8 @@ public:
     void execute() override;
 
     void render() override;
+
+    void initClickAnimation() override;
 };
 
 #endif
