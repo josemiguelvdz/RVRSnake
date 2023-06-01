@@ -81,11 +81,6 @@ void SinglePlayerButton::render(){
     }
 }
 
-void SinglePlayerButton::setHover(bool newState)
-{
-	mIsHover = newState;
-}
-
 void SinglePlayerButton::execute()
 {
 	// soundManager().stopEverySound();

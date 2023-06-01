@@ -37,14 +37,6 @@ public:
     void execute() override;
 
     void render() override;
-
-    /*
-    *Changes certain values to allow a sound to be playied only ione time when hovwering a button
-    */
-    void toggleHover();
-
-
-
 };
 
 #endif

@@ -36,6 +36,11 @@ public:
 	virtual void update(const double& dt);
     virtual void render();
 
+    /*
+    *Changes certain values to allow a sound to be playied only ione time when hovwering a button
+    */
+    virtual void setHover(bool newState);
+
     inline Texture* getTexture(){
 		return mBtnTexture;
 	}

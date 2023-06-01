@@ -85,11 +85,6 @@ void MultiPlayerButton::render(){
     }
 }
 
-void MultiPlayerButton::setHover(bool newState)
-{
-	mIsHover = newState;
-}
-
 void MultiPlayerButton::execute()
 {
 	// soundManager().stopEverySound();

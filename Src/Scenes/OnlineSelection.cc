@@ -45,7 +45,7 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
     */
     auto ipTextBox = addEntity("IpTextBox");
     ipTextBox.get()->setDepth(3);
-	ipTextBox.get()->addComponent(new Image("ipTextBox", 280, 100, 355, 285));
+	ipTextBox.get()->addComponent(new Image("textBox", 280, 100, 355, 285));
 
 
     /*
@@ -61,6 +61,45 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
     /*
         NAME
     */
+
+    // //Boton para escribir el nombre
+	// nombre = new UiButton(mGame, mGame->getNombre(), "ip", { 255, 255, 255, 255 }, { 0, 0, 0, 0 }, sdlutils().width() / 2 - 120, opcPant->getHeight() - 200);
+	// cursor_ = new GameObject(mGame);
+	// nombre->setInitialPosition(sdlutils().width() / 2 - 120, opcPant->getHeight() - 200);
+	// nombre->setActive(false);
+	
+	// nombre->setAction([this](Game* mGame, bool& exit) {
+
+	// 	char c = ih().getTypedKey();
+	// 	string nombrePlayer = mGame->getNombre();
+
+	// 	if (c != ' ')
+	// 	{
+	// 		if (c == '\b')
+	// 		{
+
+	// 			if (!nombrePlayer.empty())
+	// 				nombrePlayer.pop_back();
+	// 			else
+	// 				nombrePlayer = ' ';
+	// 		}
+
+	// 		else if (nombrePlayer.size() < maxCaracteres) {
+	// 			nombrePlayer += c;
+	// 		}
+
+	// 		if (nombrePlayer.empty())
+	// 			nombrePlayer = ' ';
+
+	// 		mGame->setNombre(nombrePlayer);
+
+	// 		nombre->setTexture(nombrePlayer, string("ip"), { 255, 255, 255, 255 }, { 0, 0, 0, 0 });
+	// 		nombre->setDimension();
+	// 	}
+	// 	nombre->render(nullptr);
+	// 	});
+
+	// optionsMenu.push_back(nombre);
 
     /*
         BACK BUTTON

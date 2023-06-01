@@ -3,7 +3,7 @@
 #include "../../Render/Window.h"
 #include "../../Utils/Vector2.h"
 #include "../../Scenes/SceneManager.h"
-#include "../../Scenes/Battle.h"
+#include "../../Scenes/ColorSelection.h"
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
 
@@ -15,6 +15,9 @@ HostGameButton::HostGameButton(string textureName, int x, int y , int w, int h)
     mWidth = mIniWidth = w;
     mHeight = mIniHeight = h;
 
+	mMaxWidth = mWidth + 10;
+	mMaxHeight = mHeight + 10;
+
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
 
@@ -25,6 +28,9 @@ HostGameButton::HostGameButton(Texture* texture, int x, int y , int w, int h)
 
     mWidth = mIniWidth = w;
     mHeight = mIniHeight = h;
+
+	mMaxWidth = mWidth + 10;
+	mMaxHeight = mHeight + 10;
 
     mBtnTexture = texture;
 }
@@ -45,21 +51,27 @@ void HostGameButton::update(const double& dt)
 	SDL_GetMouseState(&x, &y);
 
 	if (x >= mPosX && x < mPosX + mWidth && y >= mPosY && y < mPosY + mHeight) {
+		setHover(true);
 
 		if (inputManager().getButton("leftclick")) {
 			//mClickAudio->play();
 			execute();
 			
 		}
-		// else if (stoppedSound) {
-		// 	toggleSound = true;
-		// 	stoppedSound = false;
-		// 	if (mHoverAudio != nullptr)
-		// 	mHoverAudio->play();
-		// }
 	}
-	// else
-	// 	toggleSound = false;
+	else{
+		setHover(false);
+	}
+
+	// Hover Anim
+	if (mIsHover){
+		mWidth = SimpleLerp::Lerp(mWidth, mMaxWidth, 0.1);
+		mHeight = SimpleLerp::Lerp(mHeight, mMaxHeight, 0.1);
+	}
+	else{
+		mWidth = SimpleLerp::Lerp(mWidth, mIniWidth, 0.1);
+		mHeight = SimpleLerp::Lerp(mHeight, mIniHeight, 0.1);
+	}
 }
 
 void HostGameButton::render(){
@@ -69,19 +81,11 @@ void HostGameButton::render(){
     }
 }
 
-void HostGameButton::toggleHover()
-{
-	// if (!toggleSound && !stoppedSound)
-	// {
-	// 	stoppedSound = true;
-	// }
-}
-
 void HostGameButton::execute()
 {
 	// soundManager().stopEverySound();
 
     // Create game scene
-	Scene* battleTest = new Battle(1);
-	sceneManager().change(battleTest);
+	Scene* colorSelection = new ColorSelection();
+	sceneManager().change(colorSelection);
 }

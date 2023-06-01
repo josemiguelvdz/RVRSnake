@@ -38,7 +38,7 @@ void SDLUtils::initSDLExtensions() {
 	// 	}
 	
 	// }
-	
+	std::cout << "Finished initialization of libraries\n";
 		
 }
 
@@ -63,8 +63,21 @@ void SDLUtils::loadResources() {
 	images_.emplace("networkMenuDeco", Texture(window().getRenderer(), "../../Resources/gfx/menuNetworkDeco.png"));
 	images_.emplace("hostButton", Texture(window().getRenderer(), "../../Resources/gfx/hostGameButton.png"));
 	images_.emplace("joinButton", Texture(window().getRenderer(), "../../Resources/gfx/joinGameButton.png"));
-	images_.emplace("ipTextBox", Texture(window().getRenderer(), "../../Resources/gfx/ipTextBox.png"));
+	images_.emplace("textBox", Texture(window().getRenderer(), "../../Resources/gfx/textBox.png"));
 
+	images_.emplace("colorSelectionDeco", Texture(window().getRenderer(), "../../Resources/gfx/colorSelectionDeco.png"));
+	images_.emplace("connectedIcon", Texture(window().getRenderer(), "../../Resources/gfx/connectedIcon.png"));
+	images_.emplace("disconnectedIcon", Texture(window().getRenderer(), "../../Resources/gfx/disconnectedIcon.png"));
+	images_.emplace("redColorDeco", Texture(window().getRenderer(), "../../Resources/gfx/redColorDeco.png"));
+	images_.emplace("blueColorDeco", Texture(window().getRenderer(), "../../Resources/gfx/blueColorDeco.png"));
+	images_.emplace("yellowColorDeco", Texture(window().getRenderer(), "../../Resources/gfx/yellowColorDeco.png"));
+	images_.emplace("purpleColorDeco", Texture(window().getRenderer(), "../../Resources/gfx/purpleColorDeco.png"));
+	images_.emplace("grayColorDeco", Texture(window().getRenderer(), "../../Resources/gfx/grayColorDeco.png"));
+	images_.emplace("redButton", Texture(window().getRenderer(), "../../Resources/gfx/redButton.png"));
+	images_.emplace("blueButton", Texture(window().getRenderer(), "../../Resources/gfx/blueButton.png"));
+	images_.emplace("yellowButton", Texture(window().getRenderer(), "../../Resources/gfx/yellowButton.png"));
+	images_.emplace("purpleButton", Texture(window().getRenderer(), "../../Resources/gfx/purpleButton.png"));
+	images_.emplace("grayButton", Texture(window().getRenderer(), "../../Resources/gfx/grayButton.png"));
 
 	/*
 		SOUNDS	

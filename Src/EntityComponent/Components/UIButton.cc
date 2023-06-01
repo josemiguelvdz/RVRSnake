@@ -22,3 +22,8 @@ void UIButton::update(const double& dt)
 }
 
 void UIButton::render(){}
+
+void UIButton::setHover(bool newState)
+{
+	mIsHover = newState;
+}
