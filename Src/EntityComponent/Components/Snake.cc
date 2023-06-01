@@ -57,6 +57,13 @@ void Snake::update(const double& dt)
 		turn({ 0, BOX_SIZE }); //Abajo
 
 	if(mTimer->getRawSeconds() >= 1 / mSpeed){
+		mTimer->reset();
+
+		if(outOfBounds(21, 21) || hit()){
+			mAlive = false;
+			return;
+		}
+		
 		move();
 
 		if (!eat())
@@ -66,12 +73,7 @@ void Snake::update(const double& dt)
 			mTurnNextPartToCorner = false;
 			mParts.front()->setCorner();
 		}
-
-		mTimer->reset();
 	}
-
-	//if(isOutOfBounds())
-	//	mAlive = false;
 }
 
 void Snake::render()
@@ -180,4 +182,34 @@ float Snake::snapY()
 		return yPosition * BOX_SIZE;
 	else
 		return (yPosition + 1) * BOX_SIZE;
+}
+
+bool Snake::outOfBounds(int rightEdge, int bottomEdge)
+{
+	return mNextPosition.x < 0 || mNextPosition.x >= rightEdge * BOX_SIZE
+		|| mNextPosition.y < 0 || mNextPosition.y >= bottomEdge * BOX_SIZE;
+}
+
+bool Snake::hit()
+{
+	for (SnakePart* part : mParts)
+		if(part->getPosition().x + part->getOrientation().x == mNextPosition.x 
+		&& part->getPosition().y + part->getOrientation().y == mNextPosition.y)
+			return true;
+
+	//for (Snake enemySnake :  ) {
+	// 	if (enemySnake->mPosition.x == mPosition.x && enemySnake->getPosition().y == mPosition.y)
+	// 		return true;
+
+	// 	for (SnakePart* enemyPart : enemySnake->mParts)
+	// 		if (enemyPart->getPosition().x == mPosition.x && enemyPart->getPosition().y == mPosition.y)
+	// 			return true;
+	// }
+
+	return false;
+}
+
+list<SnakePart*> Snake::getParts()
+{
+	list<SnakePart*> mParts; //No se usa
 }

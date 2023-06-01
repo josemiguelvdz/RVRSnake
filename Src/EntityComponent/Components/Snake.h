@@ -45,6 +45,9 @@ class Snake : public Component
 	//Aumenta en 1 el tamaño de la serpiente
 	void eatApple(Apple& apple);
 
+	bool outOfBounds(int rightEdge, int bottomEdge);
+	bool hit();
+
 public:
 	Snake(int id, Vector2 position, Vector2 orientation);
 	~Snake();
@@ -54,6 +57,8 @@ public:
 	void update(const double& dt) override;
 
 	void render() override;
+
+	std::list<SnakePart*> getParts();
 
 	/**
 	 Set name to mesh (renderMesh in rendermanager array).
