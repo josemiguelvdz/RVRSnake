@@ -4,6 +4,7 @@
 #define __ENTITYCOMPONENT_APPLE_GENERATOR
 
 #include "Component.h"
+#include "../../Utils/Vector2.h"
 #include <string>
 #include <vector>
 
@@ -20,7 +21,6 @@ struct Apple {
 
 class AppleGenerator : public Component
 {
-protected:
 	std::string mName;
 
 	int mAppleWidth;
@@ -31,12 +31,15 @@ protected:
     float mTimeToRespawn;
 
     Timer* mAppleTimer = nullptr;
+
 public:
 	AppleGenerator();
 	~AppleGenerator();
 	void start() override;
 	void update(const double& dt) override;
 	void render() override;
+
+	void generateApple(Vector2 position);
 
 	vector<Apple>& getApples();
 };

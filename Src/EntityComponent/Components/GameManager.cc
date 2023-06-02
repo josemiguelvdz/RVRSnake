@@ -20,7 +20,7 @@ GameManager::GameManager(){
 	playerColorTextureNames[SNAKECOLOR_BLUE] = "blueSnake";
 	playerColorTextureNames[SNAKECOLOR_YELLOW] = "yellowSnake";
 	playerColorTextureNames[SNAKECOLOR_PURPLE] = "purpleSnake";
-	playerColorTextureNames[SNAKECOLOR_GRAY] = "graySnake";
+	playerColorTextureNames[SNAKECOLOR_GRAY] = "snake";
 }
 
 GameManager::~GameManager(){

@@ -38,20 +38,17 @@ class Snake : public Component
 	float snapY();
 
 	void move();
-	void turn(Vector2 newOrientation);
 
 	void bringLastPartFirst();
 
 	//Comprueba si hay una manzana en esa casilla
 	bool eat();
-	//Aumenta en 1 el tamaño de la serpiente
-	void eatApple(Apple& apple);
 
 	bool outOfBounds(int rightEdge, int bottomEdge);
 	bool hit();
 
 public:
-	Snake(int id, Vector2 position, Vector2 orientation, std::string texture = "snake");
+	Snake(int id, Vector2 position, Vector2 orientation);
 	~Snake();
 
 	void start() override;
@@ -60,6 +57,9 @@ public:
 
 	void render() override;
 
-	std::list<SnakePart*> getParts();
+	void turn(Vector2 newOrientation, bool sendMessage = false);
+
+	//Aumenta en 1 el tamaño de la serpiente
+	void eatApple(Apple& apple, bool sendMessage = false);
 };
 #endif

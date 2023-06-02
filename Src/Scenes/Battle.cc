@@ -30,7 +30,7 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 		orientation.x = i < (MAX_PLAYERS + 1) / 2? 1 : -1;
 		orientation.y = 0;
 
-		snake.get()->addComponent(new Snake(i, position, orientation, gameManager()->playerColorTextureNames[gameManager()->playerColors[i]]));
+		snake.get()->addComponent(new Snake(i, position, orientation));
 		snake.get()->setDepth(2);
 	}
 
@@ -40,7 +40,10 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 	auto appleGenerator = addEntity("AppleGenerator");
 	appleGenerator.get()->addComponent(new AppleGenerator());
 	appleGenerator.get()->setDepth(1);
-	
+
+	/*
+		GAME MANAGER
+	*/
 	auto gameManager = addEntity("GameManager");
 	gameManager.get()->addComponent(new GameManager());
 }

@@ -5,20 +5,14 @@
 #include "../../Utils/SDLUtils.h"
 #include "../../Utils/Texture.h"
 
-Board::Board() : mName("board")
+Board::Board()
 {
-    int nBoxes = window().getWindowWidth() / boxWidth;
-    boxes = std::vector<std::vector<int>>(nBoxes, std::vector<int>(nBoxes, -1));
+    mName = "board";
 }
 
 
 Board::~Board()
 {
-}
-
-void Board::start()
-{
-
 }
 
 void Board::render(){
@@ -46,9 +40,4 @@ void Board::render(){
 	// 	    groundTexture->render(textureBox);
 	//     }
     // }
-}
-
-void Board::update(const double& dt)
-{
-
 }

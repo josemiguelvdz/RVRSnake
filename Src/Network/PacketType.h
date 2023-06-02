@@ -63,10 +63,7 @@ struct PacketStartGame {
 
 // Paquete para sincronizar a los jugadores
 struct PacketSyncSnake {
-	uint8_t snakeId;
-
-	uint8_t positionX;
-	uint8_t positionY;
+	uint8_t id;
 
 	uint8_t orientationX;
 	uint8_t orientationY;
@@ -78,6 +75,8 @@ struct PacketSyncApple {
     uint8_t positionY;
 
 	bool eaten;
+
+	uint8_t snakeId;
 };
 
 union PacketInfo {

@@ -75,6 +75,8 @@ class NetworkManager : public Singleton<NetworkManager>
 	// Host
 	bool mHost;
 
+	bool mInitialized;
+
 	/**
 	@return The index of the first gap in the player array. If there are none, return -1.
 	*/
@@ -92,14 +94,15 @@ public:
 	void close();
 
 	bool isHost() { return mHost; }
+	bool initialized() { return mInitialized; };
 
 	void startGameTimer();
 
 	void sendStartGame();
 	void sendFinishGame();
 
-	void syncSnake();
-	void syncApple();
+	void syncSnake(int id, Vector2 newOrientation);
+	void syncApple(int id, Vector2 position, bool eaten);
 
 	void setGameStarted(bool gameStarted_) { mGameStarted = gameStarted_; }
 

@@ -12,8 +12,8 @@
 
 using namespace std;
 
-Snake::Snake(int id, Vector2 position, Vector2 orientation, string texture) : mId(id), 
-	mPosition(position * BOX_SIZE), mOrientation(orientation * BOX_SIZE), mTextureName(texture)
+Snake::Snake(int id, Vector2 position, Vector2 orientation) : mId(id), 
+	mPosition(position * BOX_SIZE), mOrientation(orientation * BOX_SIZE)
 {
 	mSpeed = 4.0f;
 	mSpeedIncrement = 0.2f;
@@ -30,6 +30,8 @@ Snake::~Snake()
 void Snake::start()
 {
 	mAppleGenerator = mEntity->getScene()->findEntity("AppleGenerator").get()->getComponent<AppleGenerator>("applegenerator");
+
+	mTextureName = gameManager()->playerColorTextureNames[gameManager()->playerColors[mId]];
 
     for (int i = 1; i < STARTING_LENGTH; i++)
         mParts.push_back(new SnakePart(mId, mPosition - mOrientation * i, mOrientation, mTextureName));
@@ -48,17 +50,17 @@ void Snake::update(const double& dt)
 		return;
 
 	//Solo se puede controlar tu serpiente
-	if(networkManager().getClientId() == mId){
+	if(!networkManager().initialized() || networkManager().getClientId() == mId){
 		//No se puede ir en tu direccion actual ni en la opuesta
 		//Solo se permiten giros de 90 grados
 		if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") > .1f)
-			turn({ BOX_SIZE, 0 }); //Derecha
+			turn({ BOX_SIZE, 0 }, networkManager().initialized()); 	//Derecha
 		else if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") < -.1f)
-			turn({ -BOX_SIZE, 0 }); //Izquierda
+			turn({ -BOX_SIZE, 0 }, networkManager().initialized()); //Izquierda
 		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") > .1f)
-			turn({ 0, -BOX_SIZE }); //Arriba
+			turn({ 0, -BOX_SIZE }, networkManager().initialized()); //Arriba
 		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") < -.1f)
-			turn({ 0, BOX_SIZE }); //Abajo
+			turn({ 0, BOX_SIZE }, networkManager().initialized()); 	//Abajo
 	}
 
 	if(mTimer->getRawSeconds() >= 1 / mSpeed){
@@ -115,20 +117,23 @@ bool Snake::eat()
 {
 	for(Apple& apple : mAppleGenerator->getApples())
 		if(!apple.eaten && apple.posX * BOX_SIZE == mPosition.x && apple.posY * BOX_SIZE == mPosition.y){
-			eatApple(apple);
+			eatApple(apple, networkManager().initialized());
 			return true;
 		}
 
 	return false;
 }
 
-void Snake::eatApple(Apple& apple)
+void Snake::eatApple(Apple& apple, bool sendMessage)
 {
 	apple.eaten = true;
 	
 	mSpeed += mSpeedIncrement;
 
 	mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation, mTextureName));
+
+	if (sendMessage)
+		networkManager().syncApple(mId, Vector2(apple.posX, apple.posY), true);
 }
 
 void Snake::move()
@@ -138,11 +143,14 @@ void Snake::move()
 	mNextPosition = mPosition + mOrientation;
 }
 
-void Snake::turn(Vector2 newOrientation)
+void Snake::turn(Vector2 newOrientation, bool sendMessage)
 {
 	mNextOrientation = newOrientation;
 	mNextPosition = mPosition + mNextOrientation;
 	mTurnNextPartToCorner = true;
+
+	if (sendMessage)
+		networkManager().syncSnake(mId, newOrientation);
 }
 
 void Snake::bringLastPartFirst()
@@ -192,10 +200,12 @@ bool Snake::hit()
 		if(otherSnake.get() != nullptr){
 			auto snakeComponent = otherSnake.get()->getComponent<Snake>("snake");
 
+			//Choque con otras cabezas
 			if (i != mId && snakeComponent->mPosition + (snakeComponent->mAlive ? 
 				snakeComponent->mNextOrientation : Vector2(0, 0)) == mNextPosition)
 				return true;
 
+			//Choque con todas las partes de cuerpo de la serpiente
 			auto parts = snakeComponent->mParts;
 			for (SnakePart* part : parts)
 				if (part->getPosition() + (snakeComponent->mAlive ? part->getOrientation() : Vector2(0, 0)) == mNextPosition)
@@ -204,9 +214,4 @@ bool Snake::hit()
 	}
 
 	return false;
-}
-
-list<SnakePart*> Snake::getParts()
-{
-	list<SnakePart*> mParts; //No se usa
 }

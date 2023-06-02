@@ -112,6 +112,7 @@ public:
 
     friend bool operator== (const Socket &s1, const Socket &s2);
 
+protected:
 
     /**
      *  Descriptor del socket
@@ -122,7 +123,6 @@ public:
      *  Representación binaria del extremo, usada por servidor y cliente
      */
     struct sockaddr sa;
-protected:
     socklen_t       sa_len;
 };
 

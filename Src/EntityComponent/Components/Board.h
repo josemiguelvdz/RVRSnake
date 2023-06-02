@@ -19,16 +19,12 @@ class Board : public Component
 {
 private:
 protected:
-	std::string mName;
-	vector<vector<int>> boxes;
-
 	int boxWidth = 32;
 	int boxHeight = 32;
 public:
 	Board();
 	~Board();
-	void start() override;
-	void update(const double& dt) override;
+
 	void render() override;
 };
 #endif

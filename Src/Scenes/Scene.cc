@@ -127,21 +127,26 @@ void Scene::render() {
 
 	std::sort(mRenderEntities.begin(), mRenderEntities.end(), cmpCondition);
 
-	for (const auto& re : mRenderEntities){
+	for (const auto& re : mRenderEntities)
 		re.get()->render();
-	}
 
 	mRenderEntities.clear();
 }
 
 void Scene::refresh() {
-	// std::erase_if(mEntities, [](const auto& kv) {
-	// 	return !kv.second->isActive();
-	// });
+	auto it = mEntities.begin();
+	while(it != mEntities.end())
+		if (!it->second.get()->isActive())
+			it = mEntities.erase(it);
+		else
+			it++;
 
-	// std::erase_if(MGlobalEntities, [](const auto& kv) {
-	// 	return !kv.second->isActive();
-	// });
+	it = MGlobalEntities.begin();
+	while(it != MGlobalEntities.end())
+		if (!it->second.get()->isActive())
+			it = MGlobalEntities.erase(it);
+		else
+			it++;
 }
 
 void Scene::processNewEntities()
