@@ -100,23 +100,6 @@ void Game::exit()
 	delete mTime;
 }
 
-
-// void me::MotorEngine::initFactories()
-// {
-// 	componentsFactory().addFactoryComponent("transform", new FactoryTransform());
-// 	componentsFactory().addFactoryComponent("uitransform", new FactoryUITransform());
-// 	componentsFactory().addFactoryComponent("rigidbody", new FactoryRigidBody());
-// 	componentsFactory().addFactoryComponent("animator", new FactoryAnimator());
-// 	componentsFactory().addFactoryComponent("meshrenderer", new FactoryMeshRenderer());
-// 	componentsFactory().addFactoryComponent("uispriterenderer", new FactoryUISpriteRenderer());
-// 	componentsFactory().addFactoryComponent("collider", new FactoryCollider());
-// 	componentsFactory().addFactoryComponent("camera", new FactoryCamera());
-// 	componentsFactory().addFactoryComponent("audiosource", new FactoryAudioSource());
-// 	componentsFactory().addFactoryComponent("audiolistener", new FactoryAudioListener());
-// 	componentsFactory().addFactoryComponent("light", new FactoryLight());
-// 	componentsFactory().addFactoryComponent("uitext", new FactoryUIText());
-// }
-
 int Game::QuitLoop(void* userdata, SDL_Event* event)
 {
 	if (event->type == SDL_QUIT) {

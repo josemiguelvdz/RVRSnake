@@ -64,7 +64,7 @@ void AppleGenerator::render()
         if(mApples[i].eaten)
             continue;
 
-        auto appleTexture = &sdlutils().images().at("appleTemp");
+        auto appleTexture = &sdlutils().images().at("apple");
         SDL_Rect appleTexBox = { mApples[i].posX * mAppleWidth, mApples[i].posY * mAppleWidth, mAppleWidth, mAppleHeight };
         appleTexture->render(appleTexBox);
     }

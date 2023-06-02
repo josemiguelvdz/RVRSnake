@@ -4,6 +4,7 @@
 #include "../Utils/SDLUtils.h"
 
 #include <SDL2/SDL.h>
+#include <iostream>
 
 using namespace std;
 
@@ -161,7 +162,7 @@ NetworkManager::~NetworkManager()
 
 // Funci�n que inicializa SDL_Net y tu funci�n (servidor o cliente)
 
-bool NetworkManager::init(char type, const char* ip_addr, std::string name)
+bool NetworkManager::init(char type, const char* ipAddress, std::string name)
 {
 	//SDL NET Init
 
@@ -178,6 +179,8 @@ bool NetworkManager::init(char type, const char* ip_addr, std::string name)
 
 	if (mType == 'c') { // Si somos un cliente
 		mHost = false;
+
+		cout << "NetworkManager: cliente " << mMyName << " a la espera de confirmacion (" << ipAddress << ")\n";
 
 		Socket* clientSocket;
 
@@ -217,6 +220,8 @@ bool NetworkManager::init(char type, const char* ip_addr, std::string name)
 		mPlayerIps.push_back(mIp);
 
 		mClientId = 0;
+
+		cout << "NetworkManager: host inicializado (" << mMyName << ")\n";
 	}
 
 	return true;

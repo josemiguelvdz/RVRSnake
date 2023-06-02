@@ -4,10 +4,12 @@
 #include "../../Scenes/SceneManager.h"
 #include "../Entity.h"
 
+#include <iostream>
+
 GameManager* GameManager::MInstance = nullptr;
 
 GameManager::GameManager(){
-
+	mName = "gameManager";
 }
 
 GameManager::~GameManager(){
@@ -22,7 +24,7 @@ void GameManager::start() {
 		sceneManager().getActiveScene()->promoteToGlobal(mEntity);
 	}
 
-	mName = "Snake";
+	mPlayerName = "Snake";
 }
 
 GameManager* GameManager::Instance()

@@ -53,9 +53,12 @@ void SDLUtils::loadResources() {
 	*/
 	images_.emplace("tileLight32", Texture(window().getRenderer(), "../../Resources/gfx/tile32_light.png"));
 	images_.emplace("battleBackground", Texture(window().getRenderer(), "../../Resources/gfx/battleBg.jpeg"));
-	images_.emplace("appleTemp", Texture(window().getRenderer(), "../../Resources/gfx/tile32_dark.png"));
+	images_.emplace("apple", Texture(window().getRenderer(), "../../Resources/gfx/apple.png"));
 	images_.emplace("gameLogo", Texture(window().getRenderer(), "../../Resources/gfx/gameLogo.png"));
-	images_.emplace("snakeTexture", Texture(window().getRenderer(), "../../Resources/gfx/snake.png"));
+	images_.emplace("snake", Texture(window().getRenderer(), "../../Resources/gfx/snake.png"));
+	images_.emplace("redSnake", Texture(window().getRenderer(), "../../Resources/gfx/blueSnake.png"));
+	images_.emplace("yellowSnake", Texture(window().getRenderer(), "../../Resources/gfx/yellowSnake.png"));
+	images_.emplace("purpleSnake", Texture(window().getRenderer(), "../../Resources/gfx/purpleSnake.png"));
 	images_.emplace("authorsBg", Texture(window().getRenderer(), "../../Resources/gfx/authorsBg.png"));
 	images_.emplace("singleplayerButton", Texture(window().getRenderer(), "../../Resources/gfx/singleplayerButton.png"));
 	images_.emplace("multiplayerButton", Texture(window().getRenderer(), "../../Resources/gfx/multiplayerButton.png"));

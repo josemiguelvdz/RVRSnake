@@ -104,8 +104,8 @@ TitleScreen::TitleScreen() : Scene("TitleScreen")
 		GAME MANAGER
 	*/
 
-	// auto gameManager = addEntity("GameManager");
-	// gameManager.get()->addComponent(new GameManager());
+	auto gameManager = addEntity("GameManager");
+	gameManager.get()->addComponent(new GameManager());
 }
 
 TitleScreen::~TitleScreen(){

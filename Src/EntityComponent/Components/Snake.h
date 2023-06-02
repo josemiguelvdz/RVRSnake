@@ -22,6 +22,8 @@ class Snake : public Component
 	Vector2 mPosition, mOrientation;
 	Vector2 mNextPosition, mNextOrientation;
 
+	std::string mTextureName;
+
 	float mSpeed, mSpeedIncrement;
 
 	bool mAlive;
@@ -49,7 +51,7 @@ class Snake : public Component
 	bool hit();
 
 public:
-	Snake(int id, Vector2 position, Vector2 orientation);
+	Snake(int id, Vector2 position, Vector2 orientation, std::string texture = "snake");
 	~Snake();
 
 	void start() override;

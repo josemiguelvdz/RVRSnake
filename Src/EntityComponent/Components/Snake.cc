@@ -10,8 +10,8 @@
 
 using namespace std;
 
-Snake::Snake(int id, Vector2 position, Vector2 orientation) : mId(id), 
-	mPosition(position * BOX_SIZE), mOrientation(orientation * BOX_SIZE)
+Snake::Snake(int id, Vector2 position, Vector2 orientation, string texture) : mId(id), 
+	mPosition(position * BOX_SIZE), mOrientation(orientation * BOX_SIZE), mTextureName(texture)
 {
 	mSpeed = 4.0f;
 	mSpeedIncrement = 0.2f;
@@ -30,7 +30,7 @@ void Snake::start()
 	mAppleGenerator = mEntity->getScene()->findEntity("AppleGenerator").get()->getComponent<AppleGenerator>("applegenerator");
 
     for (int i = 1; i < STARTING_LENGTH; i++)
-        mParts.push_back(new SnakePart(mId, mPosition - mOrientation * i, mOrientation));
+        mParts.push_back(new SnakePart(mId, mPosition - mOrientation * i, mOrientation, mTextureName));
 
 	mNextPosition = mPosition + mOrientation;
 	mNextOrientation = mOrientation;
@@ -84,7 +84,7 @@ void Snake::render()
 	for(int i = 0; i < mParts.size(); i++, part++, nextPart++)
 		(*part)->render(nextPart == mParts.end() ? nullptr : *nextPart);
 
-	auto bgTexture = &sdlutils().images().at("snakeTexture");
+	auto bgTexture = &sdlutils().images().at(mTextureName);
 
 	//Cabeza viva o muerta
     SDL_Rect clipBox = build_sdlrect(2 * BOX_SIZE, mAlive ? 0 : 1 * BOX_SIZE, 1 * BOX_SIZE , 1 * BOX_SIZE);
@@ -123,7 +123,7 @@ void Snake::eatApple(Apple& apple)
 	
 	mSpeed += mSpeedIncrement;
 
-	mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation));
+	mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation, mTextureName));
 }
 
 string Snake::getName()

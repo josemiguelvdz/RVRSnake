@@ -14,7 +14,7 @@ SceneManager::SceneManager() : mActiveScene(nullptr) {
 SceneManager::~SceneManager() {
 	std::cout << " >>> SceneManager deleted..." << std::endl;
 	deleteAllScenes();
-
+	
 	Scene::DeleteGlobalEntities();
 }
 

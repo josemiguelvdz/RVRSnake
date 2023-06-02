@@ -10,7 +10,8 @@
 
 using namespace std;
 
-SnakePart::SnakePart(int id, Vector2 position, Vector2 orientation) : mId(id), mPosition(position), mOrientation(orientation)
+SnakePart::SnakePart(int id, Vector2 position, Vector2 orientation, string texture) 
+    : mId(id), mPosition(position), mOrientation(orientation), mTextureName(texture)
 {
     mTextureClips[SNAKEPARTTYPE_BODY] = build_sdlrect(1 * BOX_SIZE, 0, 1 * BOX_SIZE, 1 * BOX_SIZE);
     mTextureClips[SNAKEPARTTYPE_HEAD] = build_sdlrect(2 * BOX_SIZE, 0, 1 * BOX_SIZE, 1 * BOX_SIZE);
@@ -29,7 +30,7 @@ SnakePart::~SnakePart()
 
 void SnakePart::render(SnakePart* next)
 {
-    auto bgTexture = &sdlutils().images().at("snakeTexture");
+    auto bgTexture = &sdlutils().images().at(mTextureName);
 
     SDL_Rect clipBox;
 

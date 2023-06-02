@@ -21,6 +21,8 @@ class SnakePart
 	int mId;
 	Vector2 mPosition, mOrientation;
 
+	std::string mTextureName;
+
 	std::unordered_map<SnakePartType, SDL_Rect> mTextureClips;
 
 	void snap();
@@ -30,7 +32,7 @@ class SnakePart
 	bool isCorner;
 
 public:
-	SnakePart(int id, Vector2 position, Vector2 orientation);
+	SnakePart(int id, Vector2 position, Vector2 orientation, std::string texutre = "snake");
 	~SnakePart();
 
 	void render(SnakePart* next);

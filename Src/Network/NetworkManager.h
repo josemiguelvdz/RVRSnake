@@ -1,6 +1,6 @@
 #pragma once
-#include "Socket.h"
 #include "../Utils/Singleton.h"
+#include "Socket.h"
 #include "../Utils/Vector2.h"
 
 #include <vector>
@@ -86,7 +86,7 @@ class NetworkManager : public Singleton<NetworkManager>
 public:
 	~NetworkManager() override;
 
-	bool init(char type, const char* ip_addr = nullptr, std::string name = "");
+	bool init(char type, const char* ipAddress = nullptr, std::string name = "");
 	void update();
 
 	void close();
