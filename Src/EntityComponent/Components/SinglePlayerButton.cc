@@ -109,8 +109,7 @@ void SinglePlayerButton::initClickAnimation()
 void SinglePlayerButton::execute()
 {
     // Create game scene
-	//Scene* battleTest = new Battle(1);
-	Scene* battleTest = new Battle(4);
+	Scene* battleTest = new Battle(1);
 	sceneManager().change(battleTest);
 }
 

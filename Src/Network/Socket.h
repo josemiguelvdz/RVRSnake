@@ -118,11 +118,11 @@ public:
      */
     int sd;
 
-protected:
     /**
      *  Representación binaria del extremo, usada por servidor y cliente
      */
     struct sockaddr sa;
+protected:
     socklen_t       sa_len;
 };
 

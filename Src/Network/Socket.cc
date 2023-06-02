@@ -3,6 +3,8 @@
 #include "Serializable.h"
 #include "Socket.h"
 
+#include <iostream>
+
 Socket::Socket(const char * address, const char * port):sd(-1)
 {
     //Construir un socket de tipo AF_INET y SOCK_DGRAM usando getaddrinfo.
@@ -30,25 +32,25 @@ Socket::Socket(const char * address, const char * port):sd(-1)
     sa = *result->ai_addr;
     sa_len =result->ai_addrlen;
 
-    std::cout << "socket descriptor: " << sd << "\n";
-
     freeaddrinfo(result);
 }
 
 int Socket::recv(Serializable &obj, Socket * &sock)
 {
-    struct sockaddr sa;
-    socklen_t sa_len = sizeof(struct sockaddr);
+    struct sockaddr receiverAddress;
+    socklen_t receiverAddressLength = sizeof(struct sockaddr);
 
     char buffer[MAX_MESSAGE_SIZE];
 
-    ssize_t bytes = ::recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &sa, &sa_len);
+    ssize_t bytes = ::recvfrom(sd, buffer, MAX_MESSAGE_SIZE, 0, &receiverAddress, &receiverAddressLength);
 
     if ( bytes <= 0 )
         return -1;
 
-    if ( sock != 0 )
-        sock = new Socket(&sa, sa_len);
+    if ( sock == nullptr ){
+        sock = new Socket(&receiverAddress, receiverAddressLength);
+        std::cout << receiverAddress.sa_data << "\n";
+    }
 
     obj.from_bin(buffer);
 

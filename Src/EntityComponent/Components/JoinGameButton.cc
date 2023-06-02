@@ -116,6 +116,9 @@ void JoinGameButton::initClickAnimation()
 
 void JoinGameButton::execute()
 {
+	mExecuteTimer->reset();
+	mExecuteTimer->pause();
+
 	// soundManager().stopEverySound();
 	gameManager()->myName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
 	string ip = ipTextBox->getText();

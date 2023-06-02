@@ -55,8 +55,6 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		socket->bind();
 
 		Socket* hostSocket = new Socket(ipAddress, MULTISNAKE_PORT);
-		
-
 
 		Packet sendPacket;
 		sendPacket.type = PACKETTYPE_CONNECTIONREQUEST;
@@ -64,16 +62,18 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 
 		int bytes = socket->send(sendPacket, *hostSocket);
 
-		std::cout << "HE MANDADO EL PAQUETE, bytes: "<< bytes << "\n";
+		std::cout << "HE MANDADO EL PAQUETE, bytes: "<< bytes << " SUPER XD\n";
 
 		//Esperamos respuesta
+		Socket* senderSocket = nullptr;
+
 		Packet receivedPacket;
 		receivedPacket.type = PACKETTYPE_NULL;
 
-		while (receivedPacket.type != PACKETTYPE_CONNECTIONACCEPT || receivedPacket.type != PACKETTYPE_CONNECTIONDENY){
-			int success = socket->recv(receivedPacket, hostSocket);
-			if (success < 0) continue;
-		}
+		while (receivedPacket.type != PACKETTYPE_CONNECTIONACCEPT && receivedPacket.type != PACKETTYPE_CONNECTIONDENY)
+			socket->recv(receivedPacket, senderSocket);
+
+		std::cout << "PACKETTYPE_CONNECTIONACCEPT" << endl;
 
 		if (receivedPacket.type == PACKETTYPE_CONNECTIONDENY) { // Si nos rechazan porque la partida est� llena
 			delete socket;
@@ -111,7 +111,7 @@ void NetworkManager::acceptPlayers()
 {
 	while (!mExitThread) {
 		Packet receivedPacket;
-		Socket* clientSocket = new Socket(*mPlayerSockets[0]);
+		Socket* clientSocket = nullptr;
 
 		int success = mPlayerSockets[0]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
@@ -129,7 +129,9 @@ void NetworkManager::acceptPlayers()
 		else {
 			mPlayerSockets[playerId] = clientSocket;
 
-			std::cout << "Cliente conectado ID: " << clientSocket->sd << "\n";
+			strcpy(gameManager()->playerNames[playerId], receivedPacket.info.connectionRequest.playerName);
+
+			std::cout << "Cliente conectado  Nombre: " << gameManager()->playerNames[playerId] << "  ID: " << playerId << "\n";
 
 			replyPacket.type = PACKETTYPE_CONNECTIONACCEPT;
 
@@ -153,11 +155,13 @@ void NetworkManager::acceptPlayers()
 			multicastPacket.info.createPlayer.newPlayerId;
 
 			for(int i = 1; i < mPlayerSockets.size(); i++)
-				if(mPlayerSockets[i]->sd != clientSocket->sd)
-					 mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
+				if (mPlayerSockets[i] != nullptr && mPlayerSockets[i] != clientSocket)
+					mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
 		}
-
-		 mPlayerSockets[0]->send(replyPacket, *clientSocket);
+		
+		mPlayerSockets[0]->send(replyPacket, *clientSocket);
+		
+		std::cout << "Acepto conexion de " << clientSocket->sa.sa_data << "\n";
 
 		SDL_Delay(mAcceptFrequency);
 	}	
