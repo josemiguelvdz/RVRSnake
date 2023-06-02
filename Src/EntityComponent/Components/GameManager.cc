@@ -13,8 +13,10 @@ GameManager::GameManager(){
 
 	myName = " Snake";
 
-	for(int i = 0; i < MAX_PLAYERS; i++)
-		playerColors[i] = SNAKECOLOR_GRAY;
+	playerColors[0] = SNAKECOLOR_RED;
+	playerColors[1] = SNAKECOLOR_BLUE;
+	playerColors[2] = SNAKECOLOR_YELLOW;
+	playerColors[3] = SNAKECOLOR_PURPLE;
 
 	playerColorTextureNames[SNAKECOLOR_RED] = "redSnake";
 	playerColorTextureNames[SNAKECOLOR_BLUE] = "blueSnake";

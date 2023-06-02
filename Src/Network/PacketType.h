@@ -10,15 +10,10 @@ enum PacketType : uint8_t {
 	PACKETTYPE_DISCONNECTIONREQUEST,
 	PACKETTYPE_CONNECTIONACCEPT,
 	PACKETTYPE_CONNECTIONDENY,
-	PACKETTYPE_DISCONNECTIONACCEPT,
 	PACKETTYPE_CREATEPLAYER,
-	PACKETTYPE_COLORREQUEST,
-	PACKETTYPE_COLORACCEPT,
-	PACKETTYPE_COLORDENY,
-	PACKETTYPE_COLORCHANGE,
 	PACKETTYPE_SYNCSNAKE,
 	PACKETTYPE_SYNCAPPLE,
-	PACKETTYPE_QUIT,
+	PACKETTYPE_HOSTQUIT,
     PACKETTYPE_NULL
 };
 
@@ -37,18 +32,8 @@ struct PacketAccept {
 	char playerName4[NAME_CHARACTER_LIMIT];
 };
 
-struct PacketColorRequest {
+struct PacketDisconnectionRequest {
 	uint8_t playerId;
-	uint8_t requestedColor;
-};
-
-struct PacketColorChange {
-	uint8_t playerId;
-	uint8_t newColor;
-};
-
-struct PacketColorAccept {
-	uint8_t color1, color2, color3, color4;
 };
 
 struct PacketCreatePlayer{
@@ -82,9 +67,7 @@ struct PacketSyncApple {
 union PacketInfo {
 	PacketConnectionRequest connectionRequest;
 	PacketAccept accept;
-	PacketColorRequest colorRequest;
-	PacketColorChange colorChange;
-	PacketColorAccept colorAccept;
+	PacketDisconnectionRequest disconnectionRequest;
 	PacketCreatePlayer createPlayer;
 	PacketStartGame startGame;
 	PacketSyncSnake snake;

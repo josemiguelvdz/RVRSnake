@@ -45,91 +45,25 @@ ColorSelection::ColorSelection(std::vector<std::string> names, std::vector<int> 
     /*
         COLORS DECO
     */
-    
+    auto redButtonDeco = addEntity("RedButtonDeco");
+    redButtonDeco.get()->setDepth(3);
+    redButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("redColorDeco"), 180, 120, 
+    107, 140));
 
-    for (int i = 0; i < 4; i++){
-        if (gameManager()->playerNames[i] != " "){
-            SnakeColor myColor = gameManager()->playerColors[i];
+    auto blueButtonDeco = addEntity("BlueButtonDeco");
+    blueButtonDeco.get()->setDepth(3);
+    blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
+    377, 140));
 
-            switch(i){
-                case 0:
-                {
-                    // Red always
-                    auto redButtonDeco = addEntity("RedButtonDeco");
-                    redButtonDeco.get()->setDepth(3);
-                    redButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("redColorDeco"), 180, 120, 
-                    107, 140));
-                }
-                break;
-                case 1:
-                {
-                    if (myColor == SNAKECOLOR_BLUE){
-                        auto blueButtonDeco = addEntity("BlueButtonDeco");
-                        blueButtonDeco.get()->setDepth(3);
-                        blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
-                        385, 140));
-                    }
-                    else if (myColor == SNAKECOLOR_YELLOW){
-                        auto yellowButtonDeco = addEntity("YellowButtonDeco");
-                        yellowButtonDeco.get()->setDepth(3);
-                        yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
-                        385, 140));
-                    }
-                    else if (myColor == SNAKECOLOR_PURPLE){
-                        auto purpleButtonDeco = addEntity("PurpleButtonDeco");
-                        purpleButtonDeco.get()->setDepth(3);
-                        purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
-                        385, 140));
-                    }
-                }
-                break;
-                case 2:
-                {
-                    if (myColor == SNAKECOLOR_BLUE){
-                        auto blueButtonDeco = addEntity("BlueButtonDeco");
-                        blueButtonDeco.get()->setDepth(3);
-                        blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
-                        107, 283));
-                    }
-                    else if (myColor == SNAKECOLOR_YELLOW){
-                        auto yellowButtonDeco = addEntity("YellowButtonDeco");
-                        yellowButtonDeco.get()->setDepth(3);
-                        yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
-                        107, 283));
-                    }
-                    else if (myColor == SNAKECOLOR_PURPLE){
-                        auto purpleButtonDeco = addEntity("PurpleButtonDeco");
-                        purpleButtonDeco.get()->setDepth(3);
-                        purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
-                        107, 283));
-                    }
-                }
-                break;
-                case 3:
-                {
-                        if (myColor == SNAKECOLOR_BLUE){
-                        auto blueButtonDeco = addEntity("BlueButtonDeco");
-                        blueButtonDeco.get()->setDepth(3);
-                        blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
-                        385, 283));
-                    }
-                    else if (myColor == SNAKECOLOR_YELLOW){
-                        auto yellowButtonDeco = addEntity("YellowButtonDeco");
-                        yellowButtonDeco.get()->setDepth(3);
-                        yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
-                        385, 283));
-                    }
-                    else if (myColor == SNAKECOLOR_PURPLE){
-                        auto purpleButtonDeco = addEntity("PurpleButtonDeco");
-                        purpleButtonDeco.get()->setDepth(3);
-                        purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
-                        385, 283));
-                    }
-                }
-                break;
-            }
-        }
-    }
+    auto yellowButtonDeco = addEntity("YellowButtonDeco");
+    yellowButtonDeco.get()->setDepth(3);
+    yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
+    107, 283));
+
+    auto purpleButtonDeco = addEntity("PurpleButtonDeco");
+    purpleButtonDeco.get()->setDepth(3);
+    purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
+    377, 283));
    
 
     /*

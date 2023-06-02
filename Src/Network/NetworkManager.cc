@@ -40,8 +40,7 @@ NetworkManager::NetworkManager()
 
 NetworkManager::~NetworkManager()
 {
-	// SDLNet_TCP_Close(socket);
-	// SDLNet_Quit();
+	close();
 }
 
 bool NetworkManager::init(bool host, const char* ipAddress)
@@ -162,7 +161,6 @@ void NetworkManager::acceptPlayers()
 			std::cout << "Cliente conectado  Nombre: " << gameManager()->playerNames[playerId] << "  ID: " << playerId << "\n";
 
 			replyPacket.type = PACKETTYPE_CONNECTIONACCEPT;
-
 			replyPacket.info.accept.playerId = playerId;
 
 			strcpy(replyPacket.info.accept.playerName1, gameManager()->playerNames[0]);
@@ -178,6 +176,9 @@ void NetworkManager::acceptPlayers()
 			// Update textures
 			string entName = "Player" + to_string(playerId + 1) + "Text";
 			string newName = gameManager()->playerNames[playerId];
+
+			std::cout << newName << "\n";
+
 			SDL_Color color = {255,255,255,255};
 			sceneManager().getActiveScene()->findEntity(entName).get()
 			->getComponent<Text>("text")->setText(newName, color);
@@ -219,39 +220,26 @@ void NetworkManager::receivePlayers()
 				{
 				case PACKETTYPE_DISCONNECTIONREQUEST:
 				{
-					Packet sendPacket;
-					sendPacket.type = PACKETTYPE_DISCONNECTIONACCEPT;
-
-					mPlayerSockets[0]->send(sendPacket, *clientSocket);
+					int disconnectionId = receivedPacket.info.disconnectionRequest.playerId;
 
 					delete mPlayerSockets[i];
 					mPlayerSockets[i] = nullptr;
 
 					strcpy(gameManager()->playerNames[i], " ");
-					gameManager()->playerColors[i] = SNAKECOLOR_GRAY;
+
+					// Update texture
+					string entName = "Player" + to_string(disconnectionId + 1) + "Text";
+					SDL_Color color = {255,255,255,255};
+					sceneManager().getActiveScene()->findEntity(entName).get()
+					->getComponent<Text>("text")->setText(" ", color);
+
 
 					i--;
-				}
-					break;
-				case PACKETTYPE_COLORREQUEST:
-				{
+
 					Packet sendPacket;
-
-					//gameManager()->playerColors[]
-					//receivedPacket.packetInfo.colorRequest.requestedColor;
-					if(false){
-						sendPacket.type = PACKETTYPE_COLORDENY;
-						break;
-					}
-
-					sendPacket.type = PACKETTYPE_COLORACCEPT;
-
-					mPlayerSockets[0]->send(sendPacket, *clientSocket);					
-
 					//Actualizo a los demas jugadores
-					sendPacket.type = PACKETTYPE_COLORCHANGE;
-					sendPacket.info.colorChange.newColor = SNAKECOLOR_GRAY;
-					sendPacket.info.colorChange.playerId = i;
+					sendPacket.type = PACKETTYPE_DISCONNECTIONREQUEST;
+					sendPacket.info.disconnectionRequest.playerId;
 
 					for(int j = 1; j < mPlayerSockets.size(); j++)
 						if (mPlayerSockets[j] != nullptr && mPlayerSockets[j] != clientSocket)
@@ -306,19 +294,17 @@ void NetworkManager::updateClient()
 		if(mPlayerSockets[0] == clientSocket)
 			switch (receivedPacket.type)
 			{
-			case PACKETTYPE_DISCONNECTIONACCEPT:
-				//Volver al menu
-				break;
-			case PACKETTYPE_COLORACCEPT:
-				gameManager()->playerColors[0] = (SnakeColor) receivedPacket.info.colorAccept.color1;
-				gameManager()->playerColors[1] = (SnakeColor) receivedPacket.info.colorAccept.color2;
-				gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.colorAccept.color3;
-				gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.colorAccept.color4;
-				break;
-			case PACKETTYPE_COLORDENY:
-				break;
-			case PACKETTYPE_COLORCHANGE:
-				gameManager()->playerColors[receivedPacket.info.colorChange.playerId] = (SnakeColor) receivedPacket.info.colorChange.newColor;
+			case PACKETTYPE_DISCONNECTIONREQUEST:
+				// Borrar nombres de otros
+				if (sceneManager().getActiveScene()->getName() == "ColorSelection"){
+					strcpy(gameManager()->playerNames[receivedPacket.info.disconnectionRequest.playerId], " ");
+
+					// Update texture
+					string entName = "Player" + to_string(receivedPacket.info.disconnectionRequest.playerId + 1) + "Text";
+					SDL_Color color = {255,255,255,255};
+					sceneManager().getActiveScene()->findEntity(entName).get()
+					->getComponent<Text>("text")->setText(" ", color);
+				}
 				break;
 			case PACKETTYPE_SYNCSNAKE:
 				//Actualizo la serpiente
@@ -341,34 +327,11 @@ void NetworkManager::updateClient()
 						->getComponent<AppleGenerator>("applegenerator")
 						->generateApple(Vector2(receivedPacket.info.apple.positionX, receivedPacket.info.apple.positionY));
 				break;
-			case PACKETTYPE_QUIT:
-				//Volver al menu
-				break;
 			}
 		
 		SDL_Delay(mClientFrequency);
 	}
 }
-
-// Funci�n para asignar IDs
-// uint8_t NetworkManager::getClientID(const IPaddress& addr)
-// {
-// 	int id = -1;
-
-// 	// for (int i = 0u; i < mPlayerIps.size(); i++) {
-// 	// 	if (compareAddress(mPlayerIps[i], addr)) {
-// 	// 		id = i;
-// 	// 		break;
-// 	// 	}
-// 	// }
-
-// 	return id;
-// }
-
-// bool NetworkManager::compareAddress(const IPaddress& addr1, const IPaddress& addr2)
-// {
-// 	return strcmp(addr1.host, addr2.host) && strcmp(addr1.port, addr2.port);
-// }
 
 void NetworkManager::update() // HILO PARA SINCRONIZAR ESTADO DE JUEGO (lo tienen los 2 jugadores)
 {
@@ -389,45 +352,33 @@ void NetworkManager::close()
 
 		Packet packet;
 
-		packet.type = PACKETTYPE_QUIT;
+		// packet.type = PACKETTYPE_QUIT;
 
-		for (int i = 1; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
-			mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
+		// for (int i = 1; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
+		// 	mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
 
-		accept_t->join();
-		receiveplayers_t->join();
+		// accept_t->join();
+		// receiveplayers_t->join();
 
-		delete accept_t;
-		delete receiveplayers_t;
+		// delete accept_t;
+		// delete receiveplayers_t;
 	}
 	else {
-		Packet packet;
+		Packet sendPacket;
+		sendPacket.type = PACKETTYPE_DISCONNECTIONREQUEST;
+		sendPacket.info.disconnectionRequest.playerId = gameManager()->myId;
 
-		packet.type = PACKETTYPE_DISCONNECTIONREQUEST;
-
-		mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
-
-		Socket* clientSocket;
-		Packet receivedPacket;
-		receivedPacket.type = PACKETTYPE_NULL;
-
-		while (receivedPacket.type == PACKETTYPE_DISCONNECTIONACCEPT)
-			while (mPlayerSockets[mClientId]->recv(receivedPacket, clientSocket) < 0) {}
+		mPlayerSockets[gameManager()->myId]->send(sendPacket, *mPlayerSockets[0]);
 
 		updateclient_t->join();
 		delete updateclient_t;
 	}
-
-	//mPlayerIds.clear();
-	//mPlayerIps.clear();
 
 	for(int i = 0; i < mPlayerSockets.size(); i++)
 		if(mPlayerSockets[i] != nullptr){
 			delete mPlayerSockets[i];
 			mPlayerSockets[i] = nullptr;
 		}
-	
-	//SDLNet_TCP_Close(socket);
 }
 
 int NetworkManager::getNextPlayerId()

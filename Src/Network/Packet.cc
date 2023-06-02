@@ -30,6 +30,8 @@ void Packet::to_bin() {
             index += NAME_CHARACTER_LIMIT * sizeof(char);
             break;
         case PACKETTYPE_DISCONNECTIONREQUEST:
+            memcpy(index, &info.disconnectionRequest.playerId, sizeof(uint8_t));
+            index += sizeof(uint8_t);
         break;
         case PACKETTYPE_CONNECTIONACCEPT:
             memcpy(index, &info.accept.playerId, sizeof(uint8_t));
@@ -59,23 +61,11 @@ void Packet::to_bin() {
             memcpy(index, info.accept.playerName4, NAME_CHARACTER_LIMIT * sizeof(char));
             index += NAME_CHARACTER_LIMIT * sizeof(char);
             break;
-        case PACKETTYPE_DISCONNECTIONACCEPT:
-        break;
         case PACKETTYPE_CREATEPLAYER:
-        break;
-        case PACKETTYPE_COLORREQUEST:
-        break;
-        case PACKETTYPE_COLORACCEPT:
-        break;
-        case PACKETTYPE_COLORDENY:
-        break;
-        case PACKETTYPE_COLORCHANGE:
         break;
         case PACKETTYPE_SYNCSNAKE:
         break;
         case PACKETTYPE_SYNCAPPLE:
-        break;
-        case PACKETTYPE_QUIT:
         break;
         case PACKETTYPE_NULL:
         break;
@@ -123,23 +113,17 @@ int Packet::from_bin(char * data) {
         break;
     case PACKETTYPE_CONNECTIONDENY:
     break;
-    case PACKETTYPE_DISCONNECTIONACCEPT:
+    case PACKETTYPE_DISCONNECTIONREQUEST:
+        memcpy(&info.disconnectionRequest.playerId, index, sizeof(uint8_t));
+        index += sizeof(uint8_t);
     break;
     case PACKETTYPE_CREATEPLAYER:
-    break;
-    case PACKETTYPE_COLORREQUEST:
-    break;
-    case PACKETTYPE_COLORACCEPT:
-    break;
-    case PACKETTYPE_COLORDENY:
-    break;
-    case PACKETTYPE_COLORCHANGE:
     break;
     case PACKETTYPE_SYNCSNAKE:
     break;
     case PACKETTYPE_SYNCAPPLE:
     break;
-    case PACKETTYPE_QUIT:
+    case PACKETTYPE_HOSTQUIT:
     break;
     case PACKETTYPE_NULL:
     break;
