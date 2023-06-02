@@ -8,6 +8,7 @@
 #include "../EntityComponent/Entity.h"
 #include "../Scenes/SceneManager.h"
 #include "../Scenes/Scene.h"
+#include "../Scenes/Battle.h"
 #include "../Utils/SDLUtils.h"
 
 #include "../EntityComponent/Entity.h"
@@ -125,7 +126,7 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 
 		sceneManager().change(new ColorSelection(names, colors, false));
 
-		// TODO: INIT THREAD
+		updateclient_t = new std::thread(&NetworkManager::updateClient, this);
 	}
 
 	mInitialized = true;
@@ -252,6 +253,8 @@ void NetworkManager::receivePlayers()
 						->getComponent<Snake>("snake")
 						->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
 
+					cout << "Recibo snake y reenvio\n";
+
 					//Reenvio a los demas jugadores
 					for(int j = 1; j < mPlayerSockets.size(); j++)
 						if (j != receivedPacket.info.snake.id)
@@ -291,43 +294,47 @@ void NetworkManager::updateClient()
 		int success = mPlayerSockets[mClientId]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
 
-		if(mPlayerSockets[0] == clientSocket)
-			switch (receivedPacket.type)
-			{
-			case PACKETTYPE_DISCONNECTIONREQUEST:
-				// Borrar nombres de otros
-				if (sceneManager().getActiveScene()->getName() == "ColorSelection"){
-					strcpy(gameManager()->playerNames[receivedPacket.info.disconnectionRequest.playerId], " ");
+		switch (receivedPacket.type)
+		{
+		case PACKETTYPE_START:
+			cout << "Start\n";
+			sceneManager().change(new Battle(getNumberConnectedPlayers()));
+			break;
+		case PACKETTYPE_DISCONNECTIONREQUEST:
+			// Borrar nombres de otros
+			if (sceneManager().getActiveScene()->getName() == "ColorSelection"){
+				strcpy(gameManager()->playerNames[receivedPacket.info.disconnectionRequest.playerId], " ");
 
-					// Update texture
-					string entName = "Player" + to_string(receivedPacket.info.disconnectionRequest.playerId + 1) + "Text";
-					SDL_Color color = {255,255,255,255};
-					sceneManager().getActiveScene()->findEntity(entName).get()
-					->getComponent<Text>("text")->setText(" ", color);
-				}
-				break;
-			case PACKETTYPE_SYNCSNAKE:
-				//Actualizo la serpiente
-				sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()->getComponent<Snake>("snake")
-					->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
-				break;
-			case PACKETTYPE_SYNCAPPLE:
-				//Actualizo la manzana
-				if(receivedPacket.info.apple.eaten){
-					//Una serpiente se ha comido una manzana
-					for(Apple& apple : sceneManager().getActiveScene()->findEntity("AppleGenerator").get()
-						->getComponent<AppleGenerator>("applegenerator")->getApples())
-						if(apple.posX == receivedPacket.info.apple.positionX && apple.posY == receivedPacket.info.apple.positionY)
-							sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.apple.snakeId)).get()
-								->getComponent<Snake>("snake")->eatApple(apple);
-				}
-				else
-					//Se ha generado una manzana
-					sceneManager().getActiveScene()->findEntity("AppleGenerator").get()
-						->getComponent<AppleGenerator>("applegenerator")
-						->generateApple(Vector2(receivedPacket.info.apple.positionX, receivedPacket.info.apple.positionY));
-				break;
+				// Update texture
+				string entName = "Player" + to_string(receivedPacket.info.disconnectionRequest.playerId + 1) + "Text";
+				SDL_Color color = {255,255,255,255};
+				sceneManager().getActiveScene()->findEntity(entName).get()
+				->getComponent<Text>("text")->setText(" ", color);
 			}
+			break;
+		case PACKETTYPE_SYNCSNAKE:
+			//Actualizo la serpiente
+			sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()->getComponent<Snake>("snake")
+				->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
+			cout << "actualiza snake\n";
+			break;
+		case PACKETTYPE_SYNCAPPLE:
+			//Actualizo la manzana
+			if(receivedPacket.info.apple.eaten){
+				//Una serpiente se ha comido una manzana
+				for(Apple& apple : sceneManager().getActiveScene()->findEntity("AppleGenerator").get()
+					->getComponent<AppleGenerator>("applegenerator")->getApples())
+					if(apple.posX == receivedPacket.info.apple.positionX && apple.posY == receivedPacket.info.apple.positionY)
+						sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.apple.snakeId)).get()
+							->getComponent<Snake>("snake")->eatApple(apple);
+			}
+			else
+				//Se ha generado una manzana
+				sceneManager().getActiveScene()->findEntity("AppleGenerator").get()
+					->getComponent<AppleGenerator>("applegenerator")
+					->generateApple(Vector2(receivedPacket.info.apple.positionX, receivedPacket.info.apple.positionY));
+			break;
+		}
 		
 		SDL_Delay(mClientFrequency);
 	}
@@ -394,6 +401,15 @@ void NetworkManager::sendStartGame() {
 	// Lo manda el servidor al cliente para que empiece la partida
 	startGameTimer();
 
+	Packet packet; 
+
+	packet.type = PACKETTYPE_START;
+
+	for (int i = 1; i < mPlayerSockets.size(); i++)
+		if (mPlayerSockets[i] != nullptr){
+			cout << "Mando a " << i << "\n";
+			mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
+		}
 }
 
 void NetworkManager::startGameTimer() {
@@ -411,7 +427,7 @@ int NetworkManager::getNumberConnectedPlayers() {
 	for(int i = 0; i < mPlayerSockets.size(); i++)
 		if(mPlayerSockets[i] != nullptr)
 			connectedPlayers++;
-			
+
 	return connectedPlayers;
 }
 

@@ -108,6 +108,10 @@ void StartGameButton::initClickAnimation()
 
 void StartGameButton::execute()
 {
+
+	cout << "1\n";
+	networkManager().sendStartGame();
+cout << "2\n";
 	Scene* battleTest = new Battle(networkManager().getNumberConnectedPlayers());
 	sceneManager().change(battleTest);
 }
