@@ -1,10 +1,12 @@
 #include "Snake.h"
 #include "SnakePart.h"
+#include "GameManager.h"
 #include "../Entity.h"
 #include "../../Input/InputManager.h"
 #include "../../Utils/SDLUtils.h"
 #include "../../Scenes/Scene.h"
 #include "../../Utils/Timer.h"
+#include "../../Network/NetworkManager.h"
 
 #include <iostream>
 
@@ -45,16 +47,19 @@ void Snake::update(const double& dt)
 	if(!mAlive)
 		return;
 
-	//No se puede ir en tu direccion actual ni en la opuesta
-	//Solo se permiten giros de 90 grados
-	if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") > .1f)
-		turn({ BOX_SIZE, 0 }); //Derecha
-	else if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") < -.1f)
-		turn({ -BOX_SIZE, 0 }); //Izquierda
-	else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") > .1f)
-		turn({ 0, -BOX_SIZE }); //Arriba
-	else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") < -.1f)
-		turn({ 0, BOX_SIZE }); //Abajo
+	//Solo se puede controlar tu serpiente
+	if(networkManager().getClientId() == mId){
+		//No se puede ir en tu direccion actual ni en la opuesta
+		//Solo se permiten giros de 90 grados
+		if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") > .1f)
+			turn({ BOX_SIZE, 0 }); //Derecha
+		else if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") < -.1f)
+			turn({ -BOX_SIZE, 0 }); //Izquierda
+		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") > .1f)
+			turn({ 0, -BOX_SIZE }); //Arriba
+		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") < -.1f)
+			turn({ 0, BOX_SIZE }); //Abajo
+	}
 
 	if(mTimer->getRawSeconds() >= 1 / mSpeed){
 		mTimer->reset();
@@ -126,16 +131,6 @@ void Snake::eatApple(Apple& apple)
 	mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation, mTextureName));
 }
 
-string Snake::getName()
-{
-	return mName;
-}
-
-void Snake::setName(string name)
-{
-	mName = name;
-}
-
 void Snake::move()
 {
 	mPosition = mNextPosition;
@@ -192,19 +187,21 @@ bool Snake::outOfBounds(int rightEdge, int bottomEdge)
 
 bool Snake::hit()
 {
-	for (SnakePart* part : mParts)
-		if(part->getPosition().x + part->getOrientation().x == mNextPosition.x 
-		&& part->getPosition().y + part->getOrientation().y == mNextPosition.y)
-			return true;
+	for (int i = 0; i < MAX_PLAYERS; i++){
+		auto otherSnake = mEntity->getScene()->findEntity("Snake" + to_string(i));
+		if(otherSnake.get() != nullptr){
+			auto snakeComponent = otherSnake.get()->getComponent<Snake>("snake");
 
-	//for (Snake enemySnake :  ) {
-	// 	if (enemySnake->mPosition.x == mPosition.x && enemySnake->getPosition().y == mPosition.y)
-	// 		return true;
+			if (i != mId && snakeComponent->mPosition + (snakeComponent->mAlive ? 
+				snakeComponent->mNextOrientation : Vector2(0, 0)) == mNextPosition)
+				return true;
 
-	// 	for (SnakePart* enemyPart : enemySnake->mParts)
-	// 		if (enemyPart->getPosition().x == mPosition.x && enemyPart->getPosition().y == mPosition.y)
-	// 			return true;
-	// }
+			auto parts = snakeComponent->mParts;
+			for (SnakePart* part : parts)
+				if (part->getPosition() + (snakeComponent->mAlive ? part->getOrientation() : Vector2(0, 0)) == mNextPosition)
+					return true;
+		}
+	}
 
 	return false;
 }

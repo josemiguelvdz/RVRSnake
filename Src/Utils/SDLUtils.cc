@@ -56,7 +56,8 @@ void SDLUtils::loadResources() {
 	images_.emplace("apple", Texture(window().getRenderer(), "../../Resources/gfx/apple.png"));
 	images_.emplace("gameLogo", Texture(window().getRenderer(), "../../Resources/gfx/gameLogo.png"));
 	images_.emplace("snake", Texture(window().getRenderer(), "../../Resources/gfx/snake.png"));
-	images_.emplace("redSnake", Texture(window().getRenderer(), "../../Resources/gfx/blueSnake.png"));
+	images_.emplace("redSnake", Texture(window().getRenderer(), "../../Resources/gfx/redSnake.png"));
+	images_.emplace("blueSnake", Texture(window().getRenderer(), "../../Resources/gfx/blueSnake.png"));
 	images_.emplace("yellowSnake", Texture(window().getRenderer(), "../../Resources/gfx/yellowSnake.png"));
 	images_.emplace("purpleSnake", Texture(window().getRenderer(), "../../Resources/gfx/purpleSnake.png"));
 	images_.emplace("authorsBg", Texture(window().getRenderer(), "../../Resources/gfx/authorsBg.png"));

@@ -4,6 +4,7 @@
 #include "../EntityComponent/Components/Board.h"
 #include "../EntityComponent/Components/Snake.h"
 #include "../EntityComponent/Components/AppleGenerator.h"
+#include "../EntityComponent/Components/GameManager.h"
 
 #include <iostream>
 
@@ -21,7 +22,15 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 
 	for(int i = 0; i < snakeNumber; i++){
 		auto snake = addEntity("Snake" + std::to_string(i));
-		snake.get()->addComponent(new Snake(i, {4, 3}, {1, 0}));
+		
+		Vector2 position, orientation;
+		position.x = i < (MAX_PLAYERS + 1) / 2 ? 4 : 21 - 4;
+		position.y = i % 2 == 0 ? 3 : 21 - 3;
+
+		orientation.x = i < (MAX_PLAYERS + 1) / 2? 1 : -1;
+		orientation.y = 0;
+
+		snake.get()->addComponent(new Snake(i, position, orientation, gameManager()->playerColorTextureNames[gameManager()->playerColors[i]]));
 		snake.get()->setDepth(2);
 	}
 
@@ -32,6 +41,8 @@ Battle::Battle(int snakeNumber) : Scene("Battle")
 	appleGenerator.get()->addComponent(new AppleGenerator());
 	appleGenerator.get()->setDepth(1);
 	
+	auto gameManager = addEntity("GameManager");
+	gameManager.get()->addComponent(new GameManager());
 }
 
 Battle::~Battle(){

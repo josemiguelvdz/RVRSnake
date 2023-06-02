@@ -14,6 +14,8 @@ NetworkManager::NetworkManager()
 	mExitThread = false;
 	mGameStarted = false;
 
+	mClientId = 0;
+
 	mAcceptFrequency = 150;
 	mRecvFrequency = 50;
 	mSendFrequency = 100;
@@ -367,6 +369,10 @@ void NetworkManager::sendStartGame() {
 void NetworkManager::startGameTimer() {
 	mGameStarted = true;
 	mLastUpdate = SDL_GetTicks();
+}
+
+int NetworkManager::getClientId() {
+	return mClientId;
 }
 
 void NetworkManager::syncSnake()

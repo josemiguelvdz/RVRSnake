@@ -103,6 +103,8 @@ public:
 
 	void setGameStarted(bool gameStarted_) { mGameStarted = gameStarted_; }
 
+	int getClientId();
+
 	// int getIdCount() { return mIdCount; };
 	// int getMaxIdCount() { return maxIdCount; };
 	// void setMaxIdCount(int id) { maxIdCount = id; };

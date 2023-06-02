@@ -105,7 +105,14 @@ TitleScreen::TitleScreen() : Scene("TitleScreen")
 	*/
 
 	auto gameManager = addEntity("GameManager");
-	gameManager.get()->addComponent(new GameManager());
+
+	auto gm = new GameManager();
+	gameManager.get()->addComponent(gm);
+
+	gm->playerColors[0] = SNAKECOLOR_RED;
+	gm->playerColors[1] = SNAKECOLOR_YELLOW;
+	gm->playerColors[2] = SNAKECOLOR_BLUE;
+	gm->playerColors[3] = SNAKECOLOR_PURPLE;
 }
 
 TitleScreen::~TitleScreen(){

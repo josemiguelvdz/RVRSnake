@@ -10,6 +10,17 @@ GameManager* GameManager::MInstance = nullptr;
 
 GameManager::GameManager(){
 	mName = "gameManager";
+
+	myName = " Snake";
+
+	for(int i = 0; i < MAX_PLAYERS; i++)
+		playerColors[i] = SNAKECOLOR_GRAY;
+
+	playerColorTextureNames[SNAKECOLOR_RED] = "redSnake";
+	playerColorTextureNames[SNAKECOLOR_BLUE] = "blueSnake";
+	playerColorTextureNames[SNAKECOLOR_YELLOW] = "yellowSnake";
+	playerColorTextureNames[SNAKECOLOR_PURPLE] = "purpleSnake";
+	playerColorTextureNames[SNAKECOLOR_GRAY] = "graySnake";
 }
 
 GameManager::~GameManager(){
@@ -23,8 +34,6 @@ void GameManager::start() {
 		MInstance = this;
 		sceneManager().getActiveScene()->promoteToGlobal(mEntity);
 	}
-
-	myName = " Snake";
 }
 
 GameManager* GameManager::Instance()

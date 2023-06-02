@@ -61,17 +61,5 @@ public:
 	void render() override;
 
 	std::list<SnakePart*> getParts();
-
-	/**
-	 Set name to mesh (renderMesh in rendermanager array).
-		@param name: name for map and for entity that attached in node
-	*/
-
-	void setName(std::string name);
-
-	/**
-	Set it is static entity or not
-	*/
-	std::string getName();
 };
 #endif

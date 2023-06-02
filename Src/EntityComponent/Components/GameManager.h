@@ -5,6 +5,7 @@
 
 #include "Component.h"
 #include <string>
+#include <unordered_map>
 
 #define MAX_PLAYERS 4
 
@@ -29,6 +30,7 @@ public:
 
 	char playerNames[MAX_PLAYERS][8];
 	SnakeColor playerColors[MAX_PLAYERS];
+	std::unordered_map<SnakeColor, std::string> playerColorTextureNames;
 };
 
 /**
