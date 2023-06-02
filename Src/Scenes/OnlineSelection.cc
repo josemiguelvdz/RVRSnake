@@ -75,7 +75,7 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
    	*/
    	auto nameTextBox = addEntity("NameTextBox");
     nameTextBox.get()->setDepth(3);
-	nameTextBox.get()->addComponent(new TextBox("textBox", gameManager()->mPlayerName, 190, 64, 280, 100, 8));
+	nameTextBox.get()->addComponent(new TextBox("textBox", gameManager()->myName, 190, 64, 280, 100, 8));
 
     /*
         BACK BUTTON

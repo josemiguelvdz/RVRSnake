@@ -149,3 +149,13 @@ void TextBox::render(){
         mText->render();
     }
 }
+
+void TextBox::setText(string text)
+{
+	mText->setText(text);
+}
+
+string TextBox::getText()
+{
+	return mText->getText();
+}

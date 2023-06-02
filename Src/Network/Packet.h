@@ -11,6 +11,6 @@ public:
     void to_bin() override;
     int from_bin(char * data) override;
 
-	PacketType packetType;
-	PacketInfo packetInfo;
+	PacketType type;
+	PacketInfo info;
 };

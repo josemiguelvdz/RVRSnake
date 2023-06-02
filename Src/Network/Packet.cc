@@ -1,10 +1,10 @@
 #include "Packet.h"
 
-Packet::Packet() : packetType(PACKETTYPE_NULL) {
+Packet::Packet() : type(PACKETTYPE_NULL) {
 
 }
 
-Packet::Packet(PacketType type, PacketInfo packetInfo) : packetType(PACKETTYPE_NULL), packetInfo(packetInfo) {
+Packet::Packet(PacketType type, PacketInfo packetInfo) : type(PACKETTYPE_NULL), info(packetInfo) {
 
 }
 

@@ -6,6 +6,10 @@
 #include "Component.h"
 #include <string>
 
+#define MAX_PLAYERS 4
+
+enum SnakeColor : uint8_t { SNAKECOLOR_RED, SNAKECOLOR_BLUE, SNAKECOLOR_YELLOW, SNAKECOLOR_PURPLE, SNAKECOLOR_GRAY };
+
 class GameManager : public Component
 {
     static GameManager* MInstance;
@@ -20,7 +24,11 @@ public:
 
 	void start() override;
 
-    std::string mPlayerName;
+    std::string myName;
+	uint8_t myId;
+
+	char playerNames[MAX_PLAYERS][8];
+	SnakeColor playerColors[MAX_PLAYERS];
 };
 
 /**

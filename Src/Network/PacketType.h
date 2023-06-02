@@ -6,31 +6,54 @@
 
 // Tipos de paquete
 enum PacketType : uint8_t {
-	PACKETTYPE_START,
-	PACKETTYPE_ACCEPT,
-	PACKETTYPE_DENY,
-	PACKETTYPE_COLORCONTEXT,
+	PACKETTYPE_CONNECTIONREQUEST,
+	PACKETTYPE_DISCONNECTIONREQUEST,
+	PACKETTYPE_CONNECTIONACCEPT,
+	PACKETTYPE_CONNECTIONDENY,
+	PACKETTYPE_DISCONNECTIONACCEPT,
+	PACKETTYPE_CREATEPLAYER,
 	PACKETTYPE_COLORREQUEST,
 	PACKETTYPE_COLORACCEPT,
 	PACKETTYPE_COLORDENY,
-	PACKETTYPE_NAME,
-	PACKETTYPE_UPDATE,
+	PACKETTYPE_COLORCHANGE,
 	PACKETTYPE_SYNCSNAKE,
 	PACKETTYPE_SYNCAPPLE,
-	PACKETTYPE_ENDGAME,
 	PACKETTYPE_QUIT,
     PACKETTYPE_NULL
+};
+
+// Paquete que se manda al host para establecer la conexion
+struct PacketConnectionRequest {
+	char playerName[NAME_CHARACTER_LIMIT];
 };
 
 // Paquete que manda el servidor cuando acepta a un jugador
 struct PacketAccept {
 	uint8_t playerId;
-	char playerName[NAME_CHARACTER_LIMIT];
+	uint8_t color1, color2, color3, color4;
+	char playerName1[NAME_CHARACTER_LIMIT];
+	char playerName2[NAME_CHARACTER_LIMIT];
+	char playerName3[NAME_CHARACTER_LIMIT];
+	char playerName4[NAME_CHARACTER_LIMIT];
 };
 
-// Paquete para mandar nombres
-struct PacketName {
-	char playerName[NAME_CHARACTER_LIMIT];
+struct PacketColorRequest {
+	uint8_t playerId;
+	uint8_t requestedColor;
+};
+
+struct PacketColorChange {
+	uint8_t playerId;
+	uint8_t newColor;
+};
+
+struct PacketColorAccept {
+	uint8_t color1, color2, color3, color4;
+};
+
+struct PacketCreatePlayer{
+	uint8_t newPlayerId;
+	char newPlayerName[NAME_CHARACTER_LIMIT];
 };
 
 // Paquete para comenzar juego
@@ -59,7 +82,10 @@ struct PacketSyncApple {
 
 union PacketInfo {
 	PacketAccept accept;
-	PacketName name;
+	PacketColorRequest colorRequest;
+	PacketColorChange colorChange;
+	PacketColorAccept colorAccept;
+	PacketCreatePlayer createPlayer;
 	PacketStartGame startGame;
 	PacketSyncSnake snake;
 	PacketSyncApple apple;

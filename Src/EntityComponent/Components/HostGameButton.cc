@@ -111,8 +111,8 @@ void HostGameButton::execute()
 {
 	// soundManager().stopEverySound();
 
-	gameManager()->mPlayerName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getName();
-	networkManager().init('h', nullptr, gameManager()->mPlayerName);
+	gameManager()->myName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
+	networkManager().init(true, nullptr);
 	
     // Create game scene
 	Scene* colorSelection = new ColorSelection();

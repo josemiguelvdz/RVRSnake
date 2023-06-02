@@ -112,13 +112,13 @@ public:
 
     friend bool operator== (const Socket &s1, const Socket &s2);
 
-protected:
 
     /**
      *  Descriptor del socket
      */
     int sd;
 
+protected:
     /**
      *  Representación binaria del extremo, usada por servidor y cliente
      */

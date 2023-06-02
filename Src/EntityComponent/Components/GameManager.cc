@@ -24,7 +24,7 @@ void GameManager::start() {
 		sceneManager().getActiveScene()->promoteToGlobal(mEntity);
 	}
 
-	mPlayerName = "Snake";
+	myName = " Snake";
 }
 
 GameManager* GameManager::Instance()

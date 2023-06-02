@@ -38,6 +38,9 @@ public:
     void update(const double& dt) override;
 
     void render() override;
+
+    void setText(string text);
+    string getText();
 };
 
 #endif

@@ -1,12 +1,96 @@
 #include "NetworkManager.h"
 #include "Packet.h"
 
+#include "../EntityComponent/Components/GameManager.h"
 #include "../Utils/SDLUtils.h"
 
 #include <SDL2/SDL.h>
 #include <iostream>
 
 using namespace std;
+
+NetworkManager::NetworkManager()
+{
+	mExitThread = false;
+	mGameStarted = false;
+
+	mAcceptFrequency = 150;
+	mRecvFrequency = 50;
+	mSendFrequency = 100;
+	mClientFrequency = 50;
+
+	mPlayerSockets = vector<Socket*>(MAX_PLAYERS);
+
+	for(int i = 0; i < mPlayerSockets.size(); i++)
+		mPlayerSockets[i] = nullptr;
+}
+
+NetworkManager::~NetworkManager()
+{
+	// SDLNet_TCP_Close(socket);
+	// SDLNet_Quit();
+}
+
+bool NetworkManager::init(bool host, const char* ipAddress)
+{
+	mHost = host;
+
+	if (mHost) { 	// Si somos un host
+		assert(getNextPlayerId() == 0);
+		mPlayerSockets[0] = new Socket(LOOPBACK, MULTISNAKE_PORT);
+		
+		// Hilos
+		accept_t = new std::thread(&NetworkManager::acceptPlayers, this);
+		receiveplayers_t = new std::thread(&NetworkManager::receivePlayers, this);
+
+		cout << "NetworkManager: host inicializado (" << gameManager()->myName << ")\n";
+	}
+	else { 			// Si somos un cliente
+		//Pedimos conexion al host
+		Socket* socket = new Socket(LOOPBACK, MULTISNAKE_PORT);
+		Socket* hostSocket = new Socket(ipAddress, MULTISNAKE_PORT);
+
+		Packet sendPacket;
+		sendPacket.type = PACKETTYPE_CONNECTIONREQUEST;
+
+		socket->send(sendPacket, *hostSocket);
+
+		//Esperamos respuesta
+		Packet receivedPacket;
+		receivedPacket.type = PACKETTYPE_NULL;
+		
+		Socket* clientSocket;
+
+		while (receivedPacket.type == PACKETTYPE_CONNECTIONACCEPT || receivedPacket.type == PACKETTYPE_CONNECTIONDENY)
+			while (socket->recv(receivedPacket, clientSocket) < 0) {}
+
+		if (receivedPacket.type == PACKETTYPE_CONNECTIONDENY) { // Si nos rechazan porque la partida est� llena
+			delete socket;
+			delete hostSocket;
+			return false;
+		}
+
+		// Cuando nos acepte recibimos la informacion
+		mClientId = receivedPacket.info.accept.playerId;
+
+		mPlayerSockets[0] = clientSocket;
+		mPlayerSockets[mClientId] = socket;
+
+		strcpy(gameManager()->playerNames[0], receivedPacket.info.accept.playerName1);
+		strcpy(gameManager()->playerNames[1], receivedPacket.info.accept.playerName2);
+		strcpy(gameManager()->playerNames[2], receivedPacket.info.accept.playerName3);
+		strcpy(gameManager()->playerNames[3], receivedPacket.info.accept.playerName4);
+				
+		gameManager()->playerColors[0] = (SnakeColor) receivedPacket.info.accept.color1;
+		gameManager()->playerColors[1] = (SnakeColor) receivedPacket.info.accept.color2;
+		gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.accept.color3;
+		gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.accept.color4;
+
+		cout << "NetworkManager: cliente " << gameManager()->myName << " a la espera de confirmacion (" << ipAddress << ")\n";
+	}
+
+	return true;
+}
 
 // SERVIDOR
 
@@ -18,50 +102,47 @@ void NetworkManager::acceptPlayers()
 		Packet receivedPacket;
 		Socket* clientSocket;
 
-		int success = mSocket.recv(receivedPacket, clientSocket);
+		int success = mPlayerSockets[0]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
 
-		// if(receivedPacket == PACKETTYPE_) {
+		if(receivedPacket.type != PACKETTYPE_CONNECTIONREQUEST)
+			continue;
 
-		// }
+		Packet replyPacket;
 
+		int playerId = getNextPlayerId();
+		if(playerId == -1)
+			replyPacket.type = PACKETTYPE_CONNECTIONDENY;
+		else {
+			mPlayerSockets[playerId] = clientSocket;
 
-		//CODIGO DE PAELLA, BORRAR LUEGO  ------------------------------------------------------------- <<<----- <<<----- !!!!
-		// string* remoteIP;
+			replyPacket.type = PACKETTYPE_CONNECTIONACCEPT;
 
-		// if ((remoteIP = SDLNet_TCP_GetPeerAddress(clientSocket)))
-		// 	std::cout << ("Host connected: %x %d\n", SDLNet_Read32(&remoteIP->host), SDLNet_Read16(&remoteIP->port)) << std::endl;
-		// else
-		// 	std::cout << ("SDLNet_TCP_GetPeerAddress: %s\n", SDLNet_GetError()) << std::endl;
+			replyPacket.info.accept.playerId = playerId;
 
-		// int id = getClientID(*remoteIP);
+			strcpy(replyPacket.info.accept.playerName1, gameManager()->playerNames[0]);
+			strcpy(replyPacket.info.accept.playerName2, gameManager()->playerNames[1]);
+			strcpy(replyPacket.info.accept.playerName3, gameManager()->playerNames[2]);
+			strcpy(replyPacket.info.accept.playerName4, gameManager()->playerNames[3]);
 
-		// Packet pkt;
-		// pkt.packet_type = EPT_ACCEPT;
+			replyPacket.info.accept.color1 = gameManager()->playerColors[0];
+			replyPacket.info.accept.color2 = gameManager()->playerColors[1];
+			replyPacket.info.accept.color3 = gameManager()->playerColors[2];
+			replyPacket.info.accept.color4 = gameManager()->playerColors[3];
 
-		// strcpy_s(pkt.accept.player_name, mMyName.c_str());
-		// sdlutils().soundEffects().at("connected").play();
+			//Informar al resto de jugadores
+			Packet multicastPacket;
+			multicastPacket.type = PACKETTYPE_CREATEPLAYER;
 
-		// if (mPlayerSockets.size() > MAX_PLAYERS) { // TODO: CHECK IF A PLAYER IS DISCONNECTED
-		// 	pkt.packet_type = EPT_DENY;
-		// }
-		// else {
-		// 	if (id == -1) {
-		// 		id = mIdCount;
+			multicastPacket.info.createPlayer.newPlayerId;
+			multicastPacket.info.createPlayer.newPlayerId;
 
-		// 		mPlayerIps.push_back(*remoteIP); // Como eres nuevo, se mete tu IP en el vector
-		// 	}
+			for(int i = 1; i < mPlayerSockets.size(); i++)
+				if(mPlayerSockets[i]->sd != clientSocket->sd)
+					 mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
+		}
 
-		// 	mPlayerSockets.push_back(clientSocket); // Se mete tu socket en el vector
-		// }
-
-		// pkt.accept.player_id = id;
-
-		// if (SDLNet_TCP_Send(clientSocket, &pkt, sizeof(Packet)) < sizeof(Packet))
-		// {
-		// 	std::cout << ("SDLNet_TCP_Send: %s\n", SDLNet_GetError()) << std::endl;
-		// 	exit(EXIT_FAILURE);
-		// }
+		 mPlayerSockets[0]->send(replyPacket, *clientSocket);
 
 		SDL_Delay(mAcceptFrequency);
 	}	
@@ -76,19 +157,68 @@ void NetworkManager::receivePlayers()
 	Socket* clientSocket;
 
 	while (!mExitThread) {
-		for (int i = 1u; i < mPlayerSockets.size(); i++) { // Comenzamos en uno porque el 0 somos nosotros mismos
-			int success = mSocket.recv(receivedPacket, clientSocket);
-        	if (success < 0) continue;
+		// Receive info from server
+		int success = mPlayerSockets[0]->recv(receivedPacket, clientSocket);
+        if (success < 0) continue;
 
-			switch (receivedPacket.packetType) {
-			case PACKETTYPE_NAME:
-				break;
-			case PACKETTYPE_QUIT:
-				break;
-			}	
+		for(int i = 1; i < mPlayerSockets.size(); i++) // Comenzamos en uno porque el 0 somos nosotros mismos
+			if(mPlayerSockets[i] != nullptr && mPlayerSockets[i]->sd == clientSocket->sd)
+				switch (receivedPacket.type)
+				{
+				case PACKETTYPE_DISCONNECTIONREQUEST:
+				{
+					Packet sendPacket;
+					sendPacket.type = PACKETTYPE_DISCONNECTIONACCEPT;
 
-			SDL_Delay(mRecvFrequency);
-		}
+					mPlayerSockets[0]->send(sendPacket, *clientSocket);
+
+					delete mPlayerSockets[i];
+					mPlayerSockets[i] = nullptr;
+
+					strcpy(gameManager()->playerNames[i], " ");
+					gameManager()->playerColors[i] = SNAKECOLOR_GRAY;
+
+					i--;
+				}
+					break;
+				case PACKETTYPE_COLORREQUEST:
+				{
+					Packet sendPacket;
+
+					//gameManager()->playerColors[]
+					//receivedPacket.packetInfo.colorRequest.requestedColor;
+					if(false){
+						sendPacket.type = PACKETTYPE_COLORDENY;
+						break;
+					}
+
+					sendPacket.type = PACKETTYPE_COLORACCEPT;
+
+					mPlayerSockets[0]->send(sendPacket, *clientSocket);					
+
+					//Actualizo a los demas jugadores
+					sendPacket.type = PACKETTYPE_COLORCHANGE;
+					sendPacket.info.colorChange.newColor = SNAKECOLOR_GRAY;
+					sendPacket.info.colorChange.playerId = i;
+
+					for(int j = 1; j < mPlayerSockets.size(); j++)
+						if (mPlayerSockets[j] != nullptr && mPlayerSockets[j]->sd != clientSocket->sd)
+							mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[j]);
+				}
+					break;
+				case PACKETTYPE_SYNCSNAKE:
+				{
+					//Actualizo la serpiente
+
+					//Reenvio a los demas jugadores
+					for(int j = 1; j < mPlayerSockets.size(); j++)
+						if (mPlayerSockets[j]->sd != clientSocket->sd)
+							mPlayerSockets[0]->send(receivedPacket, *clientSocket);
+				}
+					break;
+				}
+
+		SDL_Delay(mRecvFrequency);
 	}
 }
 
@@ -101,132 +231,60 @@ void NetworkManager::updateClient()
 
 	while (!mExitThread) {
 		// Receive info from server
-		int success = mSocket.recv(receivedPacket, clientSocket);
+		int success = mPlayerSockets[mClientId]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
 
-			Player* p = nullptr;
-
-		switch (receivedPacket.packetType)
-		{
-		case PACKETTYPE_START:
-			// Start game
-			// mGame->sendMessageScene(new Jornada(mGame, "Jornada" + to_string(server_pkt.startGame.num_jornada + 1), server_pkt.startGame.num_jornada, false));
-			// startGameTimer();
-			break;
-		}
-
+		if(mPlayerSockets[0]->sd == clientSocket->sd)
+			switch (receivedPacket.type)
+			{
+			case PACKETTYPE_DISCONNECTIONACCEPT:
+				//Volver al menu
+				break;
+			case PACKETTYPE_COLORACCEPT:
+				gameManager()->playerColors[0] = (SnakeColor) receivedPacket.info.colorAccept.color1;
+				gameManager()->playerColors[1] = (SnakeColor) receivedPacket.info.colorAccept.color2;
+				gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.colorAccept.color3;
+				gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.colorAccept.color4;
+				break;
+			case PACKETTYPE_COLORDENY:
+				break;
+			case PACKETTYPE_COLORCHANGE:
+				gameManager()->playerColors[receivedPacket.info.colorChange.playerId] = (SnakeColor) receivedPacket.info.colorChange.newColor;
+				break;
+			case PACKETTYPE_SYNCSNAKE:
+				//Actualizo la serpiente
+				break;
+			case PACKETTYPE_SYNCAPPLE:
+				//Actualizo la manzana
+				break;
+			case PACKETTYPE_QUIT:
+				//Volver al menu
+				break;
+			}
+		
 		SDL_Delay(mClientFrequency);
 	}
 }
 
 // Funci�n para asignar IDs
-uint8_t NetworkManager::getClientID(const IPaddress& addr)
-{
-	int id = -1;
+// uint8_t NetworkManager::getClientID(const IPaddress& addr)
+// {
+// 	int id = -1;
 
-	for (int i = 0u; i < mPlayerIps.size(); i++) {
-		if (compareAddress(mPlayerIps[i], addr)) {
-			id = i;
-			break;
-		}
-	}
+// 	// for (int i = 0u; i < mPlayerIps.size(); i++) {
+// 	// 	if (compareAddress(mPlayerIps[i], addr)) {
+// 	// 		id = i;
+// 	// 		break;
+// 	// 	}
+// 	// }
 
-	return id;
-}
+// 	return id;
+// }
 
-bool NetworkManager::compareAddress(const IPaddress& addr1, const IPaddress& addr2)
-{
-	return strcmp(addr1.host, addr2.host) && strcmp(addr1.port, addr2.port);
-}
-
-NetworkManager::NetworkManager() : mSocket("127.0.0.1", "3000")
-{
-	mExitThread = false;
-	mGameStarted = false;
-
-	mType = '0';
-	mIdCount = 0;
-
-	mAcceptFrequency = 150;
-	mRecvFrequency = 50;
-	mSendFrequency = 100;
-
-	mClientFrequency = 50;
-}
-
-NetworkManager::~NetworkManager()
-{
-	// SDLNet_TCP_Close(socket);
-	// SDLNet_Quit();
-}
-
-// Funci�n que inicializa SDL_Net y tu funci�n (servidor o cliente)
-
-bool NetworkManager::init(char type, const char* ipAddress, std::string name)
-{
-	//SDL NET Init
-
-	mType = type;
-	
-
-	//SDL NET ResolveHost
-
-	//SDL NET TCP Open
-	
-	mMyName = name;
-	
-	Packet receivedPacket;
-
-	if (mType == 'c') { // Si somos un cliente
-		mHost = false;
-
-		cout << "NetworkManager: cliente " << mMyName << " a la espera de confirmacion (" << ipAddress << ")\n";
-
-		Socket* clientSocket;
-
-		while (receivedPacket.packetType == PACKETTYPE_ACCEPT || receivedPacket.packetType == PACKETTYPE_DENY)
-			while (mSocket.recv(receivedPacket, clientSocket) < 0) {}
-
-		if (receivedPacket.packetType == PACKETTYPE_ACCEPT) { // Cuando nos acepte
-			// recv info
-			mOtherName = receivedPacket.packetInfo.accept.playerName;
-
-			// Mandarle el nombre
-			// Send info
-			// Packet namePkt;
-			// namePkt.packet_type = EPT_NAME;
-
-			// strcpy_s(namePkt.name.player_name, mMyName.c_str());
-
-			// if (SDLNet_TCP_Send(socket, &namePkt, sizeof(Packet)) < sizeof(Packet))
-			// {
-			// 	std::cout << ("SDLNet_TCP_Send: %s\n", SDLNet_GetError()) << std::endl;
-			// 	exit(EXIT_FAILURE);
-			// }
-
-			// updateclient_t = new std::thread(&NetworkManager::updateClient, this);
-		}
-		else if (receivedPacket.packetType == PACKETTYPE_DENY) // Si nos rechazan porque la partida est� llena
-			return false;
-	}
-	else { // Si somos un host
-		mHost = true;
-		
-		// Hilos
-		accept_t = new std::thread(&NetworkManager::acceptPlayers, this);
-		receiveplayers_t = new std::thread(&NetworkManager::receivePlayers, this);
-
-		mPlayerSockets.push_back(mSocket);
-		mPlayerIps.push_back(mIp);
-
-		mClientId = 0;
-
-		cout << "NetworkManager: host inicializado (" << mMyName << ")\n";
-	}
-
-	return true;
-}
-
+// bool NetworkManager::compareAddress(const IPaddress& addr1, const IPaddress& addr2)
+// {
+// 	return strcmp(addr1.host, addr2.host) && strcmp(addr1.port, addr2.port);
+// }
 
 void NetworkManager::update() // HILO PARA SINCRONIZAR ESTADO DE JUEGO (lo tienen los 2 jugadores)
 {
@@ -246,18 +304,14 @@ void NetworkManager::close()
 {
 	mExitThread = true;
 
-	if (mType == 'h') { // si se es host, tienes que mandar a todo el mundo que te has desconectado
+	if (mHost) { // si se es host, tienes que mandar a todo el mundo que te has desconectado
 
 		Packet packet;
 
-		packet.packetType = PACKETTYPE_QUIT;
+		packet.type = PACKETTYPE_QUIT;
 
-		for (int i = 1u; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
-			if (mSocket.send(packet, mPlayerSockets[i]) == -1)
-			{
-				std::cout << "Quit package send error\n";
-				exit(EXIT_FAILURE);
-			}
+		for (int i = 1; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
+			mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
 
 		accept_t->join();
 		receiveplayers_t->join();
@@ -265,27 +319,43 @@ void NetworkManager::close()
 		delete accept_t;
 		delete receiveplayers_t;
 	}
-	else if (mType == 'c') {
-
+	else {
 		Packet packet;
 
-		packet.packetType = PACKETTYPE_QUIT;
+		packet.type = PACKETTYPE_DISCONNECTIONREQUEST;
 
-		if (mSocket.send(packet, mSocket) == -1) //??????? ------------ !!! !! ?
-		{
-			std::cout << "Quit package send error\n";
-			exit(EXIT_FAILURE);
-		}
+		mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
+
+		Socket* clientSocket;
+		Packet receivedPacket;
+		receivedPacket.type = PACKETTYPE_NULL;
+
+		while (receivedPacket.type == PACKETTYPE_DISCONNECTIONACCEPT)
+			while (mPlayerSockets[mClientId]->recv(receivedPacket, clientSocket) < 0) {}
 
 		updateclient_t->join();
 		delete updateclient_t;
 	}
 
-	mPlayerIds.clear();
-	mPlayerIps.clear();
-	mPlayerSockets.clear();
+	//mPlayerIds.clear();
+	//mPlayerIps.clear();
+
+	for(int i = 0; i < mPlayerSockets.size(); i++)
+		if(mPlayerSockets[i] != nullptr){
+			delete mPlayerSockets[i];
+			mPlayerSockets[i] = nullptr;
+		}
 	
 	//SDLNet_TCP_Close(socket);
+}
+
+int NetworkManager::getNextPlayerId()
+{
+	for(int i = 0; i < mPlayerSockets.size(); i++)
+		if(mPlayerSockets[i] == nullptr)
+			return i;
+
+	return -1;
 }
 
 void NetworkManager::sendStartGame() {

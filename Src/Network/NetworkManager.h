@@ -6,23 +6,22 @@
 #include <vector>
 #include <string>
 #include <thread>
-#include <iostream>
-#include <mutex>
 
-class Player;
+#define LOOPBACK "127.0.0.1"
+#define MULTISNAKE_PORT "3000"
 
-typedef struct {
-    char* host;
-    char* port;
-} IPaddress;
+// typedef struct {
+//     char* host;
+//     char* port;
+// } IPaddress;
 
 class NetworkManager : public Singleton<NetworkManager>
 {
 	friend Singleton<NetworkManager>;
 
-	std::vector<Socket> mPlayerSockets;
-	std::vector<IPaddress> mPlayerIps;
-	std::vector<int> mPlayerIds;
+	std::vector<Socket*> mPlayerSockets;
+	//std::vector<IPaddress> mPlayerIps;
+	//std::vector<int> mPlayerIds;
 
 	// SERVER
 
@@ -43,30 +42,25 @@ class NetworkManager : public Singleton<NetworkManager>
 
 	// UTILS
 
-	uint8_t getClientID(const IPaddress& addr);
+	// uint8_t getClientID(const IPaddress& addr);
 
-	bool compareAddress(const IPaddress& addr1, const IPaddress& addr2);
+	// bool compareAddress(const IPaddress& addr1, const IPaddress& addr2);
 
 	// VARIABLES
 
-	char mType; // 'h' para host y 'c' para client
+	//char mType; // 'h' para host y 'c' para client
 
-	const int MAX_PLAYERS = 15;
-
-	uint8_t mIdCount;
-	uint8_t maxIdCount;
+	// uint8_t mIdCount;
+	// uint8_t maxIdCount;
 
 	bool mExitThread;
 	bool mGameStarted;
 
-	std::string mMyName;
-	std::string mOtherName;
-
 	// For clients ip=server_address, for host ip=local_address
-	IPaddress mIp;
+	//IPaddress mIp;
 
 	// For clients socket=socket_server, for host socket=local_socket
-	Socket mSocket;
+	//Socket mSocket;
 
 	_Float32 mAcceptFrequency;
 	_Float32 mSendFrequency;
@@ -81,20 +75,23 @@ class NetworkManager : public Singleton<NetworkManager>
 	// Host
 	bool mHost;
 
+	/**
+	@return The index of the first gap in the player array. If there are none, return -1.
+	*/
+	int getNextPlayerId();
+
 	NetworkManager();
 
 public:
 	~NetworkManager() override;
 
-	bool init(char type, const char* ipAddress = nullptr, std::string name = "");
+	// Funci�n que inicializa SDL_Net y tu funci�n (servidor o cliente)
+	bool init(bool host, const char* ipAddress = nullptr);
 	void update();
 
 	void close();
 
 	bool isHost() { return mHost; }
-
-	std::string getOtherName() { return mOtherName;}
-	std::string getMyName() { return mMyName; }
 
 	void startGameTimer();
 
@@ -106,9 +103,9 @@ public:
 
 	void setGameStarted(bool gameStarted_) { mGameStarted = gameStarted_; }
 
-	int getIdCount() { return mIdCount; };
-	int getMaxIdCount() { return maxIdCount; };
-	void setMaxIdCount(int id) { maxIdCount = id; };
+	// int getIdCount() { return mIdCount; };
+	// int getMaxIdCount() { return maxIdCount; };
+	// void setMaxIdCount(int id) { maxIdCount = id; };
 };
 
 inline NetworkManager& networkManager() {
