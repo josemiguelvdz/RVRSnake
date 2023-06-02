@@ -9,6 +9,7 @@
 #include <vector>
 
 class Text;
+class SDL_Color;
 
 class TextBox : public UIButton
 {
@@ -39,7 +40,7 @@ public:
 
     void render() override;
 
-    void setText(string text);
+    void setText(string text, SDL_Color color);
     string getText();
 };
 

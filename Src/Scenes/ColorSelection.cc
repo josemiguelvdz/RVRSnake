@@ -4,6 +4,7 @@
 #include "../EntityComponent/Components/Image.h"
 #include "../EntityComponent/Components/Text.h"
 #include "../EntityComponent/Components/HostGameButton.h"
+#include "../EntityComponent/Components/GameManager.h"
 
 #include "../Utils/Texture.h"
 #include "../Utils/SDLUtils.h"
@@ -12,7 +13,7 @@
 
 #include <iostream>
 
-ColorSelection::ColorSelection() : Scene("ColorSelection")
+ColorSelection::ColorSelection(std::vector<std::string> names, std::vector<int> colors, bool isHost) : Scene("ColorSelection")
 {
 	/*
 		BACKGROUND
@@ -32,63 +33,155 @@ ColorSelection::ColorSelection() : Scene("ColorSelection")
     colorSelectionDeco.get()->setDepth(2);
 
     /*
-        COLORS BUTTONS
+        PLAY BUTTON
     */
-
-    auto redButton = addEntity("RedColorButton");
-    redButton.get()->setDepth(3);
-    auto redColorButton = new HostGameButton(&sdlutils().images().at("redButton"), 203, 523, 90, 65);	
-	redButton.get()->addComponent(redColorButton);
-
-    auto blueButton = addEntity("BlueColorButton");
-    blueButton.get()->setDepth(3);
-    auto blueColorButton = new HostGameButton(&sdlutils().images().at("blueButton"), 203, 592, 90, 65);	
-	blueButton.get()->addComponent(blueColorButton);
-
-    auto purpleButton = addEntity("PurpleColorButton");
-    purpleButton.get()->setDepth(3);
-    auto purpleColorButton = new HostGameButton(&sdlutils().images().at("purpleButton"), 300, 523, 90, 65);	
-	purpleButton.get()->addComponent(purpleColorButton);
-
-    auto yellowButton = addEntity("YellowColorButton");
-    yellowButton.get()->setDepth(3);
-    auto yellowColorButton = new HostGameButton(&sdlutils().images().at("yellowButton"), 300, 592, 90, 65);	
-	yellowButton.get()->addComponent(yellowColorButton);
-
-
-    auto grayButton = addEntity("GrayColorButton");
-    grayButton.get()->setDepth(3);
-    auto grayColorButton = new HostGameButton(&sdlutils().images().at("grayButton"), 405, 553, 90, 65);	
-	grayButton.get()->addComponent(grayColorButton);
-
-
+    if (isHost){
+        
+    }
 
     /*
         COLORS DECO
     */
-    auto redButtonDeco = addEntity("RedButtonDeco");
-    redButtonDeco.get()->setDepth(3);
-	redButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("redColorDeco"), 180, 120, 
-    115 + window().getWindowWidth(), 140));
+    
 
-    auto blueButtonDeco = addEntity("BlueButtonDeco");
-    blueButtonDeco.get()->setDepth(3);
-	blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
-    385 + window().getWindowWidth(), 140));
+    for (int i = 0; i < 4; i++){
+        if (gameManager()->playerNames[i] != " "){
+            SnakeColor myColor = gameManager()->playerColors[i];
 
-    auto yellowButtonDeco = addEntity("YellowButtonDeco");
-    yellowButtonDeco.get()->setDepth(3);
-	yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
-    115 + window().getWindowWidth(), 283));
-
-    auto purpleButtonDeco = addEntity("PurlpleButtonDeco");
-    purpleButtonDeco.get()->setDepth(3);
-	purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
-    385 + window().getWindowWidth(), 283));
+            switch(i){
+                case 0:
+                {
+                    // Red always
+                    auto redButtonDeco = addEntity("RedButtonDeco");
+                    redButtonDeco.get()->setDepth(3);
+                    redButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("redColorDeco"), 180, 120, 
+                    107, 140));
+                }
+                break;
+                case 1:
+                {
+                    if (myColor == SNAKECOLOR_BLUE){
+                        auto blueButtonDeco = addEntity("BlueButtonDeco");
+                        blueButtonDeco.get()->setDepth(3);
+                        blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
+                        385, 140));
+                    }
+                    else if (myColor == SNAKECOLOR_YELLOW){
+                        auto yellowButtonDeco = addEntity("YellowButtonDeco");
+                        yellowButtonDeco.get()->setDepth(3);
+                        yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
+                        385, 140));
+                    }
+                    else if (myColor == SNAKECOLOR_PURPLE){
+                        auto purpleButtonDeco = addEntity("PurpleButtonDeco");
+                        purpleButtonDeco.get()->setDepth(3);
+                        purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
+                        385, 140));
+                    }
+                }
+                break;
+                case 2:
+                {
+                    if (myColor == SNAKECOLOR_BLUE){
+                        auto blueButtonDeco = addEntity("BlueButtonDeco");
+                        blueButtonDeco.get()->setDepth(3);
+                        blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
+                        107, 283));
+                    }
+                    else if (myColor == SNAKECOLOR_YELLOW){
+                        auto yellowButtonDeco = addEntity("YellowButtonDeco");
+                        yellowButtonDeco.get()->setDepth(3);
+                        yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
+                        107, 283));
+                    }
+                    else if (myColor == SNAKECOLOR_PURPLE){
+                        auto purpleButtonDeco = addEntity("PurpleButtonDeco");
+                        purpleButtonDeco.get()->setDepth(3);
+                        purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
+                        107, 283));
+                    }
+                }
+                break;
+                case 3:
+                {
+                        if (myColor == SNAKECOLOR_BLUE){
+                        auto blueButtonDeco = addEntity("BlueButtonDeco");
+                        blueButtonDeco.get()->setDepth(3);
+                        blueButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("blueColorDeco"), 180, 120, 
+                        385, 283));
+                    }
+                    else if (myColor == SNAKECOLOR_YELLOW){
+                        auto yellowButtonDeco = addEntity("YellowButtonDeco");
+                        yellowButtonDeco.get()->setDepth(3);
+                        yellowButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("yellowColorDeco"), 180, 120, 
+                        385, 283));
+                    }
+                    else if (myColor == SNAKECOLOR_PURPLE){
+                        auto purpleButtonDeco = addEntity("PurpleButtonDeco");
+                        purpleButtonDeco.get()->setDepth(3);
+                        purpleButtonDeco.get()->addComponent(new Image(&sdlutils().images().at("purpleColorDeco"), 180, 120, 
+                        385, 283));
+                    }
+                }
+                break;
+            }
+        }
+    }
+   
 
     /*
-        
+        NAMES
     */
+	auto player1Text = addEntity("Player1Text");
+	player1Text.get()->setDepth(4);
+    
+    if (names[0].size() < 1)
+        names[0] = " ";
+
+	auto player1Texture = new Text(names[0], 115, 180);
+	player1Text.get()->addComponent(player1Texture);
+
+	SDL_Color color = {255, 255, 255, 255};
+	player1Texture->setTexture(new Texture(window().getRenderer(), names[0], sdlutils().fonts().at("gameFont"), color));
+
+    // ---------------------
+    auto player2Text = addEntity("Player2Text");
+	player2Text.get()->setDepth(4);
+
+    if (names[1].size() < 1)
+        names[1] = " ";
+
+	auto player2Texture = new Text(names[1], 387, 180);
+	player2Text.get()->addComponent(player2Texture);
+
+	player2Texture->setTexture(new Texture(window().getRenderer(), names[1], sdlutils().fonts().at("gameFont"), color));
+
+    // ---------------------
+    auto player3Text = addEntity("Player3Text");
+	player3Text.get()->setDepth(4);
+
+    if (names[2].size() < 1)
+        names[2] = " ";
+
+	auto player3Texture = new Text(names[2], 115, 312);
+	player3Text.get()->addComponent(player3Texture);
+
+	player3Texture->setTexture(new Texture(window().getRenderer(), names[2], sdlutils().fonts().at("gameFont"), color));
+
+    // ---------------------
+
+    auto player4Text = addEntity("Player4Text");
+	player4Text.get()->setDepth(4);
+
+    if (names[3].size() < 1)
+        names[3] = " ";
+
+	auto player4Texture = new Text(names[3], 387, 312);
+	player4Text.get()->addComponent(player4Texture);
+
+	player4Texture->setTexture(new Texture(window().getRenderer(), names[3], sdlutils().fonts().at("gameFont"), color));
+    
+    // TODO: names DECO
 
 }
 

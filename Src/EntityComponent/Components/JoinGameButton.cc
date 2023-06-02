@@ -120,7 +120,10 @@ void JoinGameButton::execute()
 	mExecuteTimer->pause();
 
 	// soundManager().stopEverySound();
-	gameManager()->myName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
+	string name = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
+	name = name.substr(1, name.size() - 1);
+	gameManager()->myName = name;
+
 	string ip = ipTextBox->getText();
 	ip = ip.substr(1, ip.size() - 1);
 

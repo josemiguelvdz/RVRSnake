@@ -110,10 +110,33 @@ void HostGameButton::initClickAnimation()
 void HostGameButton::execute()
 {
 	// soundManager().stopEverySound();
-	gameManager()->myName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
+	string name = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
+	name = name.substr(1, name.size() - 1);
+	gameManager()->myName = name;
+
 	networkManager().init(true, nullptr);
-	
-    // Create game scene
-	Scene* colorSelection = new ColorSelection();
+
+	// Fill GameManager Info
+	strcpy(gameManager()->playerNames[0], gameManager()->myName.c_str());
+	strcpy(gameManager()->playerNames[1], " ");
+	strcpy(gameManager()->playerNames[2], " ");
+	strcpy(gameManager()->playerNames[3], " ");
+
+	gameManager()->playerColors[0] = SNAKECOLOR_RED;
+	gameManager()->playerColors[1] = SNAKECOLOR_GRAY;
+	gameManager()->playerColors[2] = SNAKECOLOR_GRAY;
+	gameManager()->playerColors[3] = SNAKECOLOR_GRAY;
+
+	// Create game scene
+	std::vector<string> names(4, " ");
+	names[gameManager()->myId] = gameManager()->myName;
+
+	std::vector<int> colors(4, -1);
+	colors[0] = gameManager()->playerColors[0];
+	colors[1] = gameManager()->playerColors[1];
+	colors[2] = gameManager()->playerColors[2];
+	colors[3] = gameManager()->playerColors[3];
+
+	Scene* colorSelection = new ColorSelection(names, colors, true);
 	sceneManager().change(colorSelection);
 }

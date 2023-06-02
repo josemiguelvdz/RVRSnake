@@ -5,11 +5,14 @@
 
 #include "Scene.h"
 
+#include <vector>
+#include <string>
+
 class ColorSelection : public Scene {
 private:
     
 public:
-    ColorSelection();
+    ColorSelection(std::vector<std::string> names, std::vector<int> colors, bool isHost);
     ~ColorSelection() override;
 };
 

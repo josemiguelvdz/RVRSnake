@@ -136,8 +136,8 @@ void TextBox::update(const double& dt)
         }
 
 		
-
-		mText->setText(mNameBuffer);
+		SDL_Color color = {0, 0, 0, 255};
+		mText->setText(mNameBuffer, color);
 	}
 }
 
@@ -150,9 +150,9 @@ void TextBox::render(){
     }
 }
 
-void TextBox::setText(string text)
+void TextBox::setText(string text, SDL_Color color)
 {
-	mText->setText(text);
+	mText->setText(text, color);
 }
 
 string TextBox::getText()

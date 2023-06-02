@@ -10,12 +10,12 @@
 using namespace std;
 
 class Texture;
+class SDL_Color;
 
 class Text : public Component
 {
 private:
 protected:
-	string mName;
     string mText;
 
 	float mPosX;
@@ -43,6 +43,6 @@ public:
 		return mText;
 	}
 
-	void setText(string newText);
+	void setText(string newText, SDL_Color newColor);
 };
 #endif

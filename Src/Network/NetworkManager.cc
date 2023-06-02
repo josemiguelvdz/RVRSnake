@@ -2,7 +2,12 @@
 #include "Packet.h"
 
 #include "../EntityComponent/Components/GameManager.h"
+#include "../Scenes/ColorSelection.h"
+#include "../Scenes/SceneManager.h"
 #include "../Utils/SDLUtils.h"
+
+#include "../EntityComponent/Entity.h"
+#include "../EntityComponent/Components/Text.h"
 
 #include <SDL2/SDL.h>
 #include <iostream>
@@ -40,8 +45,8 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 	if (mHost) { 	// Si somos un host
 		assert(getNextPlayerId() == 0);
 		mPlayerSockets[0] = new Socket(LOOPBACK, MULTISNAKE_PORT);
-		
 		mPlayerSockets[0]->bind();
+		gameManager()->myId = 0;
 
 		// Hilos
 		accept_t = new std::thread(&NetworkManager::acceptPlayers, this);
@@ -62,8 +67,6 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 
 		int bytes = socket->send(sendPacket, *hostSocket);
 
-		std::cout << "HE MANDADO EL PAQUETE, bytes: "<< bytes << " SUPER XD\n";
-
 		//Esperamos respuesta
 		Socket* senderSocket = nullptr;
 
@@ -73,8 +76,6 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		while (receivedPacket.type != PACKETTYPE_CONNECTIONACCEPT && receivedPacket.type != PACKETTYPE_CONNECTIONDENY)
 			socket->recv(receivedPacket, senderSocket);
 
-		std::cout << "PACKETTYPE_CONNECTIONACCEPT" << endl;
-
 		if (receivedPacket.type == PACKETTYPE_CONNECTIONDENY) { // Si nos rechazan porque la partida est� llena
 			delete socket;
 			delete hostSocket;
@@ -83,6 +84,7 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 
 		// Cuando nos acepte recibimos la informacion
 		mClientId = receivedPacket.info.accept.playerId;
+		gameManager()->myId = mClientId;
 
 		mPlayerSockets[0] = hostSocket;
 		mPlayerSockets[mClientId] = socket;
@@ -97,7 +99,24 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.accept.color3;
 		gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.accept.color4;
 
-		cout << "NetworkManager: cliente " << gameManager()->myName << " a la espera de confirmacion (" << ipAddress << ")\n";
+		gameManager()->myName = gameManager()->playerNames[mClientId];
+
+		// Change scene (Prevent injection)
+		std::vector<string> names(4, " ");
+		names[0] = gameManager()->playerNames[0];
+		names[1] = gameManager()->playerNames[1];
+		names[2] = gameManager()->playerNames[2];
+		names[3] = gameManager()->playerNames[3];
+
+		std::vector<int> colors(4, -1);
+		colors[0] = gameManager()->playerColors[0];
+		colors[1] = gameManager()->playerColors[1];
+		colors[2] = gameManager()->playerColors[2];
+		colors[3] = gameManager()->playerColors[3];
+
+		sceneManager().change(new ColorSelection(names, colors, false));
+
+		// TODO: INIT THREAD
 	}
 
 	return true;
@@ -118,8 +137,6 @@ void NetworkManager::acceptPlayers()
 
 		if(receivedPacket.type != PACKETTYPE_CONNECTIONREQUEST)
 			continue;
-		
-		std::cout << "HE RECIBIDO UN PAQUETE\n";
 
 		Packet replyPacket;
 
@@ -147,21 +164,26 @@ void NetworkManager::acceptPlayers()
 			replyPacket.info.accept.color3 = gameManager()->playerColors[2];
 			replyPacket.info.accept.color4 = gameManager()->playerColors[3];
 
+			// Update textures
+			string entName = "Player" + to_string(playerId + 1) + "Text";
+			string newName = gameManager()->playerNames[playerId];
+			SDL_Color color = {255,255,255,255};
+			sceneManager().getActiveScene()->findEntity(entName).get()
+			->getComponent<Text>("text")->setText(newName, color);
+
 			//Informar al resto de jugadores
-			Packet multicastPacket;
-			multicastPacket.type = PACKETTYPE_CREATEPLAYER;
+			// Packet multicastPacket;
+			// multicastPacket.type = PACKETTYPE_CREATEPLAYER;
 
-			multicastPacket.info.createPlayer.newPlayerId;
-			multicastPacket.info.createPlayer.newPlayerId;
+			// multicastPacket.info.createPlayer.newPlayerId;
+			// multicastPacket.info.createPlayer.newPlayerId;
 
-			for(int i = 1; i < mPlayerSockets.size(); i++)
-				if (mPlayerSockets[i] != nullptr && mPlayerSockets[i] != clientSocket)
-					mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
+			// for(int i = 1; i < mPlayerSockets.size(); i++)
+			// 	if (mPlayerSockets[i] != nullptr && mPlayerSockets[i] != clientSocket)
+			// 		mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
 		}
 		
 		mPlayerSockets[0]->send(replyPacket, *clientSocket);
-		
-		std::cout << "Acepto conexion de " << clientSocket->sa.sa_data << "\n";
 
 		SDL_Delay(mAcceptFrequency);
 	}	
