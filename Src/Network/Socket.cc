@@ -30,6 +30,8 @@ Socket::Socket(const char * address, const char * port):sd(-1)
     sa = *result->ai_addr;
     sa_len =result->ai_addrlen;
 
+    std::cout << "socket descriptor: " << sd << "\n";
+
     freeaddrinfo(result);
 }
 
@@ -58,8 +60,8 @@ int Socket::send(Serializable& obj, const Socket& sock)
     //Serializar el objeto
     //Enviar el objeto binario a sock usando el socket sd
     obj.to_bin();
-    sendto(sd, obj.data(), obj.size(), 0, &sock.sa, sock.sa_len);
-    return 0;
+    int bytes = sendto(sd, obj.data(), obj.size(), 0, &sock.sa, sock.sa_len);
+    return bytes;
 }
 
 bool operator== (const Socket &s1, const Socket &s2)

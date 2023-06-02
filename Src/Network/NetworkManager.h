@@ -8,7 +8,7 @@
 #include <thread>
 
 #define LOOPBACK "127.0.0.1"
-#define MULTISNAKE_PORT "3000"
+#define MULTISNAKE_PORT "2300"
 
 // typedef struct {
 //     char* host;

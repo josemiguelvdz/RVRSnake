@@ -34,16 +34,16 @@ bool Game::setup(std::string gameName)
 	// Load Scene
 	// Scene* battleTest = new Battle(1);
 	// sceneManager().loadScene(battleTest);
-	Scene* titleScreen = new TitleScreen();
-	sceneManager().loadScene(titleScreen);
+	// Scene* titleScreen = new TitleScreen();
+	// sceneManager().loadScene(titleScreen);
 
-	// Scene* multiScren = new OnlineSelection();
-	// sceneManager().loadScene(multiScren);
+	Scene* multiScren = new OnlineSelection();
+	sceneManager().change(multiScren);
 	
 	// Start time
 	mTime = new Time(60);
 
-	mPlayerName = "Snake";
+	// mPlayerName = "Snake";
 
 	return true;
 }

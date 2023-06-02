@@ -1,4 +1,4 @@
-#include "HostGameButton.h"
+#include "JoinGameButton.h"
 
 #include "GameManager.h"
 #include "TextBox.h"
@@ -12,7 +12,7 @@
 #include "../../Utils/SDLUtils.h"
 #include "../../Utils/Timer.h"
 
-HostGameButton::HostGameButton(string textureName, int x, int y , int w, int h)
+JoinGameButton::JoinGameButton(string textureName, int x, int y , int w, int h)
 {
     mPosX = x;
     mPosY = y;
@@ -29,7 +29,7 @@ HostGameButton::HostGameButton(string textureName, int x, int y , int w, int h)
 	mBtnTexture = &sdlutils().images().at(textureName);
 }
 
-HostGameButton::HostGameButton(Texture* texture, int x, int y , int w, int h)
+JoinGameButton::JoinGameButton(Texture* texture, int x, int y , int w, int h)
 {
 	mPosX = x;
     mPosY = y;
@@ -46,17 +46,18 @@ HostGameButton::HostGameButton(Texture* texture, int x, int y , int w, int h)
     mBtnTexture = texture;
 }
 
-HostGameButton::~HostGameButton()
+JoinGameButton::~JoinGameButton()
 {
 	delete mBtnTexture;
 }
 
-void HostGameButton::start()
+void JoinGameButton::start()
 {
-	// UIButton::start();
+	// Get reference to IP Text box
+    ipTextBox = mEntity->getScene()->findEntity("IpTextBox").get()->getComponent<TextBox>("textbox");
 }
 
-void HostGameButton::update(const double& dt)
+void JoinGameButton::update(const double& dt)
 {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
@@ -65,8 +66,11 @@ void HostGameButton::update(const double& dt)
 		setHover(true);
 
 		if (inputManager().getButton("leftclick")) {
-			//mClickAudio->play();
-			initClickAnimation();
+            Uint8 opacity = 0;
+			SDL_GetTextureAlphaMod(mBtnTexture->getSdlTexture(), &opacity);
+
+			if (opacity == 255)
+				initClickAnimation();	
 		}
 	}
 	else{
@@ -89,16 +93,19 @@ void HostGameButton::update(const double& dt)
 	if (mExecuteTimer->getRawSeconds() > mDelayExecution){
 		execute();
 	}
+
+    // opacity
+    opacityUpdate();
 }
 
-void HostGameButton::render(){
+void JoinGameButton::render(){
 	if (mBtnTexture != nullptr){
         SDL_Rect textureBox = {mPosX, mPosY, mWidth, mHeight};
         mBtnTexture->render(textureBox);
     }
 }
 
-void HostGameButton::initClickAnimation()
+void JoinGameButton::initClickAnimation()
 {
 	// soundManager().stopEverySound();
 	mWidth = mIniWidth;
@@ -107,13 +114,20 @@ void HostGameButton::initClickAnimation()
 	mExecuteTimer->resume();
 }
 
-void HostGameButton::execute()
+void JoinGameButton::execute()
 {
 	// soundManager().stopEverySound();
 	gameManager()->myName = mEntity->getScene()->findEntity("NameTextBox").get()->getComponent<TextBox>("textbox")->getText();
-	networkManager().init(true, nullptr);
-	
-    // Create game scene
-	Scene* colorSelection = new ColorSelection();
-	sceneManager().change(colorSelection);
+	string ip = ipTextBox->getText();
+	ip = ip.substr(1, ip.size() - 1);
+
+	networkManager().init(false, ip.c_str());
+}
+
+void JoinGameButton::opacityUpdate() {
+    // std::cout << ipTextBox->getText() << "\n";
+    if (ipTextBox->getText().size() > 7)
+        SDL_SetTextureAlphaMod(mBtnTexture->getSdlTexture(), 255);
+    else
+        SDL_SetTextureAlphaMod(mBtnTexture->getSdlTexture(), 0);
 }

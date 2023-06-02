@@ -81,6 +81,7 @@ struct PacketSyncApple {
 };
 
 union PacketInfo {
+	PacketConnectionRequest connectionRequest;
 	PacketAccept accept;
 	PacketColorRequest colorRequest;
 	PacketColorChange colorChange;

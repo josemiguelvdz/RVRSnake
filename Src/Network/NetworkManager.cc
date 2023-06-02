@@ -41,6 +41,8 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		assert(getNextPlayerId() == 0);
 		mPlayerSockets[0] = new Socket(LOOPBACK, MULTISNAKE_PORT);
 		
+		mPlayerSockets[0]->bind();
+
 		// Hilos
 		accept_t = new std::thread(&NetworkManager::acceptPlayers, this);
 		receiveplayers_t = new std::thread(&NetworkManager::receivePlayers, this);
@@ -50,21 +52,28 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 	else { 			// Si somos un cliente
 		//Pedimos conexion al host
 		Socket* socket = new Socket(LOOPBACK, MULTISNAKE_PORT);
+		socket->bind();
+
 		Socket* hostSocket = new Socket(ipAddress, MULTISNAKE_PORT);
+		
+
 
 		Packet sendPacket;
 		sendPacket.type = PACKETTYPE_CONNECTIONREQUEST;
+		strcpy(sendPacket.info.connectionRequest.playerName, gameManager()->myName.c_str());
 
-		socket->send(sendPacket, *hostSocket);
+		int bytes = socket->send(sendPacket, *hostSocket);
+
+		std::cout << "HE MANDADO EL PAQUETE, bytes: "<< bytes << "\n";
 
 		//Esperamos respuesta
 		Packet receivedPacket;
 		receivedPacket.type = PACKETTYPE_NULL;
-		
-		Socket* clientSocket;
 
-		while (receivedPacket.type == PACKETTYPE_CONNECTIONACCEPT || receivedPacket.type == PACKETTYPE_CONNECTIONDENY)
-			while (socket->recv(receivedPacket, clientSocket) < 0) {}
+		while (receivedPacket.type != PACKETTYPE_CONNECTIONACCEPT || receivedPacket.type != PACKETTYPE_CONNECTIONDENY){
+			int success = socket->recv(receivedPacket, hostSocket);
+			if (success < 0) continue;
+		}
 
 		if (receivedPacket.type == PACKETTYPE_CONNECTIONDENY) { // Si nos rechazan porque la partida est� llena
 			delete socket;
@@ -75,7 +84,7 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		// Cuando nos acepte recibimos la informacion
 		mClientId = receivedPacket.info.accept.playerId;
 
-		mPlayerSockets[0] = clientSocket;
+		mPlayerSockets[0] = hostSocket;
 		mPlayerSockets[mClientId] = socket;
 
 		strcpy(gameManager()->playerNames[0], receivedPacket.info.accept.playerName1);
@@ -102,13 +111,15 @@ void NetworkManager::acceptPlayers()
 {
 	while (!mExitThread) {
 		Packet receivedPacket;
-		Socket* clientSocket;
+		Socket* clientSocket = new Socket(*mPlayerSockets[0]);
 
 		int success = mPlayerSockets[0]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
 
 		if(receivedPacket.type != PACKETTYPE_CONNECTIONREQUEST)
 			continue;
+		
+		std::cout << "HE RECIBIDO UN PAQUETE\n";
 
 		Packet replyPacket;
 
@@ -117,6 +128,8 @@ void NetworkManager::acceptPlayers()
 			replyPacket.type = PACKETTYPE_CONNECTIONDENY;
 		else {
 			mPlayerSockets[playerId] = clientSocket;
+
+			std::cout << "Cliente conectado ID: " << clientSocket->sd << "\n";
 
 			replyPacket.type = PACKETTYPE_CONNECTIONACCEPT;
 

@@ -4,6 +4,7 @@
 #include "../EntityComponent/Components/Image.h"
 #include "../EntityComponent/Components/Text.h"
 #include "../EntityComponent/Components/HostGameButton.h"
+#include "../EntityComponent/Components/JoinGameButton.h"
 #include "../EntityComponent/Components/TextBox.h"
 #include "../EntityComponent/Components/GameManager.h"
 
@@ -56,7 +57,7 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
     auto joinGame = addEntity("JoinGameButton");
     joinGame.get()->setDepth(3);
 
-    auto joinGameButton = new HostGameButton(&sdlutils().images().at("joinButton"), 440, 380, 120, 90);	
+    auto joinGameButton = new JoinGameButton(&sdlutils().images().at("joinButton"), 440, 380, 120, 90);	
 	SDL_SetTextureAlphaMod(joinGameButton->getTexture()->getSdlTexture(), 0);
 	joinGame.get()->addComponent(joinGameButton);
 
@@ -75,11 +76,18 @@ OnlineSelection::OnlineSelection() : Scene("OnlineSelection")
    	*/
    	auto nameTextBox = addEntity("NameTextBox");
     nameTextBox.get()->setDepth(3);
-	nameTextBox.get()->addComponent(new TextBox("textBox", gameManager()->myName, 190, 64, 280, 100, 8));
+	nameTextBox.get()->addComponent(new TextBox("textBox", "temp", 190, 64, 280, 100, 8));
 
     /*
         BACK BUTTON
     */
+
+   	/*
+		GAME MANAGER
+	*/
+
+	auto gameManager = addEntity("GameManager");
+	gameManager.get()->addComponent(new GameManager());
 }
 
 OnlineSelection::~OnlineSelection(){
