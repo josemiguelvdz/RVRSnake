@@ -107,6 +107,7 @@ public:
 	void setGameStarted(bool gameStarted_) { mGameStarted = gameStarted_; }
 
 	int getClientId();
+	int getNumberConnectedPlayers();
 
 	// int getIdCount() { return mIdCount; };
 	// int getMaxIdCount() { return maxIdCount; };

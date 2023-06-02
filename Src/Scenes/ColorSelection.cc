@@ -4,6 +4,7 @@
 #include "../EntityComponent/Components/Image.h"
 #include "../EntityComponent/Components/Text.h"
 #include "../EntityComponent/Components/HostGameButton.h"
+#include "../EntityComponent/Components/StartGameButton.h"
 #include "../EntityComponent/Components/GameManager.h"
 
 #include "../Utils/Texture.h"
@@ -36,7 +37,9 @@ ColorSelection::ColorSelection(std::vector<std::string> names, std::vector<int> 
         PLAY BUTTON
     */
     if (isHost){
-        
+        auto startGameButton = addEntity("StartGameButton");
+        startGameButton.get()->addComponent(new StartGameButton(&sdlutils().images().at("hostButton"), (672 / 2) - 60, 500, 120, 90));
+        startGameButton.get()->setDepth(3);
     }
 
     /*

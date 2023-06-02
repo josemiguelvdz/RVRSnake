@@ -454,6 +454,16 @@ int NetworkManager::getClientId() {
 	return mClientId;
 }
 
+int NetworkManager::getNumberConnectedPlayers() {
+	int connectedPlayers = 0;
+
+	for(int i = 0; i < mPlayerSockets.size(); i++)
+		if(mPlayerSockets[i] != nullptr)
+			connectedPlayers++;
+			
+	return connectedPlayers;
+}
+
 void NetworkManager::syncSnake(int id, Vector2 newOrientation)
 {
 	Packet packet;
