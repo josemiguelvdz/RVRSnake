@@ -65,5 +65,6 @@ public:
 	void syncSnake(Vector2 position, Vector2 orientation, bool alive, bool ate, bool turnNextPartToCorner);
 	
 	inline bool isAlive() { return mAlive; };
+	inline void setAlive(bool newState) { mAlive = newState; };
 };
 #endif

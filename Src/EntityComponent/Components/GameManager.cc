@@ -40,39 +40,43 @@ void GameManager::start() {
 		sceneManager().getActiveScene()->removeEntity(mEntity->getName());
 	else {
 		MInstance = this;
-		sceneManager().getActiveScene()->promoteToGlobal(mEntity);
+		bool test = sceneManager().getActiveScene()->promoteToGlobal(mEntity);
 	}
+
+	
 }
 
 void GameManager::update(const double& dt){
-	std::cout << getAliveSnakes() << "\n";
-	if (!networkManager().initialized()){
-		std::cout << getAliveSnakes() << "\n";
-		if (getAliveSnakes() == 0){
-			// CHANGE TO TITLE SCREEN
-			sceneManager().change(new TitleScreen());
+	// std::cout << getAliveSnakes() << "EN TITLE UWU" << "\n";
+
+	if (sceneManager().getActiveScene()->getName() == "Battle"){
+		if (!networkManager().initialized()){
+			if (getAliveSnakes() == 0){
+				// CHANGE TO TITLE SCREEN
+				sceneManager().change(new TitleScreen());
+			}
 		}
-	}
-	else {
-		if (networkManager().isHost() && getAliveSnakes() == 1){
-			// SEND PACKET TO COLOR SELECTION
-			networkManager().sendFinishGame();
+		else{
+			if (networkManager().isHost() && getAliveSnakes() <= 1){
+				// SEND PACKET TO COLOR SELECTION
+				networkManager().sendFinishGame();
 
-			// CHANGE TO COLOR SELECTION
-			std::vector<string> names(4, " ");
-			names[0] = playerNames[0];
-			names[1] = playerNames[1];
-			names[2] = playerNames[2];
-			names[3] = playerNames[3];
+				// CHANGE TO COLOR SELECTION
+				std::vector<string> names(4, " ");
+				names[0] = playerNames[0];
+				names[1] = playerNames[1];
+				names[2] = playerNames[2];
+				names[3] = playerNames[3];
 
-			std::vector<int> colors(4, -1);
-			colors[0] = playerColors[0];
-			colors[1] = playerColors[1];
-			colors[2] = playerColors[2];
-			colors[3] = playerColors[3];
+				std::vector<int> colors(4, -1);
+				colors[0] = playerColors[0];
+				colors[1] = playerColors[1];
+				colors[2] = playerColors[2];
+				colors[3] = playerColors[3];
 
-			Scene* colorSelection = new ColorSelection(names, colors, true);
-			sceneManager().change(colorSelection);
+				Scene* colorSelection = new ColorSelection(names, colors, true);
+				sceneManager().change(colorSelection);
+			}
 		}
 	}
 }

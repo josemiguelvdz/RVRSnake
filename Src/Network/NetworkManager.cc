@@ -231,11 +231,17 @@ void NetworkManager::receivePlayers()
 
 			strcpy(gameManager()->playerNames[disconnectionId], " ");
 
-			// Update texture
-			string entName = "Player" + to_string(disconnectionId + 1) + "Text";
-			SDL_Color color = {255,255,255,255};
-			sceneManager().getActiveScene()->findEntity(entName).get()
+			if (sceneManager().getActiveScene()->getName() == "ColorSelection"){
+				// Update texture
+				string entName = "Player" + to_string(disconnectionId + 1) + "Text";
+				SDL_Color color = {255,255,255,255};
+				sceneManager().getActiveScene()->findEntity(entName).get()
 				->getComponent<Text>("text")->setText(" ", color);
+			}
+			else if (sceneManager().getActiveScene()->getName() == "Battle"){
+				sceneManager().getActiveScene()->findEntity("Snake" + to_string(disconnectionId)).get()
+				->getComponent<Snake>("snake")->setAlive(false);
+			}
 
 			Packet sendPacket;
 			//Actualizo a los demas jugadores
@@ -245,7 +251,7 @@ void NetworkManager::receivePlayers()
 			for(int i = 1; i < mPlayerSockets.size(); i++)
 				if (mPlayerSockets[i] != nullptr)
 					mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[i]);
-		}
+			}
 			break;
 		case PACKETTYPE_SYNCSNAKE:
 			//Actualizo la serpiente
@@ -307,16 +313,48 @@ void NetworkManager::updateClient()
 			break;
 		case PACKETTYPE_DISCONNECTIONREQUEST:
 			// Borrar nombres de otros
-			if (sceneManager().getActiveScene()->getName() == "ColorSelection"){
-				strcpy(gameManager()->playerNames[receivedPacket.info.disconnectionRequest.playerId], " ");
+			strcpy(gameManager()->playerNames[receivedPacket.info.disconnectionRequest.playerId], " ");
 
-				// Update texture
-				string entName = "Player" + to_string(receivedPacket.info.disconnectionRequest.playerId + 1) + "Text";
-				SDL_Color color = {255,255,255,255};
-				sceneManager().getActiveScene()->findEntity(entName).get()
+			if (sceneManager().getActiveScene()->getName() == "ColorSelection"){
+					// Update texture
+					string entName = "Player" + to_string(receivedPacket.info.disconnectionRequest.playerId + 1) + "Text";
+					SDL_Color color = {255,255,255,255};
+					sceneManager().getActiveScene()->findEntity(entName).get()
 					->getComponent<Text>("text")->setText(" ", color);
 			}
+			else if (sceneManager().getActiveScene()->getName() == "Battle"){
+					sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.disconnectionRequest.playerId)).get()
+					->getComponent<Snake>("snake")->setAlive(false);
+			}
 			break;
+		case PACKETTYPE_CHANGETOCOLORSELECTION:
+		{
+			strcpy(gameManager()->playerNames[0], receivedPacket.info.changeToColorSelection.playerName1);
+			strcpy(gameManager()->playerNames[1], receivedPacket.info.changeToColorSelection.playerName2);
+			strcpy(gameManager()->playerNames[2], receivedPacket.info.changeToColorSelection.playerName3);
+			strcpy(gameManager()->playerNames[3], receivedPacket.info.changeToColorSelection.playerName4);
+					
+			gameManager()->playerColors[0] = (SnakeColor) receivedPacket.info.changeToColorSelection.color1;
+			gameManager()->playerColors[1] = (SnakeColor) receivedPacket.info.changeToColorSelection.color2;
+			gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.changeToColorSelection.color3;
+			gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.changeToColorSelection.color4;
+
+			// Change scene (Prevent injection)
+			std::vector<string> names(4, " ");
+			names[0] = gameManager()->playerNames[0];
+			names[1] = gameManager()->playerNames[1];
+			names[2] = gameManager()->playerNames[2];
+			names[3] = gameManager()->playerNames[3];
+
+			std::vector<int> colors(4, -1);
+			colors[0] = gameManager()->playerColors[0];
+			colors[1] = gameManager()->playerColors[1];
+			colors[2] = gameManager()->playerColors[2];
+			colors[3] = gameManager()->playerColors[3];
+
+			sceneManager().change(new ColorSelection(names, colors, false));
+		}
+		break;
 		case PACKETTYPE_HOSTQUIT:
 		{
 			sceneManager().change(new TitleScreen());
