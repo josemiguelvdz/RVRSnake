@@ -22,7 +22,7 @@
 bool Game::setup(std::string gameName)
 {
     Window::Init(SDL_INIT_EVERYTHING, gameName.c_str(), SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, 672, 672, SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+		SDL_WINDOWPOS_UNDEFINED, 672, 672, SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_OPENGL);
 
 	// Load Resources
 	sdlutils().initSDLExtensions();
@@ -34,16 +34,14 @@ bool Game::setup(std::string gameName)
 	// Load Scene
 	// Scene* battleTest = new Battle(1);
 	// sceneManager().loadScene(battleTest);
- 	Scene* titleScreen = new TitleScreen();
-	sceneManager().loadScene(titleScreen);
+ 	// Scene* titleScreen = new TitleScreen();
+	// sceneManager().loadScene(titleScreen);
 
-	// Scene* multiScren = new OnlineSelection();
-	// sceneManager().change(multiScren);
+	Scene* multiScren = new OnlineSelection();
+	sceneManager().change(multiScren);
 	
 	// Start time
 	mTime = new Time(60);
-
-	// mPlayerName = "Snake";
 
 	return true;
 }
@@ -62,8 +60,6 @@ void Game::loop()
 		dt = mTime->update();
 		
 		// Update the scene
-		// physicsManager().update(dt, 0, 1 / mTime->getTargetFrameRate());
-
 		// soundManager().systemRefresh(dt);
 
 		sdlutils().clearRenderer();
@@ -90,11 +86,8 @@ void Game::exit()
 	// Clear the memory created in the execution of the program
 	NetworkManager::Shutdown();
 	SceneManager::Shutdown();
-	// PhysicsManager::Shutdown();
-	// RenderManager::Shutdown();
 	Window::Shutdown();
 	// SoundManager::Shutdown();
-	// ComponentsFactory::Shutdown();
 	InputManager::Shutdown();
 
 	delete mTime;

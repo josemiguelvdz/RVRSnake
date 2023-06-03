@@ -42,27 +42,22 @@ struct PacketCreatePlayer{
 	char newPlayerName[NAME_CHARACTER_LIMIT];
 };
 
-// Paquete para comenzar juego
-struct PacketStartGame {
-	
-};
-
 // Paquete para sincronizar a los jugadores
 struct PacketSyncSnake {
 	uint8_t id;
 
-	uint8_t orientationX;
-	uint8_t orientationY;
+	_Float32 orientationX;
+	_Float32 orientationY;
 };
 
 // Paquete para sincronizar las manzanas
 struct PacketSyncApple {
-	uint8_t positionX;
-    uint8_t positionY;
+	uint8_t snakeId;
+
+	_Float32 positionX;
+    _Float32 positionY;
 
 	bool eaten;
-
-	uint8_t snakeId;
 };
 
 union PacketInfo {
@@ -70,7 +65,6 @@ union PacketInfo {
 	PacketAccept accept;
 	PacketDisconnectionRequest disconnectionRequest;
 	PacketCreatePlayer createPlayer;
-	PacketStartGame startGame;
 	PacketSyncSnake snake;
 	PacketSyncApple apple;
 };

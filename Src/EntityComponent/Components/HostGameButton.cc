@@ -122,10 +122,10 @@ void HostGameButton::execute()
 	strcpy(gameManager()->playerNames[2], " ");
 	strcpy(gameManager()->playerNames[3], " ");
 
-	gameManager()->playerColors[0] = SNAKECOLOR_RED;
-	gameManager()->playerColors[1] = SNAKECOLOR_GRAY;
-	gameManager()->playerColors[2] = SNAKECOLOR_GRAY;
-	gameManager()->playerColors[3] = SNAKECOLOR_GRAY;
+	// gameManager()->playerColors[0] = SNAKECOLOR_RED;
+	// gameManager()->playerColors[1] = SNAKECOLOR_GRAY;
+	// gameManager()->playerColors[2] = SNAKECOLOR_GRAY;
+	// gameManager()->playerColors[3] = SNAKECOLOR_GRAY;
 
 	// Create game scene
 	std::vector<string> names(4, " ");

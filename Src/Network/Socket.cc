@@ -47,10 +47,8 @@ int Socket::recv(Serializable &obj, Socket * &sock)
     if ( bytes <= 0 )
         return -1;
 
-    if ( sock == nullptr ){
+    if ( sock == nullptr )
         sock = new Socket(&receiverAddress, receiverAddressLength);
-        std::cout << receiverAddress.sa_data << "\n";
-    }
 
     obj.from_bin(buffer);
 

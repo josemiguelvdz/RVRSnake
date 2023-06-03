@@ -104,10 +104,10 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		strcpy(gameManager()->playerNames[2], receivedPacket.info.accept.playerName3);
 		strcpy(gameManager()->playerNames[3], receivedPacket.info.accept.playerName4);
 				
-		gameManager()->playerColors[0] = (SnakeColor) receivedPacket.info.accept.color1;
-		gameManager()->playerColors[1] = (SnakeColor) receivedPacket.info.accept.color2;
-		gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.accept.color3;
-		gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.accept.color4;
+		// gameManager()->playerColors[0] = (SnakeColor) receivedPacket.info.accept.color1;
+		// gameManager()->playerColors[1] = (SnakeColor) receivedPacket.info.accept.color2;
+		// gameManager()->playerColors[2] = (SnakeColor) receivedPacket.info.accept.color3;
+		// gameManager()->playerColors[3] = (SnakeColor) receivedPacket.info.accept.color4;
 
 		gameManager()->myName = gameManager()->playerNames[mClientId];
 
@@ -151,8 +151,9 @@ void NetworkManager::acceptPlayers()
 
 		Packet replyPacket;
 
+		// Rechazamos si el juego ha empezado o la sala esta llena
 		int playerId = getNextPlayerId();
-		if(playerId == -1)
+		if (mGameStarted || playerId == -1)
 			replyPacket.type = PACKETTYPE_CONNECTIONDENY;
 		else {
 			mPlayerSockets[playerId] = clientSocket;
@@ -178,22 +179,20 @@ void NetworkManager::acceptPlayers()
 			string entName = "Player" + to_string(playerId + 1) + "Text";
 			string newName = gameManager()->playerNames[playerId];
 
-			std::cout << newName << "\n";
-
 			SDL_Color color = {255,255,255,255};
 			sceneManager().getActiveScene()->findEntity(entName).get()
 			->getComponent<Text>("text")->setText(newName, color);
 
 			//Informar al resto de jugadores
-			// Packet multicastPacket;
-			// multicastPacket.type = PACKETTYPE_CREATEPLAYER;
+			Packet multicastPacket;
+			multicastPacket.type = PACKETTYPE_CREATEPLAYER;
 
-			// multicastPacket.info.createPlayer.newPlayerId;
-			// multicastPacket.info.createPlayer.newPlayerId;
+			multicastPacket.info.createPlayer.newPlayerId = playerId;
+			strcpy(multicastPacket.info.createPlayer.newPlayerName, newName.c_str());
 
-			// for(int i = 1; i < mPlayerSockets.size(); i++)
-			// 	if (mPlayerSockets[i] != nullptr && mPlayerSockets[i] != clientSocket)
-			// 		mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
+			for(int i = 1; i < mPlayerSockets.size(); i++)
+				if (mPlayerSockets[i] != nullptr && mPlayerSockets[i] != clientSocket)
+					mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
 		}
 		
 		mPlayerSockets[0]->send(replyPacket, *clientSocket);
@@ -211,7 +210,7 @@ void NetworkManager::receivePlayers()
 	Socket* clientSocket;
 
 	while (!mExitThread) {
-		// Receive info from server
+		// Receive info from clients
 		int success = mPlayerSockets[0]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
 
@@ -232,8 +231,7 @@ void NetworkManager::receivePlayers()
 					string entName = "Player" + to_string(disconnectionId + 1) + "Text";
 					SDL_Color color = {255,255,255,255};
 					sceneManager().getActiveScene()->findEntity(entName).get()
-					->getComponent<Text>("text")->setText(" ", color);
-
+						->getComponent<Text>("text")->setText(" ", color);
 
 					i--;
 
@@ -253,7 +251,7 @@ void NetworkManager::receivePlayers()
 						->getComponent<Snake>("snake")
 						->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
 
-					cout << "Recibo snake y reenvio\n";
+					std::cout << "Recibo snake y reenvio\n";
 
 					//Reenvio a los demas jugadores
 					for(int j = 1; j < mPlayerSockets.size(); j++)
@@ -296,8 +294,21 @@ void NetworkManager::updateClient()
 
 		switch (receivedPacket.type)
 		{
+		case PACKETTYPE_CREATEPLAYER:
+		{
+			int newPlayerId = receivedPacket.info.createPlayer.newPlayerId;
+			strcpy(gameManager()->playerNames[newPlayerId], receivedPacket.info.createPlayer.newPlayerName);
+
+			//Update textures
+			string entName = "Player" + to_string(newPlayerId + 1) + "Text";
+			string newName = gameManager()->playerNames[newPlayerId];
+
+			SDL_Color color = {255,255,255,255};
+			sceneManager().getActiveScene()->findEntity(entName).get()
+				->getComponent<Text>("text")->setText(newName, color);
+		}
+			break;
 		case PACKETTYPE_START:
-			cout << "Start\n";
 			sceneManager().change(new Battle(getNumberConnectedPlayers()));
 			break;
 		case PACKETTYPE_DISCONNECTIONREQUEST:
@@ -309,14 +320,13 @@ void NetworkManager::updateClient()
 				string entName = "Player" + to_string(receivedPacket.info.disconnectionRequest.playerId + 1) + "Text";
 				SDL_Color color = {255,255,255,255};
 				sceneManager().getActiveScene()->findEntity(entName).get()
-				->getComponent<Text>("text")->setText(" ", color);
+					->getComponent<Text>("text")->setText(" ", color);
 			}
 			break;
 		case PACKETTYPE_SYNCSNAKE:
 			//Actualizo la serpiente
 			sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()->getComponent<Snake>("snake")
 				->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
-			cout << "actualiza snake\n";
 			break;
 		case PACKETTYPE_SYNCAPPLE:
 			//Actualizo la manzana
@@ -406,10 +416,8 @@ void NetworkManager::sendStartGame() {
 	packet.type = PACKETTYPE_START;
 
 	for (int i = 1; i < mPlayerSockets.size(); i++)
-		if (mPlayerSockets[i] != nullptr){
-			cout << "Mando a " << i << "\n";
+		if (mPlayerSockets[i] != nullptr)
 			mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
-		}
 }
 
 void NetworkManager::startGameTimer() {
@@ -439,7 +447,12 @@ void NetworkManager::syncSnake(int id, Vector2 newOrientation)
 	packet.info.snake.orientationX = newOrientation.x;
 	packet.info.snake.orientationY = newOrientation.y;
 
-	mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
+	if (mHost)
+		for (int i = 1; i < mPlayerSockets.size(); i++)
+			if (mPlayerSockets[i] != nullptr)
+				mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
+	else
+		mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
 }
 
 void NetworkManager::syncApple(int id, Vector2 position, bool eaten)
@@ -451,7 +464,12 @@ void NetworkManager::syncApple(int id, Vector2 position, bool eaten)
 	packet.info.apple.positionY = position.y;
 	packet.info.apple.eaten = eaten;
 
-	mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
+	if (mHost)
+		for (int i = 1; i < mPlayerSockets.size(); i++)
+			if (mPlayerSockets[i] != nullptr)
+				mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
+	else
+		mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
 }
 
 void NetworkManager::sendFinishGame()

@@ -38,7 +38,7 @@ ColorSelection::ColorSelection(std::vector<std::string> names, std::vector<int> 
     */
     if (isHost){
         auto startGameButton = addEntity("StartGameButton");
-        startGameButton.get()->addComponent(new StartGameButton(&sdlutils().images().at("hostButton"), (672 / 2) - 60, 500, 120, 90));
+        startGameButton.get()->addComponent(new StartGameButton(&sdlutils().images().at("hostButton"), (672 / 2) - 60, 550, 120, 90));
         startGameButton.get()->setDepth(3);
     }
 
