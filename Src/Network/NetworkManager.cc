@@ -214,67 +214,60 @@ void NetworkManager::receivePlayers()
 		int success = mPlayerSockets[0]->recv(receivedPacket, clientSocket);
         if (success < 0) continue;
 
-		for(int i = 1; i < mPlayerSockets.size(); i++) // Comenzamos en uno porque el 0 somos nosotros mismos
-			if(mPlayerSockets[i] != nullptr && mPlayerSockets[i] == clientSocket)
-				switch (receivedPacket.type)
-				{
-				case PACKETTYPE_DISCONNECTIONREQUEST:
-				{
-					int disconnectionId = receivedPacket.info.disconnectionRequest.playerId;
+		switch (receivedPacket.type)
+		{
+		case PACKETTYPE_DISCONNECTIONREQUEST:
+		{
+			int disconnectionId = receivedPacket.info.disconnectionRequest.playerId;
 
-					delete mPlayerSockets[i];
-					mPlayerSockets[i] = nullptr;
+			delete mPlayerSockets[disconnectionId];
+			mPlayerSockets[disconnectionId] = nullptr;
 
-					strcpy(gameManager()->playerNames[i], " ");
+			strcpy(gameManager()->playerNames[disconnectionId], " ");
 
-					// Update texture
-					string entName = "Player" + to_string(disconnectionId + 1) + "Text";
-					SDL_Color color = {255,255,255,255};
-					sceneManager().getActiveScene()->findEntity(entName).get()
-						->getComponent<Text>("text")->setText(" ", color);
+			// Update texture
+			string entName = "Player" + to_string(disconnectionId + 1) + "Text";
+			SDL_Color color = {255,255,255,255};
+			sceneManager().getActiveScene()->findEntity(entName).get()
+				->getComponent<Text>("text")->setText(" ", color);
 
-					i--;
+			Packet sendPacket;
+			//Actualizo a los demas jugadores
+			sendPacket.type = PACKETTYPE_DISCONNECTIONREQUEST;
+			sendPacket.info.disconnectionRequest.playerId;
 
-					Packet sendPacket;
-					//Actualizo a los demas jugadores
-					sendPacket.type = PACKETTYPE_DISCONNECTIONREQUEST;
-					sendPacket.info.disconnectionRequest.playerId;
+			for(int j = 1; j < mPlayerSockets.size(); j++)
+				if (mPlayerSockets[j] != nullptr && mPlayerSockets[j] != clientSocket)
+					mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[j]);
+		}
+			break;
+		case PACKETTYPE_SYNCSNAKE:
+			//Actualizo la serpiente
+			sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()
+				->getComponent<Snake>("snake")
+				->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
 
-					for(int j = 1; j < mPlayerSockets.size(); j++)
-						if (mPlayerSockets[j] != nullptr && mPlayerSockets[j] != clientSocket)
-							mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[j]);
-				}
-					break;
-				case PACKETTYPE_SYNCSNAKE:
-					//Actualizo la serpiente
-					sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()
-						->getComponent<Snake>("snake")
-						->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
-
-					std::cout << "Recibo snake y reenvio\n";
-
-					//Reenvio a los demas jugadores
-					for(int j = 1; j < mPlayerSockets.size(); j++)
-						if (j != receivedPacket.info.snake.id)
-							mPlayerSockets[0]->send(receivedPacket, *mPlayerSockets[j]);
-					break;
-				case PACKETTYPE_SYNCAPPLE:
-					//Actualizo la manzana
-					if(receivedPacket.info.apple.snakeId != 0) {
-						//Los clientes solo pueden comer manzanas
-						for(Apple& apple : sceneManager().getActiveScene()->findEntity("AppleGenerator").get()
-							->getComponent<AppleGenerator>("applegenerator")->getApples())
-							if(apple.posX == receivedPacket.info.apple.positionX && apple.posY == receivedPacket.info.apple.positionY)
-								sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.apple.snakeId)).get()
-									->getComponent<Snake>("snake")->eatApple(apple);
-					}
+			//Reenvio a los demas jugadores
+			for(int i = 1; i < mPlayerSockets.size(); i++)
+				if (mPlayerSockets[i] != nullptr && i != receivedPacket.info.snake.id)
+					mPlayerSockets[0]->send(receivedPacket, *mPlayerSockets[i]);
+			break;
+		case PACKETTYPE_SYNCAPPLE:
+			//Actualizo la manzana
+			if(receivedPacket.info.apple.snakeId != 0) 
+				//Los clientes solo pueden comer manzanas
+				for(Apple& apple : sceneManager().getActiveScene()->findEntity("AppleGenerator").get()
+					->getComponent<AppleGenerator>("applegenerator")->getApples())
+					if(apple.posX == receivedPacket.info.apple.positionX && apple.posY == receivedPacket.info.apple.positionY)
+						sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.apple.snakeId)).get()
+							->getComponent<Snake>("snake")->eatApple(apple);
 					
-					//Reenvio a los demas jugadores
-					for(int j = 1; j < mPlayerSockets.size(); j++)
-						if (j != receivedPacket.info.apple.snakeId)
-							mPlayerSockets[0]->send(receivedPacket, *mPlayerSockets[j]);
-					break;
-				}
+			//Reenvio a los demas jugadores
+			for(int i = 1; i < mPlayerSockets.size(); i++)
+				if (mPlayerSockets[i] != nullptr && i != receivedPacket.info.apple.snakeId)
+					mPlayerSockets[0]->send(receivedPacket, *mPlayerSockets[i]);
+			break;
+		}
 
 		SDL_Delay(mRecvFrequency);
 	}
@@ -447,11 +440,12 @@ void NetworkManager::syncSnake(int id, Vector2 newOrientation)
 	packet.info.snake.orientationX = newOrientation.x;
 	packet.info.snake.orientationY = newOrientation.y;
 
-	if (mHost)
+	if (mHost){
 		for (int i = 1; i < mPlayerSockets.size(); i++)
 			if (mPlayerSockets[i] != nullptr)
 				mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
-	else
+	}
+	else 
 		mPlayerSockets[mClientId]->send(packet, *mPlayerSockets[0]);
 }
 

@@ -28,7 +28,7 @@ void AppleGenerator::start()
 
 void AppleGenerator::update(const double& dt)
 {
-    if(networkManager().initialized() && networkManager().isHost())
+    if(!networkManager().initialized() || !networkManager().isHost())
         return;
 
     // Update virtual timer to generate Apples in random positions not occuppied by board

@@ -63,6 +63,7 @@ void Snake::update(const double& dt)
 			turn({ 0, BOX_SIZE }, networkManager().initialized()); 	//Abajo
 	}
 
+	//TODO: Solo host
 	if(mTimer->getRawSeconds() >= 1 / mSpeed){
 		mTimer->reset();
 
@@ -147,7 +148,7 @@ void Snake::turn(Vector2 newOrientation, bool sendMessage)
 {
 	mNextOrientation = newOrientation;
 	mNextPosition = mPosition + mNextOrientation;
-	mTurnNextPartToCorner = true;
+	mTurnNextPartToCorner = mNextOrientation.distance(mParts.front()->getOrientation()) > 1;
 
 	if (sendMessage)
 		networkManager().syncSnake(mId, newOrientation);
