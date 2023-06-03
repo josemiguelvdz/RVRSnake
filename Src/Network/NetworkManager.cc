@@ -9,6 +9,7 @@
 #include "../Scenes/SceneManager.h"
 #include "../Scenes/Scene.h"
 #include "../Scenes/Battle.h"
+#include "../Scenes/TitleScreen.h"
 #include "../Utils/SDLUtils.h"
 
 #include "../EntityComponent/Entity.h"
@@ -41,7 +42,8 @@ NetworkManager::NetworkManager()
 
 NetworkManager::~NetworkManager()
 {
-	close();
+	if (mInitialized)
+		close();
 }
 
 bool NetworkManager::init(bool host, const char* ipAddress)
@@ -320,6 +322,11 @@ void NetworkManager::updateClient()
 					->getComponent<Text>("text")->setText(" ", color);
 			}
 			break;
+		case PACKETTYPE_HOSTQUIT:
+		{
+			sceneManager().change(new TitleScreen());
+		}
+		break;
 		case PACKETTYPE_SYNCSNAKE:
 			//Actualizo la serpiente
 			sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()->getComponent<Snake>("snake")
@@ -363,13 +370,13 @@ void NetworkManager::close()
 	mExitThread = true;
 
 	if (mHost) { // si se es host, tienes que mandar a todo el mundo que te has desconectado
-
 		Packet packet;
+		packet.type = PACKETTYPE_HOSTQUIT;
 
-		// packet.type = PACKETTYPE_QUIT;
+		for (int i = 1; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
+			if (mPlayerSockets[i] != nullptr)
+				mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
 
-		// for (int i = 1; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
-		// 	mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
 
 		delete accept_t;
 		delete receiveplayers_t;
@@ -377,11 +384,12 @@ void NetworkManager::close()
 	else {
 		Packet sendPacket;
 		sendPacket.type = PACKETTYPE_DISCONNECTIONREQUEST;
-		sendPacket.info.disconnectionRequest.playerId = gameManager()->myId;
+		sendPacket.info.disconnectionRequest.playerId = mClientId;
 
-		mPlayerSockets[gameManager()->myId]->send(sendPacket, *mPlayerSockets[0]);
+		if (mPlayerSockets[0] != nullptr)
+			mPlayerSockets[mClientId]->send(sendPacket, *mPlayerSockets[0]);
 
-		// updateclient_t->join();
+
 		delete updateclient_t;
 	}
 
@@ -390,6 +398,8 @@ void NetworkManager::close()
 			delete mPlayerSockets[i];
 			mPlayerSockets[i] = nullptr;
 		}
+
+	mInitialized = false;
 }
 
 int NetworkManager::getNextPlayerId()

@@ -84,9 +84,9 @@ void Game::loop()
 void Game::exit()
 {
 	// Clear the memory created in the execution of the program
-	NetworkManager::Shutdown();
 	SceneManager::Shutdown();
 	Window::Shutdown();
+	NetworkManager::Shutdown();
 	// SoundManager::Shutdown();
 	InputManager::Shutdown();
 

@@ -7,6 +7,8 @@
 #include "../EntityComponent/Components/MultiPlayerButton.h"
 #include "../EntityComponent/Components/GameManager.h"
 
+#include "../Network/NetworkManager.h"
+
 #include "../Utils/Texture.h"
 #include "../Utils/SDLUtils.h"
 
@@ -103,10 +105,11 @@ TitleScreen::TitleScreen() : Scene("TitleScreen")
 	/*
 		GAME MANAGER
 	*/
-
 	auto gameManager = addEntity("GameManager");
-
 	gameManager.get()->addComponent(new GameManager());
+
+	if (networkManager().initialized())
+		networkManager().close();
 }
 
 TitleScreen::~TitleScreen(){
