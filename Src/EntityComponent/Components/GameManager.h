@@ -23,7 +23,10 @@ public:
 
     static GameManager* Instance();
 
+	int getAliveSnakes();
+
 	void start() override;
+	void update(const double& dt) override;
 
     std::string myName;
 	uint8_t myId;

@@ -15,6 +15,7 @@ enum PacketType : uint8_t {
 	PACKETTYPE_SYNCSNAKE,
 	PACKETTYPE_SYNCAPPLE,
 	PACKETTYPE_HOSTQUIT,
+	PACKETTYPE_CHANGETOCOLORSELECTION,
     PACKETTYPE_NULL
 };
 
@@ -67,6 +68,14 @@ struct PacketSyncApple {
 	bool eaten;
 };
 
+struct PacketChangeToColorSelection {
+	uint8_t color1, color2, color3, color4;
+	char playerName1[NAME_CHARACTER_LIMIT];
+	char playerName2[NAME_CHARACTER_LIMIT];
+	char playerName3[NAME_CHARACTER_LIMIT];
+	char playerName4[NAME_CHARACTER_LIMIT];
+};
+
 union PacketInfo {
 	PacketConnectionRequest connectionRequest;
 	PacketAccept accept;
@@ -74,4 +83,5 @@ union PacketInfo {
 	PacketCreatePlayer createPlayer;
 	PacketSyncSnake snake;
 	PacketSyncApple apple;
+	PacketChangeToColorSelection changeToColorSelection;
 };

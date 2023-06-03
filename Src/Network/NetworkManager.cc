@@ -481,4 +481,20 @@ void NetworkManager::syncApple(int id, Vector2 position, bool eaten)
 
 void NetworkManager::sendFinishGame()
 {
+	Packet sendPacket;
+	sendPacket.type = PACKETTYPE_CHANGETOCOLORSELECTION;
+
+	strcpy(sendPacket.info.changeToColorSelection.playerName1, gameManager()->playerNames[0]);
+	strcpy(sendPacket.info.changeToColorSelection.playerName2, gameManager()->playerNames[1]);
+	strcpy(sendPacket.info.changeToColorSelection.playerName3, gameManager()->playerNames[2]);
+	strcpy(sendPacket.info.changeToColorSelection.playerName4, gameManager()->playerNames[3]);
+
+	sendPacket.info.changeToColorSelection.color1 = gameManager()->playerColors[0];
+	sendPacket.info.changeToColorSelection.color2 = gameManager()->playerColors[1];
+	sendPacket.info.changeToColorSelection.color3 = gameManager()->playerColors[2];
+	sendPacket.info.changeToColorSelection.color4 = gameManager()->playerColors[3];
+
+	for (int i = 1; i < mPlayerSockets.size(); i++)
+		if (mPlayerSockets[i] != nullptr)
+			mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[i]);
 }

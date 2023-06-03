@@ -106,7 +106,34 @@ void Packet::to_bin() {
         memcpy(index, &info.apple.snakeId, sizeof(uint8_t));
         index += sizeof(uint8_t);
         break;
+
+    case PACKETTYPE_CHANGETOCOLORSELECTION:
+        memcpy(index, &info.accept.color1, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(index, &info.accept.color2, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(index, &info.accept.color3, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(index, &info.accept.color4, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(index, info.accept.playerName1, NAME_CHARACTER_LIMIT * sizeof(char));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+
+        memcpy(index, info.accept.playerName2, NAME_CHARACTER_LIMIT * sizeof(char));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+
+        memcpy(index, info.accept.playerName3, NAME_CHARACTER_LIMIT * sizeof(char));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+
+        memcpy(index, info.accept.playerName4, NAME_CHARACTER_LIMIT * sizeof(char));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+    break;
     }
+  
 }
 
 int Packet::from_bin(char * data) {
@@ -197,6 +224,32 @@ int Packet::from_bin(char * data) {
         memcpy(&info.apple.snakeId, index, sizeof(uint8_t));
         index += sizeof(uint8_t);
         break;
+
+    case PACKETTYPE_CHANGETOCOLORSELECTION:
+        memcpy(&info.accept.color1, index, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(&info.accept.color2, index, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(&info.accept.color3, index, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(&info.accept.color4, index, sizeof(uint8_t));
+        index += sizeof(uint8_t);
+
+        memcpy(&info.accept.playerName1, index, sizeof(NAME_CHARACTER_LIMIT * sizeof(char)));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+
+        memcpy(&info.accept.playerName2, index, sizeof(NAME_CHARACTER_LIMIT * sizeof(char)));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+
+        memcpy(&info.accept.playerName3, index, sizeof(NAME_CHARACTER_LIMIT * sizeof(char)));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+
+        memcpy(&info.accept.playerName4, index, sizeof(NAME_CHARACTER_LIMIT * sizeof(char)));
+        index += NAME_CHARACTER_LIMIT * sizeof(char);
+    break;
     }
 
     return index - data;
