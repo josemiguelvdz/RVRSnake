@@ -54,33 +54,43 @@ void Snake::update(const double& dt)
 		//No se puede ir en tu direccion actual ni en la opuesta
 		//Solo se permiten giros de 90 grados
 		if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") > .1f)
-			turn({ BOX_SIZE, 0 }, networkManager().initialized()); 	//Derecha
+			turn({ BOX_SIZE, 0 }, networkManager().initialized() && !networkManager().isHost()); 	//Derecha
 		else if (abs(mOrientation.x) < .1f && inputManager().getAxis("horizontal") < -.1f)
-			turn({ -BOX_SIZE, 0 }, networkManager().initialized()); //Izquierda
+			turn({ -BOX_SIZE, 0 }, networkManager().initialized() && !networkManager().isHost()); 	//Izquierda
 		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") > .1f)
-			turn({ 0, -BOX_SIZE }, networkManager().initialized()); //Arriba
+			turn({ 0, -BOX_SIZE }, networkManager().initialized() && !networkManager().isHost()); 	//Arriba
 		else if (abs(mOrientation.y) < .1f && inputManager().getAxis("vertical") < -.1f)
-			turn({ 0, BOX_SIZE }, networkManager().initialized()); 	//Abajo
+			turn({ 0, BOX_SIZE }, networkManager().initialized() && !networkManager().isHost()); 	//Abajo
 	}
 
-	//TODO: Solo host
-	if(mTimer->getRawSeconds() >= 1 / mSpeed){
+	//Solo el host mueve las serpientes
+	if ((!networkManager().initialized() || networkManager().isHost()) && mTimer->getRawSeconds() >= 1 / mSpeed) {
 		mTimer->reset();
 
-		if(outOfBounds(21, 21) || hit()){
+		bool ate = false;
+		bool turnNextPartToCorner;
+
+		if (outOfBounds(21, 21) || hit())
 			mAlive = false;
-			return;
-		}
-		
-		move();
+		else{
+			move();
 
-		if (!eat())
-			bringLastPartFirst();
+			ate = eat();
+			if (ate)
+				mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation, mTextureName));
+			else
+				bringLastPartFirst();
 
-		if(mTurnNextPartToCorner) {
-			mTurnNextPartToCorner = false;
-			mParts.front()->setCorner();
+			turnNextPartToCorner = mTurnNextPartToCorner;
+
+			if (mTurnNextPartToCorner) {
+				mTurnNextPartToCorner = false;
+				mParts.front()->setCorner();
+			}
 		}
+
+		if (networkManager().initialized())
+			networkManager().syncSnake(mId, mPosition, mOrientation, mAlive, ate, turnNextPartToCorner);
 	}
 }
 
@@ -108,7 +118,7 @@ void Snake::render()
         rotationAngle = 180;
     else if (orientation.y > .1f)	//Abajo
         rotationAngle = 90;     
-    else if (orientation.y < -.1f) //Arriba
+    else if (orientation.y < -.1f) 	//Arriba
         rotationAngle = 270;
 
  	bgTexture->render(clipBox, textureBox, rotationAngle, nullptr);
@@ -131,8 +141,6 @@ void Snake::eatApple(Apple& apple, bool sendMessage)
 	
 	mSpeed += mSpeedIncrement;
 
-	mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation, mTextureName));
-
 	if (sendMessage)
 		networkManager().syncApple(mId, Vector2(apple.posX, apple.posY), true);
 }
@@ -151,7 +159,7 @@ void Snake::turn(Vector2 newOrientation, bool sendMessage)
 	mTurnNextPartToCorner = mNextOrientation.distance(mParts.front()->getOrientation()) > 1;
 
 	if (sendMessage)
-		networkManager().syncSnake(mId, newOrientation);
+		networkManager().syncSnake(mId, mPosition, newOrientation, mAlive, false, mTurnNextPartToCorner);
 }
 
 void Snake::bringLastPartFirst()
@@ -216,3 +224,22 @@ bool Snake::hit()
 
 	return false;
 }
+
+void Snake::syncSnake(Vector2 position, Vector2 orientation, bool alive, bool ate, bool turnNextPartToCorner) {
+	mAlive = alive;
+
+	if(!mAlive)
+		return;
+
+	mPosition = position;
+	mOrientation = orientation;
+	mNextPosition = mPosition + mOrientation;
+
+	if (ate)
+		mParts.push_front(new SnakePart(mId, mPosition - mOrientation, mOrientation, mTextureName));
+	else
+		bringLastPartFirst();
+
+	if (turnNextPartToCorner) 
+		mParts.front()->setCorner();
+};

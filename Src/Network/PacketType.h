@@ -46,8 +46,15 @@ struct PacketCreatePlayer{
 struct PacketSyncSnake {
 	uint8_t id;
 
+	_Float32 positionX;
+    _Float32 positionY;
+
 	_Float32 orientationX;
 	_Float32 orientationY;
+
+	bool alive;
+	bool ate;
+	bool turnNextPartToCorner;
 };
 
 // Paquete para sincronizar las manzanas

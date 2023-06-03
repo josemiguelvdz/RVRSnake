@@ -61,5 +61,7 @@ public:
 
 	//Aumenta en 1 el tamaño de la serpiente
 	void eatApple(Apple& apple, bool sendMessage = false);
+
+	void syncSnake(Vector2 position, Vector2 orientation, bool alive, bool ate, bool turnNextPartToCorner);
 };
 #endif

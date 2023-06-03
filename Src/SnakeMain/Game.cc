@@ -32,13 +32,8 @@ bool Game::setup(std::string gameName)
 	createInput();
 
 	// Load Scene
-	// Scene* battleTest = new Battle(1);
-	// sceneManager().loadScene(battleTest);
- 	// Scene* titleScreen = new TitleScreen();
-	// sceneManager().loadScene(titleScreen);
-
-	Scene* multiScren = new OnlineSelection();
-	sceneManager().change(multiScren);
+ 	Scene* titleScreen = new TitleScreen();
+	sceneManager().loadScene(titleScreen);
 	
 	// Start time
 	mTime = new Time(60);
@@ -60,8 +55,6 @@ void Game::loop()
 		dt = mTime->update();
 		
 		// Update the scene
-		// soundManager().systemRefresh(dt);
-
 		sdlutils().clearRenderer();
 
 		// Update the scene
@@ -87,7 +80,6 @@ void Game::exit()
 	SceneManager::Shutdown();
 	Window::Shutdown();
 	NetworkManager::Shutdown();
-	// SoundManager::Shutdown();
 	InputManager::Shutdown();
 
 	delete mTime;

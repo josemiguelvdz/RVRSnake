@@ -72,11 +72,26 @@ void Packet::to_bin() {
         memcpy(index, &info.snake.id, sizeof(uint8_t));
         index += sizeof(uint8_t);
 
+        memcpy(index, &info.snake.positionX, sizeof(_Float32));
+        index += sizeof(_Float32);
+
+        memcpy(index, &info.snake.positionY, sizeof(_Float32));
+        index += sizeof(_Float32);
+
         memcpy(index, &info.snake.orientationX, sizeof(_Float32));
         index += sizeof(_Float32);
 
         memcpy(index, &info.snake.orientationY, sizeof(_Float32));
         index += sizeof(_Float32);
+
+        memcpy(index, &info.snake.alive, sizeof(bool));
+        index += sizeof(bool);
+
+        memcpy(index, &info.snake.ate, sizeof(bool));
+        index += sizeof(bool);
+
+        memcpy(index, &info.snake.turnNextPartToCorner, sizeof(bool));
+        index += sizeof(bool);
         break;
     case PACKETTYPE_SYNCAPPLE:
         memcpy(index, &info.apple.positionX, sizeof(_Float32));
@@ -148,11 +163,26 @@ int Packet::from_bin(char * data) {
         memcpy(&info.snake.id, index, sizeof(uint8_t));
         index += sizeof(uint8_t);
 
+        memcpy(&info.snake.positionX, index, sizeof(_Float32));
+        index += sizeof(_Float32);
+
+        memcpy(&info.snake.positionY, index, sizeof(_Float32));
+        index += sizeof(_Float32);
+
         memcpy(&info.snake.orientationX, index, sizeof(_Float32));
         index += sizeof(_Float32);
 
         memcpy(&info.snake.orientationY, index, sizeof(_Float32));
         index += sizeof(_Float32);
+
+        memcpy(&info.snake.alive, index, sizeof(bool));
+        index += sizeof(bool);
+
+        memcpy(&info.snake.ate, index, sizeof(bool));
+        index += sizeof(bool);
+
+        memcpy(&info.snake.turnNextPartToCorner, index, sizeof(bool));
+        index += sizeof(bool);
         break;
     case PACKETTYPE_SYNCAPPLE:
         memcpy(&info.apple.positionX, index, sizeof(_Float32));

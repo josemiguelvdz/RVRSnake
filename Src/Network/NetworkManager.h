@@ -10,18 +10,11 @@
 #define LOOPBACK "127.0.0.1"
 #define MULTISNAKE_PORT "2300"
 
-// typedef struct {
-//     char* host;
-//     char* port;
-// } IPaddress;
-
 class NetworkManager : public Singleton<NetworkManager>
 {
 	friend Singleton<NetworkManager>;
 
 	std::vector<Socket*> mPlayerSockets;
-	//std::vector<IPaddress> mPlayerIps;
-	//std::vector<int> mPlayerIds;
 
 	// SERVER
 
@@ -40,27 +33,10 @@ class NetworkManager : public Singleton<NetworkManager>
 
 	void updateClient();
 
-	// UTILS
-
-	// uint8_t getClientID(const IPaddress& addr);
-
-	// bool compareAddress(const IPaddress& addr1, const IPaddress& addr2);
-
 	// VARIABLES
-
-	//char mType; // 'h' para host y 'c' para client
-
-	// uint8_t mIdCount;
-	// uint8_t maxIdCount;
 
 	bool mExitThread;
 	bool mGameStarted;
-
-	// For clients ip=server_address, for host ip=local_address
-	//IPaddress mIp;
-
-	// For clients socket=socket_server, for host socket=local_socket
-	//Socket mSocket;
 
 	_Float32 mAcceptFrequency;
 	_Float32 mSendFrequency;
@@ -101,17 +77,13 @@ public:
 	void sendStartGame();
 	void sendFinishGame();
 
-	void syncSnake(int id, Vector2 newOrientation);
+	void syncSnake(int id, Vector2 position, Vector2 orientation, bool alive, bool ate, bool turnNextPartToCorner);
 	void syncApple(int id, Vector2 position, bool eaten);
 
 	void setGameStarted(bool gameStarted_) { mGameStarted = gameStarted_; }
 
 	int getClientId();
 	int getNumberConnectedPlayers();
-
-	// int getIdCount() { return mIdCount; };
-	// int getMaxIdCount() { return maxIdCount; };
-	// void setMaxIdCount(int id) { maxIdCount = id; };
 };
 
 inline NetworkManager& networkManager() {

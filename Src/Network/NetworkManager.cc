@@ -29,7 +29,7 @@ NetworkManager::NetworkManager()
 
 	mAcceptFrequency = 150;
 	mRecvFrequency = 50;
-	mSendFrequency = 100;
+	mSendFrequency = 50;
 	mClientFrequency = 50;
 
 	mInitialized = false;
@@ -252,11 +252,6 @@ void NetworkManager::receivePlayers()
 			sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()
 				->getComponent<Snake>("snake")
 				->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
-
-			//Reenvio a los demas jugadores
-			for(int i = 1; i < mPlayerSockets.size(); i++)
-				if (mPlayerSockets[i] != nullptr && i != receivedPacket.info.snake.id)
-					mPlayerSockets[0]->send(receivedPacket, *mPlayerSockets[i]);
 			break;
 		case PACKETTYPE_SYNCAPPLE:
 			//Actualizo la manzana
@@ -330,7 +325,9 @@ void NetworkManager::updateClient()
 		case PACKETTYPE_SYNCSNAKE:
 			//Actualizo la serpiente
 			sceneManager().getActiveScene()->findEntity("Snake" + to_string(receivedPacket.info.snake.id)).get()->getComponent<Snake>("snake")
-				->turn(Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY));
+				->syncSnake(Vector2(receivedPacket.info.snake.positionX, receivedPacket.info.snake.positionY),
+					Vector2(receivedPacket.info.snake.orientationX, receivedPacket.info.snake.orientationY), 
+					receivedPacket.info.snake.alive, receivedPacket.info.snake.ate, receivedPacket.info.snake.turnNextPartToCorner);
 			break;
 		case PACKETTYPE_SYNCAPPLE:
 			//Actualizo la manzana
@@ -443,13 +440,18 @@ int NetworkManager::getNumberConnectedPlayers() {
 	return connectedPlayers;
 }
 
-void NetworkManager::syncSnake(int id, Vector2 newOrientation)
+void NetworkManager::syncSnake(int id, Vector2 position, Vector2 orientation, bool alive, bool ate, bool turnNextPartToCorner)
 {
 	Packet packet;
 	packet.type = PACKETTYPE_SYNCSNAKE;
 	packet.info.snake.id = id;
-	packet.info.snake.orientationX = newOrientation.x;
-	packet.info.snake.orientationY = newOrientation.y;
+	packet.info.snake.positionX = position.x;
+	packet.info.snake.positionY = position.y;
+	packet.info.snake.orientationX = orientation.x;
+	packet.info.snake.orientationY = orientation.y;
+	packet.info.snake.alive = alive;
+	packet.info.snake.ate = ate;
+	packet.info.snake.turnNextPartToCorner = turnNextPartToCorner;
 
 	if (mHost){
 		for (int i = 1; i < mPlayerSockets.size(); i++)
