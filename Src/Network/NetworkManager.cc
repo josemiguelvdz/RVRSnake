@@ -56,7 +56,10 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 
 		// Hilos
 		accept_t = new std::thread(&NetworkManager::acceptPlayers, this);
+		accept_t->detach();
+
 		receiveplayers_t = new std::thread(&NetworkManager::receivePlayers, this);
+		receiveplayers_t->detach();
 
 		cout << "NetworkManager: host inicializado (" << gameManager()->myName << ")\n";
 	}
@@ -127,6 +130,7 @@ bool NetworkManager::init(bool host, const char* ipAddress)
 		sceneManager().change(new ColorSelection(names, colors, false));
 
 		updateclient_t = new std::thread(&NetworkManager::updateClient, this);
+		updateclient_t->detach();
 	}
 
 	mInitialized = true;
@@ -191,7 +195,7 @@ void NetworkManager::acceptPlayers()
 			strcpy(multicastPacket.info.createPlayer.newPlayerName, newName.c_str());
 
 			for(int i = 1; i < mPlayerSockets.size(); i++)
-				if (mPlayerSockets[i] != nullptr && mPlayerSockets[i] != clientSocket)
+				if (mPlayerSockets[i] != nullptr)
 					mPlayerSockets[0]->send(multicastPacket, *mPlayerSockets[i]);
 		}
 		
@@ -234,11 +238,11 @@ void NetworkManager::receivePlayers()
 			Packet sendPacket;
 			//Actualizo a los demas jugadores
 			sendPacket.type = PACKETTYPE_DISCONNECTIONREQUEST;
-			sendPacket.info.disconnectionRequest.playerId;
+			sendPacket.info.disconnectionRequest.playerId = disconnectionId;
 
-			for(int j = 1; j < mPlayerSockets.size(); j++)
-				if (mPlayerSockets[j] != nullptr && mPlayerSockets[j] != clientSocket)
-					mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[j]);
+			for(int i = 1; i < mPlayerSockets.size(); i++)
+				if (mPlayerSockets[i] != nullptr)
+					mPlayerSockets[0]->send(sendPacket, *mPlayerSockets[i]);
 		}
 			break;
 		case PACKETTYPE_SYNCSNAKE:
@@ -367,11 +371,8 @@ void NetworkManager::close()
 		// for (int i = 1; i < mPlayerSockets.size(); i++) // empezamos en 1 porque el 0 eres t� mismo
 		// 	mPlayerSockets[0]->send(packet, *mPlayerSockets[i]);
 
-		// accept_t->join();
-		// receiveplayers_t->join();
-
-		// delete accept_t;
-		// delete receiveplayers_t;
+		delete accept_t;
+		delete receiveplayers_t;
 	}
 	else {
 		Packet sendPacket;
@@ -380,7 +381,7 @@ void NetworkManager::close()
 
 		mPlayerSockets[gameManager()->myId]->send(sendPacket, *mPlayerSockets[0]);
 
-		updateclient_t->join();
+		// updateclient_t->join();
 		delete updateclient_t;
 	}
 
